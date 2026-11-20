@@ -1,0 +1,14 @@
+{
+  "name": "5부제 알리미",
+  "short_name": "5부제",
+  "description": "차량 5부제 해당일을 알려주는 앱",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#2251d1",
+  "lang": "ko",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

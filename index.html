@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>5부제 알리미</title>
+<meta name="theme-color" content="#2251d1">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="5부제">
+<style>
+  :root {
+    --bg: #f4f6fb; --card: #fff; --text: #1b2033; --muted: #69718a; --line: #e3e7f0;
+    --brand: #2251d1; --stop: #e03131; --stop-bg: #fff0f0; --go: #2b8a3e; --go-bg: #ebfbee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11141c; --card: #1a1f2b; --text: #e8ebf3; --muted: #9aa2b8; --line: #2a3142;
+      --brand: #6f8ff5; --stop: #ff6b6b; --stop-bg: #3a1d22; --go: #69db7c; --go-bg: #1b3324;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  main { max-width: 480px; margin: 0 auto; padding: 20px 16px 48px; }
+  h1 { font-size: 20px; margin: 4px 0 16px; }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .hero { text-align: center; padding: 28px 18px; border-width: 2px; }
+  .hero.stop { background: var(--stop-bg); border-color: var(--stop); }
+  .hero.go { background: var(--go-bg); border-color: var(--go); }
+  .hero .date { color: var(--muted); font-size: 14px; }
+  .hero .big { font-size: 64px; line-height: 1.1; margin: 10px 0 4px; }
+  .hero .status { font-size: 24px; font-weight: 800; }
+  .hero.stop .status { color: var(--stop); }
+  .hero.go .status { color: var(--go); }
+  .hero .sub { margin-top: 10px; font-size: 15px; }
+  .hero .next { margin-top: 6px; color: var(--muted); font-size: 14px; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .cal-head button { border: 0; background: none; color: var(--text); font-size: 22px; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; }
+  .cal-head button:active { background: var(--line); }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+  .grid .dow { font-size: 12px; color: var(--muted); padding: 4px 0; }
+  .grid .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 15px; }
+  .grid .day.sun { color: var(--stop); }
+  .grid .day.sat { color: var(--brand); }
+  .grid .day.restricted { background: var(--stop); color: #fff; font-weight: 700; }
+  .grid .day.today { outline: 2px solid var(--brand); outline-offset: -2px; }
+  .legend { margin-top: 10px; font-size: 13px; color: var(--muted); display: flex; gap: 14px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
+  .digits { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .digits button {
+    height: 46px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text);
+    font-size: 18px; font-weight: 700; cursor: pointer;
+  }
+  .digits button[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .row:first-of-type { border-top: 0; }
+  .hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; line-height: 1.5; }
+  select { font-size: 15px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--brand); }
+  .btn {
+    display: block; width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; border: 0;
+    background: var(--brand); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+  }
+  .btn.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--line); }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #1b2033; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); }
+  .toast.show { opacity: .95; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🚗 5부제 알리미</h1>
+
+  <section id="hero" class="card hero">
+    <div class="date" id="todayLabel"></div>
+    <div class="big" id="heroIcon"></div>
+    <div class="status" id="heroStatus"></div>
+    <div class="sub" id="tomorrow"></div>
+    <div class="next" id="nextDay"></div>
+  </section>
+
+  <section class="card">
+    <div class="cal-head">
+      <button id="prev" aria-label="이전 달">‹</button>
+      <h2 id="monthLabel" style="margin:0"></h2>
+      <button id="next" aria-label="다음 달">›</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="legend"><span><i style="background:var(--stop)"></i>5부제 (차량 운행 제한)</span></div>
+  </section>
+
+  <section class="card">
+    <h2>🔔 알림 받기</h2>
+    <p class="hint" style="margin-top:0">
+      <b>캘린더 알림(추천)</b>: 5부제 날짜를 휴대폰 캘린더에 일정으로 추가합니다.
+      앱을 열지 않아도 휴대폰이 정해진 시각에 알려줘요.
+    </p>
+    <div class="row" style="border-top:0">
+      <span>전날 저녁 알림</span>
+      <select id="evening"></select>
+    </div>
+    <div class="row">
+      <span>당일 아침 알림</span>
+      <select id="morning"></select>
+    </div>
+    <button class="btn" id="ics">📅 앞으로 12개월 캘린더에 추가</button>
+    <p class="hint">파일을 열면 캘린더 앱(아이폰 캘린더, 구글 캘린더 등)에 추가됩니다. 번호나 설정을 바꾸면 다시 추가하세요.</p>
+
+    <button class="btn secondary" id="notify">이 앱을 열 때 알림 표시 켜기</button>
+    <p class="hint" id="notifyHint">앱을 열었을 때 오늘·내일이 5부제면 알림을 띄웁니다 (하루 한 번).</p>
+  </section>
+
+  <section class="card">
+    <h2>⚙️ 설정</h2>
+    <div style="font-size:15px;margin-bottom:8px">내 차량번호 끝자리</div>
+    <div class="digits" id="digits"></div>
+    <p class="hint" id="ruleHint"></p>
+    <div class="row" style="margin-top:8px">
+      <label for="weekend">주말(토·일)은 5부제 제외</label>
+      <input type="checkbox" id="weekend">
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { restrictedDigits, isRestricted, upcoming, buildIcs } from './rule.js';
+
+const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+const $ = (id) => document.getElementById(id);
+
+const store = {
+  get(k, def) { try { const v = localStorage.getItem(k); return v === null ? def : JSON.parse(v); } catch { return def; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+const state = {
+  plate: store.get('plate', 3),
+  skipWeekends: store.get('skipWeekends', true),
+  evening: store.get('evening', 21),
+  morning: store.get('morning', 7),
+  notify: store.get('notify', false),
+  view: null,
+};
+const opts = () => ({ skipWeekends: state.skipWeekends });
+const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+const fmt = (d) => `${d.getMonth() + 1}월 ${d.getDate()}일 (${DOW[d.getDay()]})`;
+
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function renderHero() {
+  const t = today();
+  const tm = new Date(t); tm.setDate(tm.getDate() + 1);
+  const stop = isRestricted(t, state.plate, opts());
+  $('hero').className = 'card hero ' + (stop ? 'stop' : 'go');
+  $('todayLabel').textContent = `오늘 ${t.getFullYear()}년 ${fmt(t)}`;
+  $('heroIcon').textContent = stop ? '🚫' : '✅';
+  $('heroStatus').textContent = stop ? '오늘은 5부제! 차를 두고 오세요' : '오늘은 차량 운행 가능';
+  $('tomorrow').textContent = isRestricted(tm, state.plate, opts())
+    ? '⚠️ 내일은 5부제예요. 내일 아침엔 차를 두고 나오세요!'
+    : '내일은 차량 운행 가능해요.';
+  const next = upcoming(tm, state.plate, 60, opts())[0];
+  if (next) {
+    const days = Math.round((next - t) / 86400000);
+    $('nextDay').textContent = `다음 5부제: ${fmt(next)} · ${days}일 후`;
+  }
+}
+
+function renderCalendar() {
+  const v = state.view;
+  $('monthLabel').textContent = `${v.getFullYear()}년 ${v.getMonth() + 1}월`;
+  const g = $('grid'); g.innerHTML = '';
+  DOW.forEach((d) => { const e = document.createElement('div'); e.className = 'dow'; e.textContent = d; g.append(e); });
+  const first = new Date(v.getFullYear(), v.getMonth(), 1);
+  for (let i = 0; i < first.getDay(); i++) g.append(document.createElement('div'));
+  const last = new Date(v.getFullYear(), v.getMonth() + 1, 0).getDate();
+  const t = today().getTime();
+  for (let day = 1; day <= last; day++) {
+    const d = new Date(v.getFullYear(), v.getMonth(), day);
+    const e = document.createElement('div');
+    e.className = 'day';
+    if (d.getDay() === 0) e.classList.add('sun');
+    if (d.getDay() === 6) e.classList.add('sat');
+    if (isRestricted(d, state.plate, opts())) e.classList.add('restricted');
+    if (d.getTime() === t) e.classList.add('today');
+    e.textContent = day;
+    g.append(e);
+  }
+}
+
+function renderSettings() {
+  const box = $('digits'); box.innerHTML = '';
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].forEach((n) => {
+    const b = document.createElement('button');
+    b.textContent = n;
+    b.setAttribute('aria-pressed', n === state.plate);
+    b.onclick = () => { state.plate = n; store.set('plate', n); renderAll(); };
+    box.append(b);
+  });
+  const [a, b] = restrictedDigits(state.plate);
+  $('ruleHint').textContent = `끝자리 ${state.plate} → 날짜 끝자리가 ${a} 또는 ${b}인 날 (${a}, ${a + 10}, ${a + 20}${b ? `, ${b}, ${b + 10}, ${b + 20}` : ', 10, 20, 30'}일)이 5부제입니다.`;
+  $('weekend').checked = state.skipWeekends;
+}
+
+function fillTimes(sel, hours, value, key) {
+  sel.innerHTML = '<option value="off">끄기</option>' + hours.map((h) => `<option value="${h}">${h < 12 ? '오전' : '오후'} ${h % 12 || 12}시</option>`).join('');
+  sel.value = value == null ? 'off' : String(value);
+  sel.onchange = () => { state[key] = sel.value === 'off' ? null : Number(sel.value); store.set(key, state[key]); };
+}
+
+function renderNotify() {
+  const supported = 'Notification' in window;
+  const btn = $('notify');
+  if (!supported) { btn.disabled = true; btn.textContent = '이 브라우저는 알림을 지원하지 않아요'; return; }
+  const on = state.notify && Notification.permission === 'granted';
+  btn.textContent = on ? '✅ 앱 열 때 알림 켜짐 (끄려면 누르세요)' : '이 앱을 열 때 알림 표시 켜기';
+}
+
+function renderAll() { renderHero(); renderCalendar(); renderSettings(); renderNotify(); }
+
+async function showNotification(title, body) {
+  const reg = await navigator.serviceWorker?.getRegistration?.();
+  if (reg) reg.showNotification(title, { body, icon: 'icon.svg', tag: 'obuje' });
+  else new Notification(title, { body, icon: 'icon.svg' });
+}
+
+function maybeNotify() {
+  if (!state.notify || !('Notification' in window) || Notification.permission !== 'granted') return;
+  const t = today();
+  const key = t.toDateString();
+  if (store.get('lastNotified', '') === key) return;
+  const tm = new Date(t); tm.setDate(tm.getDate() + 1);
+  if (isRestricted(t, state.plate, opts())) showNotification('🚫 오늘은 5부제!', '차를 두고 출근하세요.');
+  else if (isRestricted(tm, state.plate, opts())) showNotification('⚠️ 내일은 5부제', `${fmt(tm)} 차를 두고 출근하세요.`);
+  else return;
+  store.set('lastNotified', key);
+}
+
+$('prev').onclick = () => { state.view.setMonth(state.view.getMonth() - 1); renderCalendar(); };
+$('next').onclick = () => { state.view.setMonth(state.view.getMonth() + 1); renderCalendar(); };
+$('weekend').onchange = (e) => { state.skipWeekends = e.target.checked; store.set('skipWeekends', state.skipWeekends); renderAll(); };
+
+$('ics').onclick = () => {
+  const dates = upcoming(today(), state.plate, 366, opts());
+  const ics = buildIcs(dates, state.plate, { eveningHour: state.evening, morningHour: state.morning });
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = `5부제_끝번호${state.plate}.ics`;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  toast(`5부제 ${dates.length}일을 캘린더 파일로 만들었어요`);
+};
+
+$('notify').onclick = async () => {
+  if (state.notify && Notification.permission === 'granted') {
+    state.notify = false; store.set('notify', false); renderNotify(); toast('알림을 껐어요'); return;
+  }
+  const p = await Notification.requestPermission();
+  if (p !== 'granted') { toast('알림 권한이 거부되었어요. 브라우저 설정에서 허용해 주세요.'); return; }
+  state.notify = true; store.set('notify', true); store.set('lastNotified', '');
+  renderNotify(); maybeNotify(); toast('알림을 켰어요');
+};
+
+fillTimes($('evening'), [18, 19, 20, 21, 22, 23], state.evening, 'evening');
+fillTimes($('morning'), [5, 6, 7, 8, 9], state.morning, 'morning');
+state.view = new Date(today().getFullYear(), today().getMonth(), 1);
+renderAll();
+maybeNotify();
+
+// 날짜가 바뀐 뒤 다시 앱을 열면 갱신
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderHero(); renderCalendar(); maybeNotify(); } });
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
