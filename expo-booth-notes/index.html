@@ -1,0 +1,1491 @@
+<title>엑스포 부스 노트</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: one-column field notebook — sticky tab bar, card list, sheet-style editor. Hi-vis yellow used only for primary actions and the "스마트홈" mark. */
+:root{
+  --bg:#f3f4f2; --surface:#ffffff; --line:#dcdfda; --fg:#1d2321; --muted:#5d6762;
+  --accent:#f2c200; --accent-ink:#1d2321; --ink-strong:#24332e;
+  --hi:#1f7a4d; --mid:#a86a00; --lo:#7b8580; --danger:#b3261e;
+  --chip:#e8ebe6;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"Space Grotesk","IBM Plex Sans KR",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121614; --surface:#1b201e; --line:#2e3532; --fg:#e7ebe8; --muted:#9aa49f;
+  --accent:#f2c200; --accent-ink:#121614; --ink-strong:#d9e2dd;
+  --hi:#5fcf93; --mid:#e0a63a; --lo:#8d9792; --danger:#f08a80; --chip:#252c29; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --surface:#1b201e; --line:#2e3532; --fg:#e7ebe8; --muted:#9aa49f;
+  --accent:#f2c200; --accent-ink:#121614; --ink-strong:#d9e2dd;
+  --hi:#5fcf93; --mid:#e0a63a; --lo:#8d9792; --danger:#f08a80; --chip:#252c29; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto}
+header.top{padding-block:20px 8px}
+.eyebrow{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+h1{font-size:24px;margin:2px 0 0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:18px;margin:0;text-wrap:balance}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;padding-block:10px;border-bottom:1px solid var(--line)}
+.tab{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:9px 6px;font:600 14px var(--f-body);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink-strong);color:var(--bg);border-color:var(--ink-strong)}
+button{font-family:var(--f-body)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:10px 14px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.dark{background:var(--ink-strong);color:var(--bg);border-color:var(--ink-strong)}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stack{display:flex;flex-direction:column;gap:12px}
+.toolbar{display:flex;gap:8px;padding-block:14px 6px;flex-wrap:wrap}
+.toolbar input[type=search]{flex:1 1 180px;min-width:0}
+input[type=text],input[type=search],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:10px;padding:10px 12px;font:15px var(--f-body)}
+textarea{min-height:84px;resize:vertical}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.grid2{grid-template-columns:1fr}}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);cursor:pointer;user-select:none}
+.count{font:500 13px var(--f-num);color:var(--muted);font-variant-numeric:tabular-nums}
+.list{display:flex;flex-direction:column;gap:10px;padding-block:8px}
+.card{display:grid;grid-template-columns:84px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;cursor:pointer;text-align:left;color:inherit;width:100%}
+.card .thumb{width:84px;height:84px;border-radius:10px;background:var(--chip);object-fit:cover;display:block}
+.card .ph{width:84px;height:84px;border-radius:10px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:12px}
+.card .body{min-width:0;display:flex;flex-direction:column;gap:4px}
+.card .name{font-weight:700;font-size:16px;overflow-wrap:anywhere}
+.card .sub{font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.booth{font:500 12px var(--f-num);color:var(--muted);letter-spacing:.02em}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:12px;background:var(--chip);color:var(--fg);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.chip.sh{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.rel{font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;border:1.5px solid currentColor}
+.rel.상{color:var(--hi)}.rel.중{color:var(--mid)}.rel.하{color:var(--lo)}
+.pickchips{display:flex;gap:6px;flex-wrap:wrap}
+.pickchips button{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.pickchips button[aria-pressed="true"]{background:var(--ink-strong);color:var(--bg);border-color:var(--ink-strong)}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-block:14px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.photos .p{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--chip);max-width:100%}
+.photos .p img{width:100%;height:100%;object-fit:cover;display:block}
+.photos .p .x{position:absolute;top:4px;right:4px;border:0;border-radius:999px;width:26px;height:26px;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;font-size:14px}
+.photos .p .cov{position:absolute;left:4px;bottom:4px;font-size:11px;background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:1px 6px;font-weight:700}
+.addph{aspect-ratio:1;border:1.5px dashed var(--line);border-radius:10px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:13px;cursor:pointer;background:transparent;padding:4px}
+.ai-box{border:1px dashed var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ai-box p{margin:0;font-size:13px;color:var(--muted)}
+.status{font-size:13px;color:var(--muted);min-height:1.2em}
+.status.err{color:var(--danger)}
+.stars{display:flex;gap:2px}
+.stars button{border:0;background:none;font-size:24px;line-height:1;cursor:pointer;color:var(--line);padding:2px}
+.stars button.on{color:var(--accent)}
+.detail .gallery{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
+.detail .gallery img{height:220px;max-width:85%;border-radius:12px;object-fit:cover;scroll-snap-align:start;flex:none}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:6px 12px;font-size:14px}
+.kv dt{color:var(--muted);font-weight:600}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
+ul.feat{margin:0;padding-left:18px}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:22px 18px;text-align:center;color:var(--muted)}
+.empty strong{color:var(--fg);display:block;font-size:16px;margin-bottom:4px}
+.fab{position:fixed;right:calc(max(16px,env(safe-area-inset-right,0px)) + 4px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:6;box-shadow:0 6px 20px rgba(0,0,0,.18);border-radius:999px;padding:14px 20px;font-size:15px}
+.report{white-space:pre-wrap;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;overflow-wrap:anywhere}
+.zonehead{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.02em;padding-top:10px}
+.exrow{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;text-align:left;color:inherit;width:100%;font-size:14px}
+.exrow .en{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exrow > div{min-width:0}
+.exrow .done{font-size:12px;font-weight:700;color:var(--hi)}
+.exrow .todo{font-size:12px;color:var(--muted)}
+#exhMatch.ok{color:var(--hi)}
+.job{font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.job.ok{border-color:var(--hi)}.job.err{border-color:var(--danger);color:var(--danger)}
+.chip.rev{background:var(--mid);color:var(--surface);font-weight:700}
+.rec{font-size:11px;color:var(--hi);font-weight:700}
+.notice{font-size:13px;background:var(--chip);border-radius:10px;padding:10px 12px;color:var(--fg)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">2026 스마트 건설·안전·AI 엑스포</div>
+    <div class="row" style="justify-content:space-between">
+      <h1>스마트홈 부스 노트</h1>
+      <button class="btn" id="installBtn" type="button" aria-expanded="false" aria-controls="installHelp" style="padding:6px 12px;font-size:13px">앱으로 설치</button>
+    </div>
+    <div id="installHelp" class="sheet stack" hidden style="font-size:14px;gap:8px">
+      <strong>홈 화면·Chrome에 앱처럼 두기</strong>
+      <div><b>Android Chrome</b>: 오른쪽 위 ⋮ → <b>홈 화면에 추가</b> → 설치(또는 추가). 홈 화면 아이콘으로 바로 열립니다.</div>
+      <div><b>PC Chrome</b>: 오른쪽 위 ⋮ → <b>전송, 저장, 공유</b> → <b>페이지를 앱으로 설치…</b>(버전에 따라 <b>바로가기 만들기</b> → ‘창으로 열기’ 체크). 별도 창과 아이콘이 생깁니다.</div>
+      <div><b>iPhone</b>: Safari 공유 버튼 → <b>홈 화면에 추가</b>.</div>
+      <div style="color:var(--muted)">처음 한 번은 claude.ai에 로그인되어 있어야 합니다. 설치 후에도 기록은 인터넷에 연결될 때 저장됩니다.</div>
+    </div>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button class="tab" id="tab-list" role="tab" aria-selected="true" data-view="list">부스 목록</button>
+    <button class="tab" id="tab-edit" role="tab" aria-selected="false" data-view="edit">+ 새 부스</button>
+    <button class="tab" id="tab-report" role="tab" aria-selected="false" data-view="report">팀 공유</button>
+  </nav>
+  <div id="notice" class="notice" hidden style="margin-top:12px"></div>
+
+  <!-- LIST -->
+  <section id="v-list">
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="업체명, 제품, 키워드 검색">
+      <label class="toggle"><input type="checkbox" id="onlySH"> 스마트홈만</label>
+    </div>
+    <div class="pickchips" id="modePick" style="padding-block:4px 8px">
+      <button type="button" id="mode-mine" aria-pressed="true">내 기록</button>
+      <button type="button" id="mode-guide" aria-pressed="false">가이드맵 참가업체</button>
+    </div>
+    <div class="row" id="autoRow" style="padding-bottom:6px">
+      <button class="btn dark" id="quickBtn" type="button">📷 원탭 기록</button>
+      <button class="btn" id="batchBtn" type="button">🖼 사진 한꺼번에 정리</button>
+      <button class="btn" id="routeBtn" type="button" hidden>✨ 스마트홈 동선 추천</button>
+      <label class="toggle" id="recWrap" hidden><input type="checkbox" id="recOnly"> 추천만</label>
+      <label class="toggle" id="revWrap"><input type="checkbox" id="revOnly"> 확인 필요만</label>
+    </div>
+    <input type="file" id="quickCam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="batchIn" accept="image/*" multiple hidden>
+    <div id="jobs" class="stack" style="gap:6px"></div>
+    <div id="queueBar" class="notice row" hidden style="justify-content:space-between;margin-top:6px"><span id="queueText"></span><button class="btn" id="queueBtn" type="button" style="padding:6px 12px;font-size:13px">지금 올리기</button></div>
+    <div class="row" style="justify-content:space-between"><span class="count" id="count">불러오는 중…</span>
+      <select id="sort" style="width:auto;padding:6px 10px;font-size:13px">
+        <option value="new">최근 기록순</option><option value="interest">관심도순</option><option value="booth">부스번호순</option>
+      </select></div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <!-- DETAIL -->
+  <section id="v-detail" class="detail" hidden></section>
+
+  <!-- EDIT -->
+  <section id="v-edit" hidden>
+    <form id="form" class="sheet stack" autocomplete="off">
+      <h2 id="formTitle">새 부스 기록</h2>
+      <div class="stack" style="gap:6px">
+        <label class="f" for="fileIn">사진 (간판·패널·브로셔·제품)</label>
+        <div class="photos" id="photos"></div>
+        <input type="file" id="fileIn" accept="image/*" multiple hidden>
+        <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+      </div>
+      <div class="ai-box" id="aiBox">
+        <p>부스 간판이나 제품 설명 패널을 찍은 뒤 누르면, 업체명·제품·특징·스마트홈 관련성을 자동으로 채웁니다.</p>
+        <div class="row"><button type="button" class="btn dark" id="aiBtn">사진으로 자동 입력</button></div>
+        <div class="status" id="aiStatus"></div>
+      </div>
+      <div class="grid2">
+        <label class="f">업체명<input type="text" id="company" required placeholder="입력하면 가이드맵에서 찾아요" autocomplete="off"></label>
+        <label class="f">부스 번호<input type="text" id="booth" placeholder="예: C117"></label>
+      </div>
+      <div class="stack" id="exhSug" hidden style="gap:6px"></div>
+      <div class="status" id="exhMatch"></div>
+      <div class="stack" style="gap:6px">
+        <span class="f" style="font-size:13px;font-weight:600;color:var(--muted)">분야</span>
+        <div class="pickchips" id="catPick"></div>
+      </div>
+      <label class="f">주요 제품·기술<textarea id="products" rows="2"></textarea></label>
+      <label class="f">특징 (한 줄에 하나씩)<textarea id="features" rows="4"></textarea></label>
+      <div class="grid2">
+        <label class="f">스마트홈 관련성
+          <select id="relevance"><option value="">선택 안 함</option><option>상</option><option>중</option><option>하</option></select></label>
+        <div class="f">우리 팀 관심도<div class="stars" id="stars"></div></div>
+      </div>
+      <label class="f">스마트홈 적용 포인트<textarea id="smPoint" rows="2" placeholder="예: 아파트 월패드 연동, 세대 내 낙상 감지"></textarea></label>
+      <div class="stack" style="gap:6px">
+        <div class="row" style="justify-content:space-between"><label class="f" for="contact">담당자·연락처·웹사이트</label>
+          <button class="btn" id="cardBtn" type="button" style="padding:6px 12px;font-size:13px">🪪 명함 촬영</button></div>
+        <input type="text" id="contact">
+        <input type="file" id="cardCam" accept="image/*" capture="environment" hidden>
+        <div class="row" id="cardRow" hidden><img id="cardImg" alt="명함" style="height:56px;border-radius:6px;border:1px solid var(--line)"><button class="btn" id="cardDel" type="button" style="padding:4px 10px;font-size:12px">명함 빼기</button></div>
+        <div class="status" id="cardStatus"></div>
+      </div>
+      <div class="stack" style="gap:6px">
+        <div class="row" style="justify-content:space-between"><label class="f" for="memo">현장 메모</label>
+          <button class="btn" id="micBtn" type="button" hidden style="padding:6px 12px;font-size:13px">🎙 말로 메모</button></div>
+        <textarea id="memo" rows="3" placeholder="데모 인상, 가격, 협업 가능성 등"></textarea>
+        <div class="status" id="micStatus"></div>
+      </div>
+      <div class="status" id="saveStatus"></div>
+      <div class="row" style="justify-content:flex-end">
+        <button type="button" class="btn" id="cancelBtn">취소</button>
+        <button type="submit" class="btn primary" id="saveBtn">저장</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- REPORT -->
+  <section id="v-report" hidden>
+    <div class="sheet stack">
+      <h2>팀 공유용 정리</h2>
+      <p style="margin:0;color:var(--muted);font-size:14px">기록한 부스 전체를 정리합니다. 텍스트로 복사해 메신저에 붙이거나, 마크다운 파일로 받을 수 있어요. 팀원에게는 이 페이지 링크를 공유하면 사진까지 함께 볼 수 있습니다.</p>
+      <div class="row">
+        <button class="btn dark" id="aiSumBtn" type="button">AI 총평 만들기</button>
+        <button class="btn" id="copyBtn" type="button">텍스트 복사</button>
+      </div>
+      <div class="row" id="exportRow" hidden>
+        <span class="f" style="font-size:13px;font-weight:600;color:var(--muted)">문서로 받기</span>
+        <button class="btn primary" id="pptBtn" type="button">PowerPoint</button>
+        <button class="btn primary" id="docBtn" type="button">Word</button>
+        <button class="btn primary" id="xlsBtn" type="button">Excel</button>
+        <button class="btn" id="dlBtn" type="button">Markdown</button>
+      </div>
+      <div class="status" id="repStatus"></div>
+      <div class="report" id="aiSum" hidden></div>
+      <div class="report" id="report"></div>
+    </div>
+    <div class="sheet stack" id="backupSheet">
+      <h2>데이터 백업</h2>
+      <p style="margin:0;color:var(--muted);font-size:14px">전시가 끝나면 한 번 받아 두세요. JSON은 기록만 담아 가볍고, ZIP에는 업체별 폴더로 나눈 사진과 정리본까지 들어가요. 받은 JSON은 ‘백업 불러오기’로 되살릴 수 있어요.</p>
+      <div class="row">
+        <button class="btn primary" id="bkJson" type="button">기록 백업 (JSON)</button>
+        <button class="btn" id="bkZip" type="button">사진 포함 백업 (ZIP)</button>
+        <button class="btn" id="bkRestore" type="button">백업 불러오기</button>
+      </div>
+      <input type="file" id="bkIn" accept=".json,application/json" hidden>
+      <div class="status" id="bkStatus"></div>
+    </div>
+  </section>
+</div>
+<button class="btn primary fab" id="fab" type="button">+ 부스 기록</button>
+
+<script>
+(function(){
+const CATS=["스마트홈","IoT·센서","AI 비전","안전관리","로봇","에너지","플랫폼·SW","기타"];
+const $=id=>document.getElementById(id);
+/* 가이드맵(2026.11.20판) 참가기업 리스트: [부스, Zone, 국문명, 영문명] */
+const EXH=[["F140","주관기관","한국도로공사","Korea Expressway Corporation"],["A140","주관기관","한국철도공사","Korea Railroad Corporation"],["D140","주관기관","국가철도공단","Korea National Railway"],["D150","주관기관","한국토지주택공사","KOREA LAND & HOUSING CORPORATION"],["F150","주관기관","국토안전관리원","Korea Authority of Land & Infrastructure Safety"],["I140","주관기관","한국건설기술연구원","Korea Institute of Civil Engineering and Building Technology"],["A150","주관기관","국토교통과학기술진흥원","Korea Agency for Infrastructure Technology Advancement"],["J150","주관기관","스마트건설얼라이언스","Smart Construction Alliance"],["C109","스마트 안전관리 Zone","보다","Boda Co., Ltd"],["A125","스마트 안전관리 Zone","엘립","Elib Co,. Ltd."],["C117","스마트 안전관리 Zone","가디언웍스","Guardian Works Co.,Ltd."],["A117","스마트 안전관리 Zone","거비메타","GUBIMETA"],["E113","스마트 안전관리 Zone","글로벌스마트솔루션","GSS"],["C121","스마트 안전관리 Zone","기람테크","KIRAMTECH"],["B102","스마트 안전관리 Zone","더세이프코리아","THE SAFE KOREA Inc."],["A101","스마트 안전관리 Zone","디알씨티에스","Dr.CTS"],["A132","스마트 안전관리 Zone","비앤알","VAXCON"],["A114","스마트 안전관리 Zone","비이인터렉티브","Beinteractive"],["D102","스마트 안전관리 Zone","상도일렉트릭","SANGDO ELECTRIC CO.,LTD"],["C114","스마트 안전관리 Zone","새임","SEIIM Co.,Ltd."],["C127","스마트 안전관리 Zone","세이지","SAIGE Co.,Ltd"],["B118","스마트 안전관리 Zone","소암컨설턴트","SOAM Consultant"],["E108","스마트 안전관리 Zone","시엑스알","SEEXR"],["A124","스마트 안전관리 Zone","심투리얼","SIM2REAL"],["D114","스마트 안전관리 Zone","씨테크솔루션","CTEC Solution"],["C128","스마트 안전관리 Zone","아이티유","itu co., Ltd"],["B114","스마트 안전관리 Zone","에스아이네트","Si NET Corp"],["B117","스마트 안전관리 Zone","에스제이티엘","SJTL"],["A128","스마트 안전관리 Zone","에이엘테크","AL-TECH Co., Ltd."],["D117","스마트 안전관리 Zone","엔더블유시","NWC Co., Ltd."],["B127","스마트 안전관리 Zone","엘렉트","ELLECT"],["B132","스마트 안전관리 Zone","엘티시큐리티","LTsecurity co.,ltd"],["E117","스마트 안전관리 Zone","엠디퍼트","MDPERT CO., LTD."],["B121","스마트 안전관리 Zone","영우테크","YOUNGWOO TECH"],["B128","스마트 안전관리 Zone","와이낫","Y-not co.,Ltd"],["C118","스마트 안전관리 Zone","워크어웨어","Workaware"],["B113","스마트 안전관리 Zone","원모어시큐리티","OneMoreSecurity"],["B131","스마트 안전관리 Zone","위험안전경보기","RUN-T.CO.,LTD"],["A102","스마트 안전관리 Zone","이성","Isung company"],["A121","스마트 안전관리 Zone","이엠엑스","EMX"],["C102","스마트 안전관리 Zone","인성","INSUNG"],["D118","스마트 안전관리 Zone","제이엠엘이디","JM LED CO., LTD."],["A131","스마트 안전관리 Zone","지브이엠 신호수 로봇 마네킹","G V M Signal robot mannequin"],["A108","스마트 안전관리 Zone","카스웍스","CaasWorks"],["B122","스마트 안전관리 Zone","컨워스","Conworth"],["A122","스마트 안전관리 Zone","케이씨티이엔씨","KCT E&C"],["A105","스마트 안전관리 Zone","케이에스엔티","KSNT Co,. Ltd."],["A109","스마트 안전관리 Zone","코어트러스트","CORETRUST"],["B107","스마트 안전관리 Zone","트윈투게더(디아지트)","TWINTOGETHER(DAGIT)"],["A129","스마트 안전관리 Zone","티엘엑스","TL-X CO., LTD."],["C131","스마트 안전관리 Zone","티제이랩스","TJLABS"],["B110","스마트 안전관리 Zone","파이퀀트","PiQuant"],["A113","스마트 안전관리 Zone","퍼스","PULSE"],["F107","스마트 안전관리 Zone","페이퍼리","Paiperly"],["D113","스마트 안전관리 Zone","포그","POG"],["B124","스마트 안전관리 Zone","피아스페이스","PIASPACE"],["C113","스마트 안전관리 Zone","현대경제연구원","HYUNDAI RESEARCH INSTITUTE"],["E102","스마트 안전관리 Zone","현대인프라코어","HYUNDAI INFRACORE"],["H102","로봇·건설자동화 Zone","고레로보틱스","GoLe Robotics"],["E114","로봇·건설자동화 Zone","네모테크놀로지스","MNEMO Technologies"],["E118","로봇·건설자동화 Zone","문스테크놀로지","MOONS TECHNOLOGY CO., LTD."],["F112","로봇·건설자동화 Zone","솔리메틱스","SOLIMATICS"],["I102","로봇·건설자동화 Zone","스패너","Xpanner"],["G106","로봇·건설자동화 Zone","알티비온","ALTIVION"],["G111","로봇·건설자동화 Zone","엠에프알","MFR"],["F113","로봇·건설자동화 Zone","위슨테크놀로지","WISON TECHNOLOGY"],["F117","로봇·건설자동화 Zone","유닛랩","UNITLAB"],["F102","로봇·건설자동화 Zone","진인프라","JIN INFRA"],["G102","로봇·건설자동화 Zone","탑콘소끼아포지셔닝코리아","TOPCON SOKKIA POSITIONING KOREA"],["H105","로봇·건설자동화 Zone","플랜바이테크놀로지스","Planby Technologies"],["A171","스마트 건설관리 Zone","OpenXR융합연구단","OpenXR Convergence Research Center"],["C172","스마트 건설관리 Zone","TR정보기술","TR Information technology"],["D171","스마트 건설관리 Zone","세종측기","SEJONG Surveying"],["B162","스마트 건설관리 Zone","강산기술단","KANGSAN"],["A177","스마트 건설관리 Zone","갱폼컨설팅 넛지","Gangform Consulting nudge. co., Ltd."],["C166","스마트 건설관리 Zone","공새로","GONGSAERO"],["D175","스마트 건설관리 Zone","다온머티리얼즈","Daon Materials"],["D180","스마트 건설관리 Zone","다이나믹코어스","Dynamicores"],["B167","스마트 건설관리 Zone","디지털커브","Digitalcurve"],["B172","스마트 건설관리 Zone","라스트마일","LASTMILE co., ltd."],["A165","스마트 건설관리 Zone","마지글","MAZIGLE"],["B161","스마트 건설관리 Zone","무사퇴근","MUSA"],["A175","스마트 건설관리 Zone","삼에스테크","3S TECH"],["D172","스마트 건설관리 Zone","송산특수엘리베이터","SONGSAN SPECIAL ELEVATORS"],["A168","스마트 건설관리 Zone","슈맥스(슈니버스)","Shoemax(Shoenivers)"],["C171","스마트 건설관리 Zone","신진아이티컨설팅","SINJIN IT CONSULTING CO., LTD"],["A172","스마트 건설관리 Zone","업사이트","UPSIGHT"],["B171","스마트 건설관리 Zone","위즈엑스퍼트","WIZEXPERT"],["C161","스마트 건설관리 Zone","이피션스테크놀로지스","Efficience Technologies Co., Ltd."],["C176","스마트 건설관리 Zone","인프라스마트","InfraSmart"],["C162","스마트 건설관리 Zone","전문건설공제조합","K-FINCO"],["A162","스마트 건설관리 Zone","콘업","conUP"],["E171","스마트 건설관리 Zone","크로스팀","CROSSTEAM"],["C167","스마트 건설관리 Zone","티쉐어건설","T.Share Construction"],["B168","스마트 건설관리 Zone","티쓰리솔루션","T3 Solution"],["B175","스마트 건설관리 Zone","파이어버스터","FIREBUSTER"],["A169","스마트 건설관리 Zone","폼이즈","FORMiS"],["D165","스마트 건설관리 Zone","피식스에스씨","P6ixSC"],["A181","스마트 건설관리 Zone","하이시스템하우스","Hisystemhouse"],["A161","스마트 건설관리 Zone","한국에스티엠","Koreastm"],["L172","스마트 유지관리 Zone","간트너코리아","Gantner Korea"],["L170","스마트 유지관리 Zone","길솔루션","GIL Solution"],["J173","스마트 유지관리 Zone","네브시스","NAVSYS Technology"],["L174","스마트 유지관리 Zone","네트워크코리아","Netwrk Korea Co., Ltd."],["L176","스마트 유지관리 Zone","대한이앤씨","Daehan E&C"],["I162","스마트 유지관리 Zone","드림티엔에스/머신가이던스","DREAM T&S/Machine Guidance"],["I172","스마트 유지관리 Zone","디케이시스템","DK SYSTEM"],["K172","스마트 유지관리 Zone","라미랩","Lamilab.inc."],["K165","스마트 유지관리 Zone","라이카 지오시스템즈 코리아 (part of Hexagon)","Leica Geosystems Korea (part of Hexagon)"],["J178","스마트 유지관리 Zone","리베라웨어코리아","Liberaware KOREA"],["L180","스마트 유지관리 Zone","리젠티앤아이","REGENTNI"],["I178","스마트 유지관리 Zone","메가판넬","MEGAPANEL Co., Ltd."],["K162","스마트 유지관리 Zone","미래아이티","Mirae IT co.ltd"],["L181","스마트 유지관리 Zone","스마트 아이리스","SMART AIRIS"],["L171","스마트 유지관리 Zone","스마트로드","SMARTROAD Co.,Ltd."],["I178","스마트 유지관리 Zone","스틸라이트","STEELITE"],["K174","스마트 유지관리 Zone","시원소프트","C1SOFT"],["K182","스마트 유지관리 Zone","쎈블락","SSENVLAK"],["L161","스마트 유지관리 Zone","씨고","CIGO Co.,Ltd"],["J166","스마트 유지관리 Zone","오스콘이엔씨","OSCON ENC"],["K178","스마트 유지관리 Zone","이노온","Ino-on"],["K171","스마트 유지관리 Zone","이제이텍","EJtech"],["L166","스마트 유지관리 Zone","이후시스","EHOOSYS"],["K173","스마트 유지관리 Zone","인프라안전","Infra Safety, Inc."],["J182","스마트 유지관리 Zone","제이투이앤씨","J2 Engineering&Construction"],["L177","스마트 유지관리 Zone","지비유","GBYOU"],["L165","스마트 유지관리 Zone","지오봇","Geobot Co., Ltd."],["K166","스마트 유지관리 Zone","진동측정장치","TVMS IIoT"],["L182","스마트 유지관리 Zone","코세코","KOSECO"],["L162","스마트 유지관리 Zone","테크윌","TECHWILL"],["J162","스마트 유지관리 Zone","포인트웍스 / FARO KOREA","POINTWORKS / FARO KOREA"],["K181","스마트 유지관리 Zone","한국안전보건협회","CSHA"],["K177","스마트 유지관리 Zone","한국장비관리리콘디션협회","KOREA CONS. EQUIP. ASSOCIATION"],["J172","스마트 유지관리 Zone","항타기 24시간 스마트 안전감시 시스템","24-Hour Smart Safety Monitoring System for Piling Machines"],["L173","스마트 유지관리 Zone","2027스마트컨스트럭션위크","Smart Construction Week 2027"],["K116","설계 자동화 Zone","3D 점군 데이터 최적화 솔루션","IGPNET CO., LTD."],["J105","설계 자동화 Zone","엔비랩스","ENVILABS"],["L126","설계 자동화 Zone","더마루디자인","Themarudesign"],["L111","설계 자동화 Zone","도슨티","Docenty"],["L124","설계 자동화 Zone","메타비즈디자인","MetaBizDesign"],["L101","설계 자동화 Zone","몰더코리아","Moulder Korea"],["J102","설계 자동화 Zone","브이피케이","VPK"],["K132","설계 자동화 Zone","비아이엠팩토리","BIM FACTORY"],["K122","설계 자동화 Zone","서버키트","serverkit"],["L127","설계 자동화 Zone","서벡스","SUBEX"],["L108","설계 자동화 Zone","세라","SERA Inc."],["L132","설계 자동화 Zone","세이프티원","SafetyOne"],["L115","설계 자동화 Zone","솔리데오","SOLIDEO Co.,Ltd"],["L121","설계 자동화 Zone","스페이스워크","Spacewalk"],["K128","설계 자동화 Zone","엠폴","MPOLE"],["F118","설계 자동화 Zone","오토데스크","Autodesk"],["L120","설계 자동화 Zone","연우PC엔지니어링","YUNWOO PCE & YTG"],["K106","설계 자동화 Zone","유신","Yooshin"],["L118","설계 자동화 Zone","유앤미스튜디오 아키박스","YOUNME ARCHBOX"],["K105","설계 자동화 Zone","조인트디자인","joint.design"],["L105","설계 자동화 Zone","직스캐드 AX","ZYXCAD AX"],["L102","설계 자동화 Zone","징코스테크놀러지","Gingko’s Tech"],["K102","설계 자동화 Zone","커넥틴","CONNECTIN Co., Ltd."],["L114","설계 자동화 Zone","케이지오솔루션","Kgeosolution"],["K101","설계 자동화 Zone","트림블","Trimble Inc."],["K112","설계 자동화 Zone","포비콘","FOBECON"],["L112","설계 자동화 Zone","프롬디","From D Co., Ltd."],["L131","설계 자동화 Zone","하우빌드","HOWBUILD"],["J130","설계 자동화 Zone","한국생산기술연구원 국가엔지니어링센터","KITECH KNEC"],["F173","ESG Zone","구구","GOOGOO"],["H161","ESG Zone","넥스비전랩","NEXVISIONLAB Co., Ltd."],["G174","ESG Zone","대명에스코","DAEMYUNG ESCO CO.,LTD"],["H174","ESG Zone","디더블유아이","DW&I Co., Ltd"],["E174","ESG Zone","디월트","DEWALT"],["G180","ESG Zone","레디로버스트머신","READi Robust Machine"],["F180","ESG Zone","로보블럭시스템","ROBOBLOCK SYSTEM Co., LTD"],["H168","ESG Zone","복합열원 하이브리드 K-냉방","Composite heat source hybrid"],["F174","ESG Zone","신의환경","SINUI"],["I173","ESG Zone","엑사트","EXAXT Inc."],["H175","ESG Zone","이유씨엔씨","EUCNC"],["H162","ESG Zone","인바디","InBody"],["E180","ESG Zone","인터내셔날서비스비지니스","ISB"],["H180","ESG Zone","코이스","KOISS"],["G162","ESG Zone","큐엠","QM"],["I167","ESG Zone","티푸스코리아","TIFUS KOREA"],["G173","ESG Zone","파빅스랩","PAVIX LAB"],["I161","ESG Zone","하이로컬","Hilokal"],["D162","ESG Zone","한국건설기술인협회","KOCEA"],["H173","ESG Zone","한국그린텍홀딩스","Korea Greentech Holdings"],["D122","AI 특별관","디알티","DRT Co.,Ltd."],["E127","AI 특별관","메이사","Meissa"],["D132","AI 특별관","메타이노텍","Metainnotech.Inc"],["D121","AI 특별관","무스마","musma"],["C122","AI 특별관","비드래프트","VIDraft"],["E131","AI 특별관","삼성물산·뉴빌리티·디버","Samsung C&T Corporation· NEUBILITY·dver"],["F123","AI 특별관","세이프티랩","SAFETYLAB"],["F129","AI 특별관","아이티원","IT-ONE"],["D128","AI 특별관","에스씨에스","SCS INC."],["F121","AI 특별관","에이치에이치에스","HHS Co. , Ltd."],["E121","AI 특별관","토탈시스","TOTALSYS.CO.LTD"],["E122","AI 특별관","팀워크","TIMWORK Inc."],["F202","스마트 안전 체험관","로보아","ROBOA Co.,Ltd."],["F200","스마트 안전 체험관","엠라인스튜디오","MLINESTUDIO"],["F204","스마트 안전 체험관","영우산업","Youngwoo Industries"],["F206","스마트 안전 체험관","한국경량레일","HANKOOK RAIL SYSTEM CO., LTD."],["J171","글로벌 파트너","CSPI JAPAN","CSPI JAPAN"],["F106","글로벌 파트너","World of Concrete Asia","World of Concrete Asia"]].map(([b,z,k,e])=>({b,z,k,e}));
+const normName=s=>String(s||"").toLowerCase().replace(/\(주\)|주식회사|㈜|co\.?,?\s*ltd\.?|inc\.?|corp(oration)?\.?|company|[\s.,·'’&()\/\-]/g,"");
+const normBooth=s=>String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+function matchExh(name,booth){
+  const nb=normBooth(booth),nn=normName(name);
+  const byB=EXH.filter(x=>x.b===nb);
+  if(byB.length===1&&(!nn||!byB[0]||sim(byB[0],nn)>0))return byB[0];
+  if(byB.length>1&&nn){const best=byB.map(x=>[x,sim(x,nn)]).sort((a,c)=>c[1]-a[1])[0];if(best[1]>0)return best[0];}
+  if(!nn||nn.length<2){return byB.length===1?byB[0]:null;}
+  let best=null,score=0;
+  for(const x of EXH){const v=sim(x,nn);if(v>score){score=v;best=x;}}
+  if(score>=2)return best;
+  return byB.length===1?byB[0]:null;
+}
+function sim(x,nn){
+  const k=normName(x.k),e=normName(x.e);
+  if(nn===k||nn===e)return 3;
+  if((k.length>=2&&(nn.includes(k)||k.includes(nn)))||(e.length>=3&&(nn.includes(e)||e.includes(nn))))return 2;
+  return 0;
+}
+function visitedOf(x){return S.booths.find(b=>normBooth(b.booth)===x.b&&(EXH.filter(y=>y.b===x.b).length===1||sim(x,normName(b.company))>0))||S.booths.find(b=>sim(x,normName(b.company))>=3);}
+const S={booths:[],db:null,assets:null,sample:null,user:null,downloads:null,myId:null,names:{},
+  view:"list",editing:null,mode:"mine",match:null,photos:[],cats:new Set(),interest:0,detailId:null,loaded:false};
+
+/* ---------- helpers ---------- */
+function el(tag,attrs,...kids){const e=document.createElement(tag);
+  if(attrs)for(const k in attrs){if(k==="class")e.className=attrs[k];else if(k==="text")e.textContent=attrs[k];else if(k.startsWith("on"))e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k]);}
+  for(const c of kids){if(c==null)continue;e.append(c instanceof Node?c:document.createTextNode(String(c)));}return e;}
+const blobUrl=id=>"/_blob/"+encodeURIComponent(id);
+const str=v=>typeof v==="string"?v:(v==null?"":String(v));
+const arr=v=>Array.isArray(v)?v.map(str).filter(Boolean):[];
+function fmtTime(ms){if(!ms)return"";const d=new Date(ms);return (d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+function notice(msg){const n=$("notice");if(!msg){n.hidden=true;return;}n.textContent=msg;n.hidden=false;}
+
+async function resize(file,max=1600,q=0.82){
+  const url=URL.createObjectURL(file);
+  try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url;});
+    const s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));
+    const c=document.createElement("canvas");c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    return await new Promise(r=>c.toBlob(b=>r(b||file),"image/jpeg",q));
+  }catch(e){return file;}finally{URL.revokeObjectURL(url);}
+}
+
+/* ---------- views ---------- */
+function show(view){
+  S.view=view;
+  for(const v of ["list","detail","edit","report"])$("v-"+v).hidden=(v!==view);
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.view===view||(view==="detail"&&t.dataset.view==="list"))));
+  $("fab").hidden=(view==="edit");
+  if(view==="report")renderReport();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{if(t.dataset.view==="edit")openEditor(null);else show(t.dataset.view);}));
+$("fab").addEventListener("click",()=>openEditor(null));
+$("installBtn").addEventListener("click",()=>{const h=$("installHelp");h.hidden=!h.hidden;$("installBtn").setAttribute("aria-expanded",String(!h.hidden));});
+
+/* ---------- list ---------- */
+function filtered(){
+  const q=$("q").value.trim().toLowerCase();const only=$("onlySH").checked;
+  let b=S.booths.filter(x=>{
+    if(only&&!(arr(x.categories).includes("스마트홈")||x.relevance==="상"||x.relevance==="중"))return false;
+    if($("revOnly").checked&&!x.needsReview)return false;
+    if(!q)return true;
+    return [x.company,x.booth,x.products,arr(x.features).join(" "),x.smPoint,x.memo,arr(x.categories).join(" ")].map(str).join(" ").toLowerCase().includes(q);});
+  const s=$("sort").value;
+  if(s==="interest")b.sort((a,c)=>(c.interest||0)-(a.interest||0));
+  else if(s==="booth")b.sort((a,c)=>str(a.booth).localeCompare(str(c.booth),"ko",{numeric:true}));
+  else b.sort((a,c)=>(c.createdAt||0)-(a.createdAt||0));
+  return b;
+}
+function relBadge(r){return r?el("span",{class:"rel "+r,text:"스마트홈 "+r}):null;}
+function setMode(m){S.mode=m;$("mode-mine").setAttribute("aria-pressed",String(m==="mine"));$("mode-guide").setAttribute("aria-pressed",String(m==="guide"));
+  $("sort").hidden=$("onlySH").parentElement.hidden=$("revWrap").hidden=(m==="guide");
+  $("routeBtn").hidden=$("recWrap").hidden=(m!=="guide");renderList();}
+$("mode-mine").addEventListener("click",()=>setMode("mine"));
+$("mode-guide").addEventListener("click",()=>setMode("guide"));
+function renderGuide(){
+  const L=$("list");L.replaceChildren();
+  let items=searchExh($("q").value);
+  if($("recOnly").checked&&S.route){items=items.filter(routeOf).sort((a,c)=>a.b.localeCompare(c.b,"en",{numeric:true}));}
+  const visited=EXH.filter(x=>visitedOf(x)).length;
+  $("count").textContent=`방문 ${visited}곳 / 가이드맵 ${EXH.length}곳`+(items.length!==EXH.length?` · 검색 ${items.length}곳`:"");
+  if(!items.length){L.append(el("div",{class:"empty",text:"가이드맵에서 찾지 못했어요. ‘+ 부스 기록’으로 직접 추가할 수 있어요."}));return;}
+  if($("recOnly").checked&&!S.route){L.prepend(el("div",{class:"empty",text:"아직 추천이 없어요. ‘✨ 스마트홈 동선 추천’을 눌러 만들어 보세요."}));$("count").textContent="";return;}
+  if($("recOnly").checked&&S.route){
+    const done=items.filter(x=>visitedOf(x)).length;
+    $("count").textContent=`추천 ${items.length}곳 중 방문 ${done}곳 · 부스 위치 순`;
+    L.append(el("div",{class:"notice",text:"업체명과 전시 구역만 보고 AI가 추정한 목록이에요. 실제 전시 내용은 다를 수 있어요."}));
+    let hall=null;
+    for(const x of items){const h=x.b[0];if(h!==hall){hall=h;L.append(el("div",{class:"zonehead",text:h+" 열"}));}L.append(exRow(x));}
+    return;
+  }
+  let z=null;
+  for(const x of items){
+    if(x.z!==z){z=x.z;L.append(el("div",{class:"zonehead",text:z}));}
+    L.append(exRow(x));
+  }
+}
+function searchExh(raw){
+  const q=normName(raw);const qb=normBooth(raw);
+  if(!q)return EXH.slice();
+  return EXH.filter(x=>normName(x.k+" "+x.e+" "+x.z).includes(q)||(qb.length>=2&&x.b.includes(qb)));
+}
+function exRow(x){
+  const v=visitedOf(x);
+  return el("button",{class:"exrow",type:"button",onclick:()=>v?openDetail(v.id):openEditor({company:x.k,booth:x.b,zone:x.z,enName:x.e})},
+    el("span",{class:"booth",text:x.b}),
+    el("div",null,el("div",{text:x.k}),el("div",{class:"en",text:x.e+" · "+x.z}),
+      routeOf(x)?el("div",{class:"rec",text:"★".repeat(routeOf(x).score)+" 추천 · "+routeOf(x).why}):null),
+    el("span",{class:v?"done":"todo",text:v?"✓ 기록함":"기록하기"}));
+}
+function appendGuideMatches(L,raw){
+  if(!normName(raw))return;
+  const g=searchExh(raw).filter(x=>!visitedOf(x));
+  L.append(el("div",{class:"zonehead",text:g.length?`가이드맵에서 찾은 업체 ${g.length}곳 (아직 기록 안 함)`:"가이드맵에서도 찾지 못했어요."}));
+  g.slice(0,40).forEach(x=>L.append(exRow(x)));
+}
+function renderList(){
+  const L=$("list");L.replaceChildren();
+  if(!S.loaded){$("count").textContent="불러오는 중…";return;}
+  if(S.mode==="guide")return renderGuide();
+  const items=filtered();
+  const nrev=S.booths.filter(b=>b.needsReview).length;
+  $("count").textContent=`${items.length}개 부스`+(items.length!==S.booths.length?` / 전체 ${S.booths.length}`:"")+(nrev?` · 확인 필요 ${nrev}`:"");
+  if(!S.booths.length&&!normName($("q").value)){
+    L.append(el("div",{class:"empty"},el("strong",{text:"아직 기록한 부스가 없어요"}),
+      "부스에 도착하면 오른쪽 아래 ‘+ 부스 기록’을 눌러 간판과 제품 사진을 찍으세요. ‘사진으로 자동 입력’을 누르면 업체 정보가 채워집니다."));return;}
+  if(!items.length&&S.booths.length)L.append(el("div",{class:"empty",text:"내 기록 중에는 맞는 부스가 없어요."}));
+  for(const b of items){
+    const ids=arr(b.imageIds);const cover=ids[Math.min(b.coverIndex||0,ids.length-1)];
+    const cats=arr(b.categories);
+    const card=el("button",{class:"card",type:"button",onclick:()=>openDetail(b.id)},
+      cover?el("img",{class:"thumb",src:blobUrl(cover),alt:"",loading:"lazy"}):el("div",{class:"ph",text:"사진 없음"}),
+      el("div",{class:"body"},
+        el("div",{class:"row",style:"gap:6px"},el("span",{class:"name",text:str(b.company)||"(업체명 없음)"}),b.booth?el("span",{class:"booth",text:str(b.booth)+(b.zone?" · "+str(b.zone):"")}):null),
+        el("div",{class:"sub",text:str(b.products)||arr(b.features).join(" · ")}),
+        el("div",{class:"chips"},b.needsReview?el("span",{class:"chip rev",text:"확인 필요"}):null,dupCandidates(b).length?el("span",{class:"chip rev",text:"중복 의심"}):null,relBadge(b.relevance),...cats.slice(0,3).map(c=>el("span",{class:"chip"+(c==="스마트홈"?" sh":""),text:c})),
+          b.interest?el("span",{class:"chip",text:"★".repeat(b.interest)}):null)));
+    L.append(card);
+  }
+  appendGuideMatches(L,$("q").value);
+}
+["onlySH","sort"].forEach(id=>$(id).addEventListener("input",renderList));
+["input","keyup","compositionend","search","change"].forEach(ev=>$("q").addEventListener(ev,()=>{if($("q").value!==S.lastQ){S.lastQ=$("q").value;renderList();}}));
+
+/* ---------- detail ---------- */
+function openDetail(id){S.detailId=id;renderDetail();show("detail");}
+function renderDetail(){
+  const D=$("v-detail");D.replaceChildren();const b=S.booths.find(x=>x.id===S.detailId);
+  if(!b){D.append(el("div",{class:"empty",text:"이 부스 기록이 삭제되었습니다."}));return;}
+  const ids=arr(b.imageIds);const feats=arr(b.features);
+  const kv=el("dl",{class:"kv"});
+  const add=(k,v)=>{if(!v)return;kv.append(el("dt",{text:k}),v instanceof Node?el("dd",null,v):el("dd",{text:v}));};
+  add("부스",[str(b.booth),str(b.zone)].filter(Boolean).join(" · "));
+  add("영문명",str(b.enName));
+  add("분야",arr(b.categories).join(", "));
+  add("주요 제품",str(b.products));
+  if(feats.length)add("특징",el("ul",{class:"feat"},...feats.map(f=>el("li",{text:f}))));
+  add("스마트홈",(b.relevance?"관련성 "+b.relevance:"")+(b.smPoint?(b.relevance?"\n":"")+str(b.smPoint):""));
+  add("관심도",b.interest?"★".repeat(b.interest)+"☆".repeat(5-b.interest):"");
+  add("연락처",str(b.contact));
+  if(b.cardImageId)add("명함",el("img",{src:blobUrl(b.cardImageId),alt:"명함",style:"max-height:120px;border-radius:8px;border:1px solid var(--line)"}));
+  add("메모",str(b.memo));
+  const who=S.names[b.authorId]||"";
+  add("기록",[who,fmtTime(b.createdAt)].filter(Boolean).join(" · "));
+  const delBtn=el("button",{class:"btn danger",type:"button",text:"삭제"});
+  let armed=false;
+  delBtn.addEventListener("click",async()=>{
+    if(!armed){armed=true;delBtn.textContent="한 번 더 누르면 삭제";setTimeout(()=>{armed=false;delBtn.textContent="삭제";},4000);return;}
+    delBtn.disabled=true;
+    try{await S.db.doc("booths/"+b.id).delete();
+      for(const a of ids){try{await S.assets?.delete(a);}catch(e){}}
+      show("list");}catch(e){delBtn.disabled=false;delBtn.textContent="삭제 실패: 권한을 확인하세요";}
+  });
+  D.append(el("div",{class:"toolbar"},el("button",{class:"btn",type:"button",text:"← 목록",onclick:()=>show("list")})),
+    el("div",{class:"sheet stack"},
+      el("div",{class:"row",style:"justify-content:space-between"},el("h2",{text:str(b.company)||"(업체명 없음)"}),relBadge(b.relevance)),
+      b.needsReview?el("div",{class:"notice",text:"자동으로 만든 기록이에요. 내용을 확인하고 ‘수정’ → 저장하면 확인 완료로 바뀌어요."}):null,
+      ids.length?el("div",{class:"gallery"},...ids.map(a=>el("img",{src:blobUrl(a),alt:"부스 사진",loading:"lazy"}))):null,
+      kv,
+      mergeUI(b),
+      el("div",{class:"row",style:"justify-content:flex-end"},delBtn,el("button",{class:"btn primary",type:"button",text:"수정",onclick:()=>openEditor(b)}))));
+}
+
+/* ---------- editor ---------- */
+function renderCats(){const P=$("catPick");P.replaceChildren();
+  for(const c of CATS){P.append(el("button",{type:"button","aria-pressed":String(S.cats.has(c)),text:c,onclick:()=>{S.cats.has(c)?S.cats.delete(c):S.cats.add(c);renderCats();}}));}}
+function renderStars(){const W=$("stars");W.replaceChildren();
+  for(let i=1;i<=5;i++)W.append(el("button",{type:"button",class:i<=S.interest?"on":"","aria-label":"관심도 "+i,text:"★",onclick:()=>{S.interest=(S.interest===i?0:i);renderStars();}}));}
+function renderPhotos(){const P=$("photos");P.replaceChildren();
+  S.photos.forEach((p,i)=>{
+    P.append(el("div",{class:"p"},el("img",{src:p.url,alt:""}),i===0?el("span",{class:"cov",text:"대표"}):null,
+      el("button",{class:"x",type:"button","aria-label":"사진 빼기",text:"✕",onclick:()=>{if(p.blob)URL.revokeObjectURL(p.url);S.photos.splice(i,1);renderPhotos();}})));});
+  P.append(el("button",{class:"addph",type:"button",onclick:()=>$("camIn").click()},"📷",el("br"),"촬영"));
+  P.append(el("button",{class:"addph",type:"button",onclick:()=>$("fileIn").click()},"🖼",el("br"),"앨범"));
+}
+async function addFiles(files){
+  for(const f of files){if(!f.type.startsWith("image/"))continue;const blob=await resize(f);S.photos.push({blob,url:URL.createObjectURL(blob)});}
+  renderPhotos();
+}
+$("fileIn").addEventListener("change",e=>{addFiles([...e.target.files]);e.target.value="";});
+$("camIn").addEventListener("change",e=>{addFiles([...e.target.files]);e.target.value="";});
+
+function showMatch(){
+  const m=S.match,E=$("exhMatch");
+  if(m){E.className="status ok";E.textContent=`가이드맵 연결: ${m.k} · ${m.b} · ${m.z}`;}
+  else if($("company").value.trim()){E.className="status";E.textContent="가이드맵 명단에서 찾지 못했어요. 그대로 저장해도 됩니다.";}
+  else E.textContent="";
+}
+function applyMatch(m,force){
+  S.match=m||null;
+  if(m){if(force||!$("company").value.trim()||normName($("company").value)!==normName(m.k))$("company").value=m.k;
+    if(force||!normBooth($("booth").value)||normBooth($("booth").value)!==m.b)$("booth").value=m.b;}
+  showMatch();
+}
+function renderSug(){
+  const B=$("exhSug");const raw=$("company").value;
+  const g=normName(raw)?searchExh(raw).slice(0,6):[];
+  if(!g.length||(S.match&&normName(raw)===normName(S.match.k))){B.hidden=true;B.replaceChildren();return;}
+  B.replaceChildren(...g.map(x=>el("button",{class:"exrow",type:"button",onclick:()=>{applyMatch(x,true);B.hidden=true;}},
+    el("span",{class:"booth",text:x.b}),el("div",null,el("div",{text:x.k}),el("div",{class:"en",text:x.e+" · "+x.z})),el("span",{class:"todo",text:"선택"}))));
+  B.hidden=false;
+}
+["input","keyup","compositionend"].forEach(ev=>$("company").addEventListener(ev,()=>{if(S.match&&normName($("company").value)!==normName(S.match.k)){S.match=null;showMatch();}renderSug();}));
+$("company").addEventListener("change",()=>{const m=matchExh($("company").value,$("booth").value);if(m)applyMatch(m,false);else{S.match=null;showMatch();}});
+$("booth").addEventListener("change",()=>{const m=matchExh($("company").value,$("booth").value);if(m)applyMatch(m,false);else{S.match=null;showMatch();}});
+function openEditor(b){
+  S.photos.forEach(p=>p.blob&&URL.revokeObjectURL(p.url));
+  S.editing=b&&b.id?b.id:null;
+  $("formTitle").textContent=S.editing?"부스 기록 수정":"새 부스 기록";
+  $("company").value=str(b?.company);$("booth").value=str(b?.booth);$("products").value=str(b?.products);
+  $("features").value=arr(b?.features).join("\n");$("relevance").value=str(b?.relevance);
+  $("smPoint").value=str(b?.smPoint);$("contact").value=str(b?.contact);$("memo").value=str(b?.memo);
+  S.cats=new Set(arr(b?.categories));S.interest=b?.interest||0;
+  S.photos=arr(b?.imageIds).map(id=>({id,url:blobUrl(id)}));
+  if(S.dict&&S.dict.active())S.dict.stop().catch(()=>{});
+  $("micStatus").textContent="";$("cardStatus").textContent="";
+  S.card=b&&b.cardImageId?{id:b.cardImageId,url:blobUrl(b.cardImageId)}:null;$("cardRow").hidden=!S.card;if(S.card)$("cardImg").src=S.card.url;
+  $("aiStatus").textContent="";$("saveStatus").textContent="";$("saveStatus").className="status";
+  $("exhSug").hidden=true;S.match=b?(EXH.find(x=>x.b===normBooth(b.booth)&&x.k===b.company)||matchExh(b.company,b.booth)):null;showMatch();
+  renderCats();renderStars();renderPhotos();show("edit");
+}
+$("cancelBtn").addEventListener("click",()=>show(S.editing?"detail":"list"));
+
+/* AI autofill */
+$("aiBtn").addEventListener("click",async()=>{
+  const st=$("aiStatus");st.className="status";
+  if(!S.sample){st.textContent="이 화면에서는 AI 자동 입력을 쓸 수 없어요. 직접 입력해 주세요.";return;}
+  if(!S.photos.length){st.textContent="먼저 간판이나 제품 설명 패널 사진을 찍어 주세요.";return;}
+  const btn=$("aiBtn");btn.disabled=true;st.textContent="사진을 읽는 중…";
+  try{
+    let lim=null;try{lim=(await S.sample.limits()).images;}catch(e){}
+    if(!lim){st.textContent="이 앱 버전에서는 사진 분석이 지원되지 않아요.";return;}
+    const max=Math.min(lim.maxCount||4,4);
+    const blobs=[];
+    for(const p of S.photos.slice(0,max)){
+      if(p.blob)blobs.push(p.blob);
+      else{try{blobs.push(await (await fetch(p.url)).blob());}catch(e){}}
+    }
+    const prompt=boothPrompt();
+    const r=await S.sample.json(prompt,{images:blobs,modelTier:"default",cache:false,onText:()=>{st.textContent="분석 중…";}});
+    const setIf=(id,v)=>{v=str(v).trim();if(v)$(id).value=v;};
+    setIf("company",r.company);setIf("booth",r.booth);setIf("products",r.products);
+    const f=arr(r.features);if(f.length)$("features").value=f.join("\n");
+    if(["상","중","하"].includes(r.relevance))$("relevance").value=r.relevance;
+    setIf("smPoint",r.smPoint);setIf("contact",r.contact);
+    arr(r.categories).forEach(c=>{if(CATS.includes(c))S.cats.add(c);});renderCats();
+    const lb=normBooth(r.listBooth);
+    const m=(lb&&EXH.filter(x=>x.b===lb).length?matchExh(r.company,lb)||EXH.find(x=>x.b===lb):null)||matchExh(r.company,r.booth);
+    if(m)applyMatch(m,true);else{S.match=null;showMatch();}
+    st.textContent=(m?`가이드맵의 ‘${m.k}’(${m.b})로 연결했어요. `:"")+"내용을 확인하고 필요한 부분을 고친 뒤 저장하세요.";
+  }catch(e){
+    st.className="status err";
+    const c=e&&e.code;
+    st.textContent=c==="not_granted"?"AI 사용이 허용되지 않았어요. 직접 입력해 주세요.":
+      c==="rate_limited"?"요청이 많아요. 잠시 뒤 다시 눌러 주세요.":
+      c==="image_rejected"?"사진을 읽지 못했어요. 간판이 더 크게 나오게 다시 찍어 보세요.":
+      "자동 입력에 실패했어요. 다시 시도하거나 직접 입력해 주세요.";
+  }finally{btn.disabled=false;}
+});
+
+/* save */
+$("form").addEventListener("submit",async e=>{
+  e.preventDefault();const st=$("saveStatus");st.className="status";
+  if(!S.db){st.className="status err";st.textContent="로그인한 상태에서만 저장할 수 있어요.";return;}
+  const btn=$("saveBtn");btn.disabled=true;
+  try{
+    const ids=[];let n=0;const total=S.photos.filter(p=>p.blob).length;
+    for(const p of S.photos){
+      if(p.id){ids.push(p.id);continue;}
+      if(!S.assets)throw {code:"no_assets"};
+      n++;st.textContent=`사진 올리는 중 ${n}/${total}`;
+      const up=await S.assets.upload(p.blob,{type:"image/jpeg"});
+      p.id=up.id;ids.push(up.id);
+    }
+    if(S.card&&S.card.blob&&!S.card.id){if(!S.assets)throw {code:"no_assets"};st.textContent="명함 올리는 중…";S.card.id=(await S.assets.upload(S.card.blob,{type:"image/jpeg"})).id;}
+    st.textContent="저장 중…";
+    const data={needsReview:false,cardImageId:S.card&&S.card.id?S.card.id:"",company:$("company").value.trim(),booth:$("booth").value.trim(),categories:[...S.cats],
+      products:$("products").value.trim(),features:$("features").value.split("\n").map(s=>s.replace(/^[-•·\s]+/,"").trim()).filter(Boolean),
+      relevance:$("relevance").value,smPoint:$("smPoint").value.trim(),contact:$("contact").value.trim(),memo:$("memo").value.trim(),
+      interest:S.interest,imageIds:ids,coverIndex:0,updatedAt:Date.now(),
+      zone:S.match?S.match.z:"",enName:S.match?S.match.e:""};
+    let id=S.editing;
+    if(id){await S.db.doc("booths/"+id).update(data);}
+    else{data.createdAt=Date.now();data.authorId=S.myId||"";const ref=await S.db.collection("booths").add(data);id=ref.id;}
+    S.detailId=id;
+    // optimistic local merge so detail shows immediately
+    const i=S.booths.findIndex(x=>x.id===id);const merged=Object.assign({},i>=0?S.booths[i]:{},data,{id});
+    if(i>=0)S.booths[i]=merged;else S.booths.push(merged);
+    renderList();renderDetail();show("detail");
+  }catch(err){
+    if(!S.editing&&retryable(err)){
+      const data={company:$("company").value.trim(),booth:$("booth").value.trim(),categories:[...S.cats],
+        products:$("products").value.trim(),features:$("features").value.split("\n").map(s=>s.replace(/^[-•·\s]+/,"").trim()).filter(Boolean),
+        relevance:$("relevance").value,smPoint:$("smPoint").value.trim(),contact:$("contact").value.trim(),memo:$("memo").value.trim(),
+        interest:S.interest,needsReview:false,zone:S.match?S.match.z:"",enName:S.match?S.match.e:"",createdAt:Date.now(),authorId:S.myId||""};
+      const r=await qAdd({kind:"form",data,blobs:S.photos.filter(p=>p.blob&&!p.id).map(p=>p.blob),existingIds:S.photos.filter(p=>p.id).map(p=>p.id),
+        cardBlob:S.card&&S.card.blob&&!S.card.id?S.card.blob:null,at:Date.now()});
+      if(r!=null){refreshQueueBar();show("list");job("").done(`‘${data.company||"업체명 없음"}’ 기록을 이 폰에 임시 저장했어요. 인터넷이 연결되면 자동으로 올려요.`);btn.disabled=false;return;}
+    }
+    st.className="status err";
+    st.textContent=err&&err.code==="no_assets"?"이 계정은 사진을 올릴 권한이 없어요. 페이지 소유자에게 편집 권한을 요청하세요.":
+      err&&err.code==="too_large"?"사진 용량이 너무 커요.":
+      "저장하지 못했어요. 인터넷 연결을 확인하고 다시 저장을 눌러 주세요. 입력한 내용은 그대로 있습니다.";
+  }finally{btn.disabled=false;}
+});
+
+/* ---------- automation: shared AI helpers ---------- */
+const EXH_TXT=()=>EXH.map(x=>x.b+"|"+x.k+"|"+x.e).join("\n");
+function boothPrompt(){
+  return `당신은 전시회 부스 기록을 돕는 조수입니다. 첨부 사진은 "2026 스마트 건설·안전·AI 엑스포"의 한 참가업체 부스에서 찍은 간판, 제품 설명 패널, 브로셔, 제품 사진입니다. 우리 팀은 스마트홈(아파트·주거 공간에 적용할 IoT, 보안, 에너지, 헬스케어, 월패드, 홈네트워크 등) 관점에서 보고 있습니다.
+사진에 보이는 내용만 근거로 아래 JSON 하나만 출력하세요. 사진에서 확인할 수 없는 항목은 빈 문자열("")이나 빈 배열로 두고 추측으로 채우지 마세요.
+{
+ "company": "업체명 (사진 속 표기 그대로)",
+ "booth": "부스 번호가 보이면",
+ "categories": ["다음 중 해당하는 것: ${CATS.join(", ")}"],
+ "products": "주요 제품·기술명 한두 줄",
+ "features": ["핵심 특징 3~5개, 각 40자 이내 한국어"],
+ "relevance": "스마트홈 관련성 상/중/하 중 하나",
+ "smPoint": "스마트홈에 적용할 수 있는 포인트 1~2문장",
+ "contact": "사진에 보이는 웹사이트·연락처",
+ "listBooth": "아래 참가기업 명단에서 이 업체에 해당하는 부스 번호. 업체명(국문·영문·로고 표기)이 명단과 같은 회사일 때만 쓰고, 확실하지 않으면 빈 문자열"
+}
+참가기업 명단 (부스|국문명|영문명):
+${EXH_TXT()}`;
+}
+async function imgLimit(){
+  if(!S.sample)return 0;
+  try{const l=(await S.sample.limits()).images;return l?Math.max(1,Math.min(l.maxCount||4,4)):0;}catch(e){return 0;}
+}
+function matchFromResult(r){
+  const lb=normBooth(r&&r.listBooth);
+  return (lb&&EXH.some(x=>x.b===lb)?matchExh(r.company,lb)||EXH.find(x=>x.b===lb):null)||matchExh(r&&r.company,r&&r.booth);
+}
+async function analyzeBooth(blobs){
+  const lim=await imgLimit();if(!lim)throw {code:"images_unavailable"};
+  const r=await S.sample.json(boothPrompt(),{images:blobs.slice(0,lim),modelTier:"default",cache:false});
+  return {r:r||{},m:matchFromResult(r||{})};
+}
+function dataFromResult(r,m){
+  return {company:m?m.k:str(r.company).trim(),booth:m?m.b:str(r.booth).trim(),
+    categories:arr(r.categories).filter(c=>CATS.includes(c)),products:str(r.products).trim(),features:arr(r.features),
+    relevance:["상","중","하"].includes(r.relevance)?r.relevance:"",smPoint:str(r.smPoint).trim(),contact:str(r.contact).trim(),
+    zone:m?m.z:"",enName:m?m.e:""};
+}
+function aiErrMsg(e){const c=e&&e.code;
+  return c==="not_granted"?"AI 사용이 허용되지 않았어요.":c==="rate_limited"?"AI 요청이 많아요. 잠시 뒤 다시 해 주세요.":
+    c==="image_rejected"?"사진을 읽지 못했어요.":c==="images_unavailable"?"이 앱 버전에서는 사진 분석이 안 돼요.":"AI 분석에 실패했어요.";}
+function job(text){
+  const d=el("div",{class:"job",text});$("jobs").prepend(d);
+  return {set:t=>{d.textContent=t;},done:t=>{d.className="job ok";d.textContent=t;setTimeout(()=>d.remove(),9000);},
+    fail:t=>{d.className="job err";d.textContent=t;setTimeout(()=>d.remove(),15000);}};
+}
+async function uploadBlobs(blobs,onEach){
+  if(!S.assets)throw {code:"no_assets"};
+  const ids=[];for(let i=0;i<blobs.length;i++){onEach&&onEach(i+1,blobs.length);ids.push((await S.assets.upload(blobs[i],{type:"image/jpeg"})).id);}
+  return ids;
+}
+/* 이미 기록한 업체면 사진만 붙이고, 아니면 새 기록을 만든다 */
+async function saveAuto(data,imageIds){
+  const m=data.booth?EXH.find(x=>x.b===normBooth(data.booth)&&x.k===data.company):null;
+  const ex=m?visitedOf(m):(data.company?S.booths.find(b=>normName(b.company)===normName(data.company)):null);
+  if(ex){
+    const ids=[...arr(ex.imageIds),...imageIds];
+    const patch={imageIds:ids,needsReview:true,updatedAt:Date.now()};
+    for(const k of ["products","smPoint","contact","relevance","zone","enName","booth"])if(!str(ex[k])&&str(data[k]))patch[k]=data[k];
+    if(!arr(ex.features).length&&arr(data.features).length)patch.features=data.features;
+    if(!arr(ex.categories).length&&arr(data.categories).length)patch.categories=data.categories;
+    await S.db.doc("booths/"+ex.id).update(patch);
+    Object.assign(ex,patch);return {id:ex.id,merged:true};
+  }
+  const doc=Object.assign({company:"",booth:"",categories:[],products:"",features:[],relevance:"",smPoint:"",contact:"",memo:"",interest:0,zone:"",enName:""},
+    data,{imageIds,coverIndex:0,needsReview:true,createdAt:Date.now(),updatedAt:Date.now(),authorId:S.myId||""});
+  const ref=await S.db.collection("booths").add(doc);
+  if(!S.booths.some(x=>x.id===ref.id))S.booths.push(Object.assign({},doc,{id:ref.id}));
+  return {id:ref.id,merged:false};
+}
+function needLogin(j){if(!S.db){j.fail("로그인한 상태에서만 저장할 수 있어요.");return true;}if(!S.assets){j.fail("사진을 올릴 권한이 없어요. 페이지 소유자에게 편집 권한을 요청하세요.");return true;}return false;}
+
+/* ---------- 1. 원탭 기록 ---------- */
+$("quickBtn").addEventListener("click",()=>$("quickCam").click());
+$("quickCam").addEventListener("change",e=>{const fs=[...e.target.files];e.target.value="";if(fs.length)quickRecord(fs);});
+async function quickRecord(files){
+  const j=job("원탭 기록: 사진 준비 중…");
+  const blobs=[];for(const f of files)if(f.type.startsWith("image/"))blobs.push(await resize(f));
+  const toQueue=async()=>{const r=await qAdd({kind:"quick",blobs,at:Date.now()});
+    if(r==null){j.fail("인터넷이 연결되지 않았고, 이 브라우저는 임시 저장도 막혀 있어요. 폰 카메라로 찍어 두고 나중에 ‘사진 한꺼번에 정리’를 써 주세요.");return;}
+    j.done("인터넷이 불안정해서 이 폰에 임시 저장했어요. 연결되면 자동으로 올려요.");refreshQueueBar();};
+  if(!navigator.onLine){await toQueue();return;}
+  if(needLogin(j))return;
+  try{
+    const {res,data,note}=await quickCore(blobs,j);
+    renderList();
+    j.done(`${res.merged?"기존 기록에 사진 추가":"새 기록 저장"}: ${data.company||"업체 미확인"}${data.booth?" · "+data.booth:""}${note} · 나중에 ‘확인 필요’에서 검토하세요`);
+  }catch(err){if(retryable(err))await toQueue();else j.fail("원탭 기록에 실패했어요. 사진을 올릴 권한을 확인해 주세요.");}
+}
+
+/* ---------- 4. 사진 한꺼번에 정리 ---------- */
+$("batchBtn").addEventListener("click",()=>$("batchIn").click());
+$("batchIn").addEventListener("change",e=>{const fs=[...e.target.files];e.target.value="";if(fs.length)batchSort(fs);});
+async function batchSort(files){
+  const j=job(`사진 ${files.length}장 정리 준비 중…`);if(needLogin(j))return;
+  if(!S.sample){j.fail("AI를 쓸 수 없어 자동 정리를 할 수 없어요.");return;}
+  try{
+    const lim=await imgLimit();if(!lim){j.fail(aiErrMsg({code:"images_unavailable"}));return;}
+    files=files.filter(f=>f.type.startsWith("image/")).sort((a,b)=>(a.lastModified||0)-(b.lastModified||0));
+    const P=[];for(let i=0;i<files.length;i++){j.set(`사진 줄이는 중 ${i+1}/${files.length}`);P.push({blob:await resize(files[i]),key:null,m:null,name:""});}
+    for(let i=0;i<P.length;i+=lim){
+      j.set(`AI가 업체를 알아보는 중 ${Math.min(i+lim,P.length)}/${P.length}`);
+      const chunk=P.slice(i,i+lim);
+      const prompt=`첨부한 사진 ${chunk.length}장은 "2026 스마트 건설·안전·AI 엑스포"에서 찍은 순서대로입니다. 각 사진이 어느 참가업체 부스에서 찍은 것인지, 사진에 보이는 간판·로고·패널·명함 글자로 판단하세요. 글자가 안 보여서 알 수 없으면 company와 listBooth를 빈 문자열로 두세요. 추측하지 마세요.
+JSON 하나만 출력: {"photos":[{"i":1,"company":"사진 속 업체명","listBooth":"아래 명단의 부스 번호(같은 회사가 확실할 때만)"}]}  (i는 1부터 ${chunk.length}까지, 첨부 순서)
+참가기업 명단 (부스|국문명|영문명):
+${EXH_TXT()}`;
+      let res=null;try{res=await S.sample.json(prompt,{images:chunk.map(p=>p.blob),modelTier:"default",cache:false});}catch(err){if(err&&err.code==="rate_limited"){await new Promise(r=>setTimeout(r,8000));i-=lim;continue;}throw err;}
+      for(const o of (res&&Array.isArray(res.photos)?res.photos:[])){
+        const p=chunk[(o.i|0)-1];if(!p)continue;
+        const m=matchFromResult(o);p.m=m;p.name=str(o.company).trim();
+        p.key=m?"x:"+m.b+m.k:(normName(p.name).length>=2?"n:"+normName(p.name):null);
+      }
+    }
+    // 업체를 못 알아본 사진은 바로 앞(없으면 뒤) 사진의 업체로 묶는다
+    let last=null;for(const p of P){if(p.key)last=p;else if(last){p.key=last.key;p.m=last.m;p.name=last.name;}}
+    let next=null;for(let i=P.length-1;i>=0;i--){const p=P[i];if(p.key)next=p;else if(next){p.key=next.key;p.m=next.m;p.name=next.name;}}
+    const groups=new Map();for(const p of P){const k=p.key||"unknown";if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p);}
+    let gi=0,made=0,added=0;const names=[];
+    for(const [k,ps] of groups){
+      gi++;const label=ps[0].m?ps[0].m.k:(ps[0].name||"미분류 사진");
+      j.set(`업체별 기록 만드는 중 ${gi}/${groups.size}: ${label} (${ps.length}장)`);
+      const blobs=ps.map(p=>p.blob);
+      const ids=await uploadBlobs(blobs);
+      let data;
+      if(k==="unknown")data={company:"미분류 사진",memo:"업체를 알아보지 못한 사진이에요. 확인 후 업체명을 입력하세요."};
+      else{try{const {r,m}=await analyzeBooth(blobs);const m0=ps[0].m;
+          // 사진별로 먼저 알아본 업체를 우선한다
+          data=dataFromResult(r,m0||m);if(!m0&&!m&&ps[0].name)data.company=ps[0].name;if(!data.company)data.company=label;}
+        catch(err){const m=ps[0].m;data=m?{company:m.k,booth:m.b,zone:m.z,enName:m.e}:{company:label};}}
+      const res=await saveAuto(data,ids);res.merged?added++:made++;names.push(data.company);
+    }
+    renderList();
+    j.done(`사진 ${P.length}장 정리 완료 · 새 기록 ${made}곳, 기존 기록에 추가 ${added}곳 (${names.slice(0,5).join(", ")}${names.length>5?" 외":""}) · ‘확인 필요’에서 검토하세요`);
+  }catch(err){j.fail("사진 정리 중 멈췄어요. "+aiErrMsg(err)+" 이미 저장된 기록은 그대로 있어요.");}
+}
+
+/* ---------- 2. 스마트홈 동선 추천 ---------- */
+S.route=null;
+$("routeBtn").addEventListener("click",async()=>{
+  const btn=$("routeBtn");
+  if(!S.sample){job("").fail("AI를 쓸 수 없어 추천을 만들 수 없어요.");return;}
+  btn.disabled=true;const j=job("AI가 가이드맵 202곳에서 스마트홈 관련 업체를 고르는 중…");
+  try{
+    const r=await S.sample.json(`우리 팀은 아파트·주거용 스마트홈(IoT 센서, 홈네트워크·월패드, 보안·출입, 에너지 관리, 헬스케어·고령자 케어, 시설관리 플랫폼, 홈 로봇 등) 사업을 합니다.
+아래는 "2026 스마트 건설·안전·AI 엑스포" 참가기업 명단입니다(부스|전시 구역|국문명|영문명). 업체명과 전시 구역만 보고, 스마트홈 사업에 참고할 가능성이 높은 업체를 최대 25곳 고르세요. 공공기관·협회·행사 홍보 부스는 빼세요.
+업체명만으로는 확신할 수 없으니 why에는 "업체명으로 보아 ~일 가능성" 정도로만 쓰세요(30자 이내).
+JSON 하나만 출력: {"items":[{"b":"부스번호","score":3,"why":"이유"}]}  score: 3=꼭 볼 곳, 2=볼 만한 곳, 1=시간 나면
+명단:
+${EXH.map(x=>x.b+"|"+x.z+"|"+x.k+"|"+x.e).join("\n")}`,{modelTier:"default",cache:false});
+    const items=(r&&Array.isArray(r.items)?r.items:[]).map(o=>({b:normBooth(o.b),score:Math.max(1,Math.min(3,o.score|0||1)),why:str(o.why).slice(0,60)})).filter(o=>EXH.some(x=>x.b===o.b));
+    if(!items.length)throw {code:"empty"};
+    const doc={items,createdAt:Date.now(),by:S.myId||""};
+    S.route=doc;if(S.db){try{await S.db.doc("meta/route").set(doc);}catch(e){}}
+    $("recOnly").checked=true;renderList();
+    j.done(`추천 ${items.length}곳을 만들었어요. 부스 위치 순서대로 보여드려요. 팀원 화면에도 같이 보입니다.`);
+  }catch(err){j.fail("추천을 만들지 못했어요. "+aiErrMsg(err));}
+  finally{btn.disabled=false;}
+});
+$("recOnly").addEventListener("input",renderList);
+$("revOnly").addEventListener("input",renderList);
+function routeOf(x){return S.route&&S.route.items.find(o=>o.b===x.b);}
+
+/* ---------- 3. 명함 촬영 ---------- */
+S.card=null;
+$("cardBtn").addEventListener("click",()=>$("cardCam").click());
+$("cardDel").addEventListener("click",()=>{S.card=null;$("cardRow").hidden=true;$("cardStatus").textContent="";});
+$("cardCam").addEventListener("change",async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;
+  const st=$("cardStatus");st.className="status";
+  const blob=await resize(f,1400,0.85);
+  S.card={blob,url:URL.createObjectURL(blob)};$("cardImg").src=S.card.url;$("cardRow").hidden=false;
+  if(!S.sample){st.textContent="명함 사진을 붙였어요. AI를 쓸 수 없어 연락처는 직접 입력해 주세요.";return;}
+  st.textContent="명함 읽는 중…";
+  try{
+    const lim=await imgLimit();if(!lim)throw {code:"images_unavailable"};
+    const c=await S.sample.json(`첨부 사진은 명함입니다. 보이는 글자 그대로 아래 JSON 하나만 출력하세요. 없는 항목은 빈 문자열.
+{"name":"이름","title":"직함","department":"부서","company":"회사명","mobile":"휴대폰","phone":"전화","email":"이메일","website":"웹사이트"}`,{images:[blob],modelTier:"default",cache:false});
+    const parts=[[str(c.name),str(c.title)].filter(Boolean).join(" "),str(c.department),str(c.mobile)||str(c.phone),str(c.email),str(c.website)].map(t=>t.trim()).filter(Boolean);
+    if(parts.length){const cur=$("contact").value.trim();$("contact").value=cur?cur+" / "+parts.join(" · "):parts.join(" · ");}
+    S.card.info=c;
+    if(!$("company").value.trim()&&str(c.company).trim()){$("company").value=str(c.company).trim();const m=matchExh($("company").value,$("booth").value);if(m)applyMatch(m,true);else{S.match=null;showMatch();}}
+    st.textContent=parts.length?"명함 내용을 연락처에 넣었어요. 저장하면 명함 사진도 함께 남아요.":"명함 글자를 읽지 못했어요. 직접 입력해 주세요.";
+  }catch(err){st.className="status err";st.textContent=aiErrMsg(err)+" 연락처는 직접 입력해 주세요.";}
+});
+
+/* ---------- 6. 음성 메모 ---------- */
+S.dict=null;S.dictBase="";
+function setupDictation(d){
+  S.dict=d;if(!d)return;$("micBtn").hidden=false;
+  d.onPartial(({text})=>{$("micStatus").textContent="듣는 중: "+text;});
+  d.onFinal(({text})=>{const t=str(text).trim();if(!t)return;const m=$("memo");m.value=(m.value.trim()?m.value.trimEnd()+" ":"")+t;$("micStatus").textContent="";});
+  d.onState(({state,reason})=>{
+    const on=state==="listening"||state==="starting";
+    $("micBtn").textContent=on?"⏹ 그만 듣기":"🎙 말로 메모";
+    if(state==="idle"){$("micStatus").textContent=reason==="not_granted"?"마이크 사용이 허용되지 않았어요. 직접 입력해 주세요.":reason==="time_limit"?"녹음 시간이 끝났어요. 다시 누르면 이어서 받아 적어요.":"";
+      if(reason==="not_granted")$("micBtn").hidden=true;}
+  });
+}
+$("micBtn").addEventListener("click",()=>{
+  const d=S.dict;if(!d)return;
+  if(d.active()){d.stop().catch(()=>{});return;}
+  $("micStatus").textContent="마이크 준비 중…";
+  d.start({language:"ko-KR"}).catch(e=>{
+    $("micStatus").textContent=e&&e.code==="not_granted"?"마이크 사용이 허용되지 않았어요. 직접 입력해 주세요.":e&&e.code==="dismissed"?"":"음성 입력을 시작하지 못했어요. 다시 눌러 주세요.";
+    if(e&&e.code==="not_granted")$("micBtn").hidden=true;});
+});
+
+/* ---------- report ---------- */
+function reportText(){
+  const items=[...S.booths].sort((a,c)=>{const r={"상":0,"중":1,"하":2,"":3};return (r[a.relevance||""]-r[c.relevance||""])||((c.interest||0)-(a.interest||0));});
+  const lines=["# 2026 스마트 건설·안전·AI 엑스포 — 스마트홈 부스 정리",`총 ${items.length}개 부스 (스마트홈 관련성 높은 순)`,""];
+  for(const b of items){
+    lines.push(`## ${str(b.company)||"(업체명 없음)"}${b.booth?` [${str(b.booth)}]`:""}`);
+    const meta=[b.zone?str(b.zone):"",b.relevance?`스마트홈 관련성: ${b.relevance}`:"",b.interest?`관심도: ${"★".repeat(b.interest)}`:"",arr(b.categories).length?`분야: ${arr(b.categories).join(", ")}`:""].filter(Boolean);
+    if(meta.length)lines.push(meta.join(" | "));
+    if(b.products)lines.push(`- 주요 제품: ${str(b.products)}`);
+    for(const f of arr(b.features))lines.push(`- ${f}`);
+    if(b.smPoint)lines.push(`- 스마트홈 적용: ${str(b.smPoint)}`);
+    if(b.contact)lines.push(`- 연락처: ${str(b.contact)}`);
+    if(b.memo)lines.push(`- 메모: ${str(b.memo)}`);
+    const n=arr(b.imageIds).length;if(n)lines.push(`- 사진 ${n}장 (앱에서 보기)`);
+    lines.push("");
+  }
+  return lines.join("\n");
+}
+function mdFull(INS){
+  const items=sortedForReport();const cell=t=>str(t).replace(/\|/g,"／").replace(/\n/g," ")||"-";
+  const shN=items.filter(b=>b.relevance==="상"||b.relevance==="중").length,hiN=items.filter(b=>(b.interest||0)>=4).length;
+  const L=["# 2026 스마트 건설·안전·AI 엑스포 — 스마트홈 부스 탐방 리포트","",`> 킨텍스 제1전시장 3·4홀 · 2026. 11. 25.–27. · 정리 ${dateStr()}`,"",
+    "## 한 장 요약","",`**결론** ${INS.headline}`,"",
+    "| 방문한 부스 | 스마트홈 관련성 상·중 | 관심도 ★4 이상 |","|:---:|:---:|:---:|",`| ${items.length}곳 | ${shN}곳 | ${hiN}곳 |`,"",
+    "### 핵심 인사이트","",...INS.insights.map((o,k)=>`${k+1}. **${o.title}** — ${o.body}`),"",
+    "### 후속 미팅 추천","",...INS.recommend.map(o=>`- **${o.company}** — ${o.why}`),""];
+  if(!INS.ai)L.push("_AI를 쓸 수 없어 기록된 수치로 요약했어요._","");
+  L.push("### 참관 부스 목록","","| # | 업체명 | 부스 | 전시 구역 | 분야 | 스마트홈 | 관심도 |","|---:|---|---|---|---|:---:|---|",
+    ...items.map((b,i)=>`| ${i+1} | ${b.relevance==="상"?"**"+cell(b.company)+"**":cell(b.company)} | ${cell(b.booth)} | ${cell(b.zone)} | ${cell(arr(b.categories).join(", "))} | ${cell(b.relevance)} | ${b.interest?"★".repeat(b.interest):"-"} |`),"");
+  const ai=aiSumText();if(ai)L.push("## AI 총평","",ai.split("\n").map(l=>l.trim()).filter(Boolean).join("\n\n"),"");
+  L.push("---","","## 업체별 상세","");
+  for(const b of items){
+    L.push(`### ${str(b.company)||"(업체명 없음)"}${b.booth?` · ${str(b.booth)}`:""}`,"");
+    const meta=[b.zone?str(b.zone):"",b.relevance?`스마트홈 관련성 **${b.relevance}**`:"",b.interest?`관심도 ${"★".repeat(b.interest)}`:"",arr(b.categories).length?`분야: ${arr(b.categories).join(", ")}`:""].filter(Boolean);
+    if(meta.length)L.push(meta.join(" · "),"");
+    if(b.products)L.push(`- **주요 제품·기술**: ${str(b.products)}`);
+    const f=arr(b.features);if(f.length){L.push("- **핵심 특징**");f.forEach(t=>L.push(`  - ${t}`));}
+    if(b.smPoint)L.push(`- **스마트홈 적용 포인트**: ${str(b.smPoint)}`);
+    if(b.contact)L.push(`- **연락처**: ${str(b.contact)}`);
+    if(b.memo)L.push(`- **현장 메모**: ${str(b.memo)}`);
+    const n=arr(b.imageIds).length;if(n)L.push(`- 사진 ${n}장 (앱에서 보기)`);
+    L.push("");
+  }
+  return L.join("\n");
+}
+function insightNow(){const items=sortedForReport();const key=items.map(b=>b.id+":"+(b.updatedAt||0)).join(",");
+  return S.insightCache&&S.insightCache.key===key?S.insightCache.val:fallbackInsight(items);}
+function renderReport(){$("report").textContent=S.booths.length?mdFull(insightNow()):"기록한 부스가 생기면 여기에 정리본이 만들어집니다.";}
+$("copyBtn").addEventListener("click",()=>{
+  const t=mdFull(insightNow());
+  const st=$("repStatus");
+  try{navigator.clipboard.writeText(t).then(()=>{st.textContent="복사했어요."+(insightNow().ai?"":" 요약을 AI 인사이트로 바꾸려면 ‘AI 총평 만들기’를 먼저 눌러 주세요.");},()=>sel());}catch(e){sel();}
+  function sel(){const r=document.createRange();r.selectNodeContents($("report"));const s=getSelection();s.removeAllRanges();s.addRange(r);st.textContent="복사가 막혀 있어요. 선택된 텍스트를 직접 복사해 주세요.";}
+});
+$("dlBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("dlBtn");btn.disabled=true;
+  const INS=await getInsight(sortedForReport(),st);renderReport();
+  const t=mdFull(INS);btn.disabled=false;
+  try{await S.downloads.save({filename:EXPORT_NAME+".md",data:t});st.textContent="파일을 저장했어요.";}
+  catch(e){st.textContent=e&&e.code==="declined"?"저장을 취소했어요.":"파일을 저장하지 못했어요. 텍스트 복사를 이용해 주세요.";}
+});
+/* ---------- PPTX export ---------- */
+function sortedForReport(){const r={"상":0,"중":1,"하":2,"":3};return [...S.booths].sort((a,c)=>(r[a.relevance||""]-r[c.relevance||""])||((c.interest||0)-(a.interest||0)));}
+const LIBS={
+  PptxGenJS:"https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js",
+  docx:"https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js",
+  ExcelJS:"https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"};
+function loadLib(g){
+  if(window[g])return Promise.resolve();
+  return new Promise((res,rej)=>{const s=document.createElement("script");s.src=LIBS[g];s.onload=res;s.onerror=rej;document.head.append(s);});
+}
+const loadPptx=()=>loadLib("PptxGenJS");
+async function imgData(id,max=1200){
+  const raw=await (await fetch(blobUrl(id))).blob();
+  const small=await resize(raw,max,0.75);
+  const dataUrl=await new Promise((r,j)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=j;fr.readAsDataURL(small);});
+  const dim=await new Promise(r=>{const i=new Image();i.onload=()=>r([i.naturalWidth||4,i.naturalHeight||3]);i.onerror=()=>r([4,3]);i.src=dataUrl;});
+  return {data:dataUrl,blob:small,w:dim[0],h:dim[1]};
+}
+const EXPORT_NAME="엑스포-스마트홈-부스정리";
+function exportErr(e,kind){
+  return e&&e.code==="declined"?"저장을 취소했어요.":e&&e.code==="too_large"?"사진이 많아 파일이 너무 커요. 부스당 사진 수를 줄여 보세요.":kind+" 파일을 만들지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.";
+}
+function aiSumText(){return !$("aiSum").hidden?$("aiSum").textContent.trim():"";}
+function dateStr(){const t=new Date();return t.getFullYear()+". "+(t.getMonth()+1)+". "+t.getDate()+".";}
+
+/* ---------- Word ---------- */
+$("docBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("docBtn");btn.disabled=true;st.textContent="Word 준비 중…";
+  try{
+    await loadLib("docx");
+    const D=window.docx;const items=sortedForReport();
+    const FONT="Malgun Gothic";
+    const P=(text,o={})=>new D.Paragraph({spacing:{after:o.after??80},children:[new D.TextRun({text,bold:o.bold,color:o.color,size:o.size})],heading:o.heading});
+    const label=(k,v)=>new D.Paragraph({spacing:{after:60},children:[new D.TextRun({text:k+"  ",bold:true,color:"5D6762"}),new D.TextRun({text:v})]});
+    const cell=(t,head)=>new D.TableCell({shading:head?{fill:"24332E"}:undefined,margins:{top:60,bottom:60,left:80,right:80},
+      children:[new D.Paragraph({children:[new D.TextRun({text:t||"-",bold:!!head,color:head?"FFFFFF":undefined,size:18})]})]});
+    const kids=[];
+    const G="14634A",INK="1B2433",GREY="6B7280",MINT="E8F5EF";
+    const NB={style:D.BorderStyle.NONE,size:0,color:"FFFFFF"};const NOB={top:NB,bottom:NB,left:NB,right:NB};
+    const LB={style:D.BorderStyle.SINGLE,size:4,color:"E3E8E6"};const LINE={top:LB,bottom:LB,left:LB,right:LB};
+    const runs=(arr2,o={})=>new D.Paragraph({spacing:{before:o.before||0,after:o.after??80,line:o.line},alignment:o.align,children:arr2.map(([t,ro])=>new D.TextRun(Object.assign({text:t},ro||{})))});
+    const box=(children,o={})=>new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:NB},
+      rows:[new D.TableRow({children:[new D.TableCell({shading:{fill:o.fill||MINT},borders:o.borders||NOB,margins:{top:140,bottom:140,left:220,right:220},children})]})]});
+    const INS=await getInsight(items,st);st.textContent="Word 작성 중…";
+    const shN=items.filter(b=>b.relevance==="상"||b.relevance==="중").length;
+    const hiN=items.filter(b=>(b.interest||0)>=4).length;
+    /* --- 1쪽: 표지 --- */
+    kids.push(runs([["● 2026 스마트 건설·안전·AI 엑스포",{bold:true,color:G,size:24}]],{before:2400,after:360}));
+    kids.push(runs([["스마트홈 관점으로 본",{bold:true,color:INK,size:64}]],{after:60}));
+    kids.push(runs([["부스 탐방 리포트",{bold:true,color:G,size:64}]],{after:360}));
+    kids.push(runs([["킨텍스 제1전시장 3·4홀 · 2026. 11. 25.–27.",{color:GREY,size:24}]],{after:600}));
+    kids.push(new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:{style:D.BorderStyle.SINGLE,size:24,color:"FFFFFF"}},
+      rows:[new D.TableRow({children:[[items.length,"방문한 부스"],[shN,"스마트홈 관련성 상·중"],[hiN,"관심도 ★4 이상"]].map(([v,l],k)=>new D.TableCell({
+        shading:{fill:k===0?G:MINT},borders:NOB,margins:{top:200,bottom:200,left:220,right:220},
+        children:[runs([[String(v),{bold:true,size:56,color:k===0?"FFFFFF":G}],[" 곳",{bold:true,size:24,color:k===0?"FFFFFF":GREY}]],{after:40}),
+          runs([[l,{size:20,color:k===0?"FFFFFF":GREY}]],{after:0})]}))})]}));
+    kids.push(runs([["정리 ",{color:GREY,size:22}],[dateStr(),{bold:true,color:G,size:22}]],{before:600,after:0}));
+    kids.push(new D.Paragraph({children:[new D.PageBreak()]}));
+    /* --- 2쪽: 한 장 요약 --- */
+    kids.push(runs([["● 한 장 요약",{bold:true,color:G,size:22}]],{after:120}));
+    kids.push(runs([[`참관 부스 ${items.length}곳에서 찾은 `,{bold:true,color:INK,size:36}],["스마트홈 인사이트",{bold:true,color:G,size:36}]],{after:200}));
+    kids.push(box([runs([[INS.headline,{bold:true,color:"FFFFFF",size:24}]],{after:0})],{fill:G}));
+    kids.push(runs([["핵심 인사이트",{bold:true,color:G,size:24}]],{before:280,after:100}));
+    kids.push(new D.Table({width:{size:9900,type:D.WidthType.DXA},columnWidths:[800,9100],layout:D.TableLayoutType.FIXED,borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:{style:D.BorderStyle.SINGLE,size:16,color:"FFFFFF"},insideVertical:NB},
+      rows:INS.insights.map((o,k)=>new D.TableRow({children:[
+        new D.TableCell({width:{size:800,type:D.WidthType.DXA},shading:{fill:k===0?G:MINT},borders:NOB,verticalAlign:D.VerticalAlign.CENTER,margins:{top:120,bottom:120,left:100,right:100},
+          children:[runs([[String(k+1).padStart(2,"0"),{bold:true,size:24,color:k===0?"FFFFFF":G}]],{align:D.AlignmentType.CENTER,after:0})]}),
+        new D.TableCell({width:{size:9100,type:D.WidthType.DXA},borders:k===0?{top:{style:D.BorderStyle.SINGLE,size:8,color:G},bottom:{style:D.BorderStyle.SINGLE,size:8,color:G},left:NB,right:{style:D.BorderStyle.SINGLE,size:8,color:G}}:LINE,margins:{top:120,bottom:120,left:200,right:200},
+          children:[runs([[o.title,{bold:true,size:24,color:INK}]],{after:40}),runs([[o.body,{size:20,color:GREY}]],{after:0})]})]}))}));
+    kids.push(runs([["후속 미팅 추천",{bold:true,color:G,size:24}]],{before:280,after:100}));
+    kids.push(box(INS.recommend.map((o,k)=>runs([["✓ "+o.company,{bold:true,color:INK,size:21}],["   "+o.why,{color:GREY,size:20}]],{after:k<INS.recommend.length-1?80:0}))));
+    if(!INS.ai)kids.push(runs([["AI를 쓸 수 없어 기록된 수치로 요약했어요.",{color:"A3ABB5",size:16}]],{before:80}));
+    kids.push(runs([["참관 부스 목록",{bold:true,color:G,size:24}],[`   ${items.length}곳 · 스마트홈 관련성 높은 순`,{color:GREY,size:18}]],{before:280,after:100}));
+    const relColor={"상":G,"중":"A86A00","하":GREY};
+    const tc=(t,o={})=>new D.TableCell({shading:o.head?{fill:G}:o.fill?{fill:o.fill}:undefined,borders:LINE,margins:{top:60,bottom:60,left:90,right:90},
+      children:[runs([[t||"-",{bold:!!(o.head||o.bold),color:o.head?"FFFFFF":(o.color||INK),size:18}]],{after:0})]});
+    kids.push(new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},rows:[
+      new D.TableRow({tableHeader:true,children:["업체명","부스","전시 구역","분야","스마트홈","관심도"].map(t=>tc(t,{head:true}))}),
+      ...items.map((b,i)=>new D.TableRow({children:[
+        tc(str(b.company),{bold:b.relevance==="상",fill:i%2?"F7F9F8":undefined}),tc(str(b.booth),{fill:i%2?"F7F9F8":undefined}),tc(str(b.zone),{fill:i%2?"F7F9F8":undefined}),
+        tc(arr(b.categories).join(", "),{fill:i%2?"F7F9F8":undefined}),tc(str(b.relevance),{bold:true,color:relColor[b.relevance],fill:i%2?"F7F9F8":undefined}),
+        tc(b.interest?"★".repeat(b.interest):"",{color:"C99700",fill:i%2?"F7F9F8":undefined})]}))]}));
+    const ai=aiSumText();
+    if(ai){kids.push(new D.Paragraph({children:[new D.PageBreak()]}));kids.push(runs([["AI 총평",{bold:true,color:G,size:28}]],{after:160}));ai.split("\n").forEach(l=>kids.push(P(l)));}
+    let n=0;
+    for(const b of items){
+      n++;st.textContent=`Word 작성 중 ${n}/${items.length}`;
+      kids.push(new D.Paragraph({children:[new D.PageBreak()]}));
+      kids.push(P(str(b.company)||"(업체명 없음)",{heading:D.HeadingLevel.HEADING_1}));
+      const meta=[b.booth?"부스 "+str(b.booth):"",str(b.zone),b.relevance?"스마트홈 관련성 "+b.relevance:"",b.interest?"관심도 "+"★".repeat(b.interest):""].filter(Boolean).join("  ·  ");
+      if(meta)kids.push(P(meta,{color:"5D6762",after:160}));
+      const imgs=[];for(const id of arr(b.imageIds).slice(0,4)){try{imgs.push(await imgData(id,1000));}catch(e){}}
+      if(imgs.length){
+        const runs=[];
+        for(let k=0;k<imgs.length;k++)runs.push(new D.ImageRun({data:await imgs[k].blob.arrayBuffer(),transformation:sizeFor(imgs[k],k)}));
+        kids.push(new D.Paragraph({spacing:{after:80},children:[runs[0]]}));
+        if(runs.length>1)kids.push(new D.Paragraph({spacing:{after:160},children:runs.slice(1).flatMap((r,k)=>k?[new D.TextRun("  "),r]:[r])}));
+      }
+      if(arr(b.categories).length)kids.push(label("분야",arr(b.categories).join(", ")));
+      if(b.products)kids.push(label("주요 제품·기술",str(b.products)));
+      const f=arr(b.features);
+      if(f.length){kids.push(P("특징",{bold:true,color:"5D6762",after:40}));f.forEach(t=>kids.push(new D.Paragraph({bullet:{level:0},spacing:{after:40},children:[new D.TextRun(t)]})));}
+      if(b.smPoint)kids.push(label("스마트홈 적용 포인트",str(b.smPoint)));
+      if(b.contact)kids.push(label("연락처",str(b.contact)));
+      if(b.memo)kids.push(label("현장 메모",str(b.memo)));
+    }
+    const doc=new D.Document({creator:"엑스포 부스 노트",title:"스마트홈 부스 정리",
+      styles:{default:{document:{run:{font:FONT,size:21}}}},
+      sections:[{properties:{page:{margin:{top:1000,bottom:1000,left:1000,right:1000}}},children:kids}]});
+    st.textContent="파일 만드는 중…";
+    const blob=await D.Packer.toBlob(doc);
+    await S.downloads.save({filename:EXPORT_NAME+".docx",data:blob});
+    st.textContent="Word 파일을 저장했어요.";
+  }catch(e){st.textContent=exportErr(e,"Word");}
+  finally{btn.disabled=false;}
+});
+function sizeFor(im,k){const W=k===0?560:180;const H=Math.round(W*im.h/im.w);const cap=k===0?360:140;const sc=Math.min(1,cap/H);return {width:Math.round(W*sc),height:Math.round(H*sc)};}
+
+/* ---------- Excel ---------- */
+$("xlsBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("xlsBtn");btn.disabled=true;st.textContent="Excel 준비 중…";
+  try{
+    await loadLib("ExcelJS");
+    const wb=new window.ExcelJS.Workbook();wb.creator="엑스포 부스 노트";
+    /* --- 요약 시트 (맨 앞) --- */
+    {
+      const itemsS=sortedForReport();const INS=await getInsight(itemsS,st);st.textContent="Excel 작성 중…";
+      const G="FF14634A",INK="FF1B2433",GREY="FF6B7280",MINT="FFE8F5EF",WHITE="FFFFFFFF",LINE="FFE3E8E6";
+      const sm=wb.addWorksheet("요약",{views:[{showGridLines:false}],properties:{tabColor:{argb:G}}});
+      sm.columns=[{width:2},{width:24},{width:10},{width:22},{width:22},{width:12},{width:12}];
+      const fill=c=>({type:"pattern",pattern:"solid",fgColor:{argb:c}});
+      const thin={style:"thin",color:{argb:LINE}};const box={top:thin,bottom:thin,left:thin,right:thin};
+      const put=(addr,v,o={})=>{const c=sm.getCell(addr);c.value=v;if(o.font)c.font=Object.assign({name:"맑은 고딕"},o.font);if(o.fill)c.fill=fill(o.fill);
+        c.alignment=Object.assign({vertical:"middle",wrapText:true},o.align||{});if(o.border)c.border=box;return c;};
+      put("B2","● 2026 스마트 건설·안전·AI 엑스포",{font:{bold:true,color:{argb:G},size:11},align:{wrapText:false}});
+      sm.mergeCells("B3:G3");put("B3",{richText:[{text:"스마트홈 부스 탐방 리포트  ",font:{bold:true,size:18,color:{argb:INK},name:"맑은 고딕"}},{text:"한 장 요약",font:{bold:true,size:18,color:{argb:G},name:"맑은 고딕"}}]});
+      sm.getRow(3).height=30;
+      sm.mergeCells("B4:G4");put("B4",`킨텍스 제1전시장 3·4홀 · 2026. 11. 25.–27. · 정리 ${dateStr()}`,{font:{color:{argb:GREY},size:10}});
+      const shN=itemsS.filter(b=>b.relevance==="상"||b.relevance==="중").length,hiN=itemsS.filter(b=>(b.interest||0)>=4).length;
+      const L="'부스 목록'!";
+      [[["B","C"],{formula:`COUNTA(${L}B:B)-1`,result:itemsS.length},"방문한 부스 (곳)"],
+       [["D","E"],{formula:`COUNTIF(${L}F:F,"상")+COUNTIF(${L}F:F,"중")`,result:shN},"스마트홈 관련성 상·중 (곳)"],
+       [["F","G"],{formula:`COUNTIF(${L}G:G,">=4")`,result:hiN},"관심도 ★4 이상 (곳)"]].forEach(([[a,b],v,l],k)=>{
+        const f=k===0?G:MINT,fc=k===0?WHITE:G,lc=k===0?WHITE:GREY;
+        sm.mergeCells(`${a}6:${b}6`);put(`${a}6`,v,{font:{bold:true,size:26,color:{argb:fc}},fill:f,align:{horizontal:"left",indent:1}});
+        sm.mergeCells(`${a}7:${b}7`);put(`${a}7`,l,{font:{size:10,color:{argb:lc}},fill:f,align:{horizontal:"left",indent:1}});});
+      sm.getRow(6).height=40;sm.getRow(7).height=20;
+      sm.mergeCells("B9:G9");put("B9",INS.headline,{font:{bold:true,size:13,color:{argb:WHITE}},fill:G,align:{indent:1}});sm.getRow(9).height=34;
+      put("B11","핵심 인사이트",{font:{bold:true,size:12,color:{argb:G}},align:{wrapText:false}});
+      INS.insights.forEach((o,k)=>{const r=12+k;sm.mergeCells(`B${r}:G${r}`);
+        put(`B${r}`,{richText:[{text:String(k+1).padStart(2,"0")+"   ",font:{bold:true,size:12,color:{argb:G},name:"맑은 고딕"}},{text:o.title,font:{bold:true,size:12,color:{argb:INK},name:"맑은 고딕"}},{text:"\n"+o.body,font:{size:10,color:{argb:GREY},name:"맑은 고딕"}}]},
+          {fill:k===0?MINT:"FFFFFFFF",align:{indent:1},border:true});
+        if(k===0)sm.getCell(`B${r}`).border={top:{style:"medium",color:{argb:G}},bottom:{style:"medium",color:{argb:G}},left:{style:"medium",color:{argb:G}},right:{style:"medium",color:{argb:G}}};
+        sm.getRow(r).height=44;});
+      put("B16","후속 미팅 추천",{font:{bold:true,size:12,color:{argb:G}},align:{wrapText:false}});
+      INS.recommend.forEach((o,k)=>{const r=17+k;
+        put(`B${r}`,"✓ "+o.company,{font:{bold:true,color:{argb:INK}},fill:MINT,align:{indent:1}});
+        sm.mergeCells(`C${r}:G${r}`);put(`C${r}`,o.why,{font:{color:{argb:GREY},size:10},fill:MINT});sm.getRow(r).height=22;});
+      if(!INS.ai)put("B20","AI를 쓸 수 없어 기록된 수치로 요약했어요.",{font:{size:9,color:{argb:"FFA3ABB5"}},align:{wrapText:false}});
+      put("B22",`참관 부스 목록  (${itemsS.length}곳 · 스마트홈 관련성 높은 순)`,{font:{bold:true,size:12,color:{argb:G}},align:{wrapText:false}});
+      ["업체명","부스","전시 구역","분야","스마트홈","관심도"].forEach((h,k)=>put(String.fromCharCode(66+k)+"23",h,{font:{bold:true,color:{argb:WHITE}},fill:G,border:true}));
+      const rc={"상":G,"중":"FFA86A00","하":GREY};
+      itemsS.forEach((b,i)=>{const r=24+i,f=i%2?"FFF7F9F8":"FFFFFFFF";
+        [str(b.company),str(b.booth),str(b.zone),arr(b.categories).join(", "),str(b.relevance),b.interest?"★".repeat(b.interest):""].forEach((v,k)=>
+          put(String.fromCharCode(66+k)+r,v,{fill:f,border:true,font:{bold:k===0&&b.relevance==="상"||k===4,color:{argb:k===4?(rc[b.relevance]||GREY):k===5?"FFC99700":INK}}}));});
+      sm.pageSetup={paperSize:9,orientation:"portrait",fitToPage:true,fitToWidth:1,fitToHeight:0};
+    }
+    const ws=wb.addWorksheet("부스 목록",{views:[{state:"frozen",ySplit:1,xSplit:2}]});
+    ws.columns=[
+      {header:"사진",key:"photo",width:18},{header:"업체명",key:"company",width:22},{header:"부스",key:"booth",width:9},{header:"전시 구역",key:"zone",width:18},
+      {header:"분야",key:"cats",width:18},{header:"스마트홈 관련성",key:"rel",width:10},{header:"관심도",key:"interest",width:8},
+      {header:"주요 제품·기술",key:"products",width:32},{header:"특징",key:"features",width:44},{header:"스마트홈 적용 포인트",key:"sm",width:36},
+      {header:"연락처",key:"contact",width:24},{header:"현장 메모",key:"memo",width:32},{header:"작성자",key:"author",width:10},
+      {header:"기록 시각",key:"time",width:12},{header:"사진 수",key:"nphoto",width:7}];
+    const hr=ws.getRow(1);hr.font={bold:true,color:{argb:"FFFFFFFF"}};hr.height=22;
+    hr.eachCell(c=>{c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FF24332E"}};c.alignment={vertical:"middle",wrapText:true};});
+    const items=sortedForReport();let n=0;
+    for(const b of items){
+      n++;st.textContent=`Excel 작성 중 ${n}/${items.length}`;
+      const ids=arr(b.imageIds);
+      const row=ws.addRow({company:str(b.company),booth:str(b.booth),zone:str(b.zone),cats:arr(b.categories).join(", "),rel:str(b.relevance),
+        interest:b.interest||null,products:str(b.products),features:arr(b.features).map(t=>"• "+t).join("\n"),sm:str(b.smPoint),
+        contact:str(b.contact),memo:str(b.memo),author:S.names[b.authorId]||"",time:fmtTime(b.createdAt),nphoto:ids.length});
+      row.height=80;row.alignment={vertical:"top",wrapText:true};
+      const rc=row.getCell("rel");const col={"상":"FF1F7A4D","중":"FFA86A00","하":"FF7B8580"}[b.relevance];if(col)rc.font={bold:true,color:{argb:col}};
+      if(ids.length){
+        try{const im=await imgData(ids[Math.min(b.coverIndex||0,ids.length-1)],320);
+          const imgId=wb.addImage({base64:im.data,extension:"jpeg"});
+          const s=Math.min(120/im.w,100/im.h);
+          ws.addImage(imgId,{tl:{col:0.05,row:row.number-1+0.05},ext:{width:Math.round(im.w*s),height:Math.round(im.h*s)}});
+        }catch(e){}
+      }
+    }
+    ws.autoFilter={from:{row:1,column:1},to:{row:1,column:ws.columns.length}};
+    const ai=aiSumText();
+    if(ai){const w2=wb.addWorksheet("AI 총평");w2.getColumn(1).width=110;w2.addRow(["AI 총평"]).font={bold:true,size:14};
+      ai.split("\n").forEach(l=>{const r=w2.addRow([l]);r.alignment={wrapText:true,vertical:"top"};});}
+    st.textContent="파일 만드는 중…";
+    const buf=await wb.xlsx.writeBuffer();
+    await S.downloads.save({filename:EXPORT_NAME+".xlsx",data:new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})});
+    st.textContent="Excel 파일을 저장했어요.";
+  }catch(e){st.textContent=exportErr(e,"Excel");}
+  finally{btn.disabled=false;}
+});
+function fit(im,x,y,w,h){const s=Math.min(w/im.w,h/im.h);const iw=im.w*s,ih=im.h*s;return {data:im.data,x:x+(w-iw)/2,y:y+(h-ih)/2,w:iw,h:ih};}
+/* ---------- PPT 요약용 스마트홈 인사이트 ---------- */
+S.insightCache=null;
+function fallbackInsight(items){
+  const cnt=(arr2)=>{const m={};arr2.forEach(k=>{if(k)m[k]=(m[k]||0)+1;});return Object.entries(m).sort((a,c)=>c[1]-a[1]);};
+  const hi=items.filter(b=>b.relevance==="상"),mid=items.filter(b=>b.relevance==="중");
+  const cats=cnt(items.flatMap(b=>arr(b.categories))),zones=cnt(items.map(b=>str(b.zone)));
+  const ins=[];
+  ins.push({title:`스마트홈 관련성 높은 업체 ${hi.length}곳`,body:hi.length?hi.slice(0,4).map(b=>str(b.company)).join(", ")+(mid.length?` / 관련성 중 ${mid.length}곳`:""):`관련성 중 ${mid.length}곳, 하 ${items.length-mid.length}곳`});
+  if(cats.length)ins.push({title:`가장 많이 본 분야: ${cats[0][0]}`,body:cats.slice(0,4).map(([k,v])=>`${k} ${v}곳`).join(" · ")});
+  if(zones.length)ins.push({title:`가장 많이 둘러본 구역: ${zones[0][0]}`,body:zones.slice(0,3).map(([k,v])=>`${k} ${v}곳`).join(" · ")});
+  while(ins.length<3)ins.push({title:"기록을 더 모으면 인사이트가 풍부해져요",body:"부스별 특징과 스마트홈 적용 포인트를 채워 주세요."});
+  const rec=items.slice().sort((a,c)=>({"상":0,"중":1,"하":2,"":3}[a.relevance||""]-{"상":0,"중":1,"하":2,"":3}[c.relevance||""])||((c.interest||0)-(a.interest||0))).slice(0,3)
+    .map(b=>({company:str(b.company),why:str(b.smPoint)||str(b.products)||"관심도 "+(b.interest||0)}));
+  return {headline:`스마트홈 관점으로 ${items.length}곳을 둘러봤고, 그중 ${hi.length+mid.length}곳이 사업에 참고할 만합니다.`,insights:ins.slice(0,3),recommend:rec,ai:false};
+}
+async function getInsight(items,st){
+  const key=items.map(b=>b.id+":"+(b.updatedAt||0)).join(",");
+  if(S.insightCache&&S.insightCache.key===key)return S.insightCache.val;
+  let val=null;
+  if(S.sample){
+    st.textContent="AI가 스마트홈 인사이트를 정리하는 중…";
+    try{
+      const r=await S.sample.json(`다음은 우리 팀(아파트·주거용 스마트홈 사업)이 "2026 스마트 건설·안전·AI 엑스포"에서 둘러본 부스 기록입니다.
+발표 자료의 '한 장 요약' 슬라이드에 넣을 내용을 기록에 있는 사실만 근거로 만드세요. 기록에 없는 회사·수치·사실은 만들지 마세요.
+JSON 하나만 출력:
+{"headline":"전체를 한 문장으로 요약한 결론(45자 이내)",
+ "insights":[{"title":"스마트홈 관점 인사이트 제목(20자 이내)","body":"근거가 된 업체·기술을 넣은 설명(60자 이내)"}],   // 정확히 3개
+ "recommend":[{"company":"기록에 있는 업체명","why":"후속 미팅을 추천하는 이유(30자 이내)"}]}   // 최대 3개
+기록:
+${reportText()}`,{modelTier:"default",cache:false});
+      const ins=(Array.isArray(r&&r.insights)?r.insights:[]).map(o=>({title:str(o.title).slice(0,40),body:str(o.body).slice(0,120)})).filter(o=>o.title).slice(0,3);
+      const names=new Set(items.map(b=>normName(b.company)));
+      const rec=(Array.isArray(r&&r.recommend)?r.recommend:[]).map(o=>({company:str(o.company),why:str(o.why).slice(0,60)})).filter(o=>names.has(normName(o.company))).slice(0,3);
+      if(ins.length===3&&str(r.headline))val={headline:str(r.headline).slice(0,80),insights:ins,recommend:rec.length?rec:fallbackInsight(items).recommend,ai:true};
+    }catch(e){}
+  }
+  if(!val)val=fallbackInsight(items);
+  S.insightCache={key,val};return val;
+}
+
+$("pptBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("pptBtn");btn.disabled=true;st.textContent="PPTX 준비 중…";
+  try{
+    await loadPptx();
+    const T={bg:"F7F9F8",ink:"1B2433",green:"14634A",green2:"1E8A5F",mint:"E8F5EF",mintLine:"BFE3D2",grey:"6B7280",soft:"A3ABB5",line:"E3E8E6",white:"FFFFFF"};
+    const F="Malgun Gothic";
+    const SH={type:"outer",blur:8,offset:2,angle:90,color:"000000",opacity:0.07};
+    const p=new window.PptxGenJS();p.layout="LAYOUT_WIDE";p.title="2026 스마트 건설·안전·AI 엑스포 스마트홈 부스 리포트";
+    const items=sortedForReport();
+    const pad=n=>String(n).padStart(2,"0");
+    const RX=p.ShapeType.roundRect;
+    const card=(s,x,y,w,h,o={})=>s.addShape(RX,{x,y,w,h,rectRadius:o.r??0.14,fill:{color:o.fill||T.white},line:{color:o.line||T.line,width:o.lw||0.75},shadow:o.noShadow?undefined:SH});
+    const pill=(s,text,x,y)=>{const w=Math.min(6,0.5+text.length*0.17);
+      s.addShape(RX,{x,y,w,h:0.42,rectRadius:0.21,fill:{color:T.mint},line:{color:T.mintLine,width:1}});
+      s.addText([{text:"● ",options:{color:T.green,fontSize:10}},{text,options:{color:T.green,bold:true,fontSize:13}}],{x,y,w,h:0.42,align:"center",valign:"middle",fontFace:F,margin:0});};
+    const counter=(s,i,n)=>s.addText([{text:pad(i),options:{color:T.ink}},{text:" / "+pad(n),options:{color:T.soft}}],{x:10.6,y:0.45,w:2.13,h:0.42,align:"right",fontFace:F,fontSize:16,bold:true,margin:0});
+    const title=(s,l1,l2,size=30,y=1.1)=>s.addText([{text:l1,options:{color:T.ink,breakLine:true}},{text:l2,options:{color:T.green}}],{x:0.6,y,w:10.2,h:size*0.042,fontFace:F,fontSize:size,bold:true,valign:"top",margin:0,fit:"shrink",lineSpacingMultiple:1.05});
+    const banner=(s,text,y=6.55)=>{s.addShape(RX,{x:0.6,y,w:12.13,h:0.62,rectRadius:0.14,fill:{color:T.green},line:{color:T.green}});
+      s.addText(text,{x:0.85,y,w:11.7,h:0.62,fontFace:F,fontSize:15,bold:true,color:T.white,valign:"middle",margin:0,fit:"shrink"});};
+    const foot=s=>s.addText("2026 스마트 건설·안전·AI 엑스포 · 스마트홈 부스 노트",{x:7.2,y:7.18,w:5.53,h:0.25,fontFace:F,fontSize:9,color:T.soft,align:"right",margin:0});
+    const relPill=(s,rel,x,y)=>{if(!rel)return;const c={"상":T.green,"중":"A86A00","하":T.grey}[rel];
+      s.addShape(RX,{x,y,w:1.35,h:0.4,rectRadius:0.2,fill:{color:T.white},line:{color:c,width:1.5}});
+      s.addText("스마트홈 "+rel,{x,y,w:1.35,h:0.4,align:"center",valign:"middle",fontFace:F,fontSize:12,bold:true,color:c,margin:0});};
+    const stars=n=>n?"★".repeat(n)+"☆".repeat(5-n):"";
+
+    /* build slide plan first so page numbers are known */
+    const plan=[];
+    plan.push({k:"cover"});
+    plan.push({k:"summary"});
+    const INS=await getInsight(items,st);
+    for(let i=0;i<items.length;i+=6)plan.push({k:"list",rows:items.slice(i,i+6),start:i,part:Math.floor(i/6)+1,parts:Math.ceil(items.length/6)});
+    const zones={};items.forEach(b=>{const z=str(b.zone)||"기타·직접 입력";(zones[z]=zones[z]||[]).push(b);});
+    if(Object.keys(zones).length>1||!zones["기타·직접 입력"])plan.push({k:"zones"});
+    const aiLines=aiSumText().split("\n").map(l=>l.trim()).filter(Boolean);
+    for(let i=0;i<aiLines.length;i+=8)plan.push({k:"ai",lines:aiLines.slice(i,i+8)});
+    const heavy=b=>arr(b.imageIds).length>4||str(b.memo).length>60||arr(b.features).length>5||str(b.smPoint).length>90||str(b.contact).length>70;
+    items.forEach((b,i)=>{plan.push({k:"booth",b,i,more:heavy(b)});if(heavy(b))plan.push({k:"booth2",b,i});});
+    const N=plan.length;
+    const shN=items.filter(b=>b.relevance==="상"||b.relevance==="중").length;
+    const hiN=items.filter(b=>(b.interest||0)>=4).length;
+
+    for(let pi=0;pi<N;pi++){
+      const P=plan[pi];const s=p.addSlide();s.background={color:T.bg};
+      if(P.k==="cover"){
+        pill(s,"2026 스마트 건설·안전·AI 엑스포",0.6,0.7);
+        title(s,"스마트홈 관점으로 본","부스 탐방 리포트",44,1.45);
+        s.addText([{text:"킨텍스 제1전시장 3·4홀 · 2026. 11. 25.–27.   ",options:{color:T.grey}},{text:"정리 "+dateStr(),options:{color:T.green,bold:true}}],{x:0.6,y:3.45,w:12,h:0.45,fontFace:F,fontSize:16,margin:0});
+        [[items.length,"방문한 부스"],[shN,"스마트홈 관련성 상·중"],[hiN,"관심도 ★4 이상"]].forEach(([v,l],k)=>{
+          const x=0.6+k*4.12;card(s,x,4.2,3.89,1.75);
+          s.addShape(RX,{x:x+0.3,y:4.5,w:0.62,h:0.62,rectRadius:0.12,fill:{color:k===0?T.green:T.mint},line:{color:k===0?T.green:T.mint}});
+          s.addText(pad(k+1),{x:x+0.3,y:4.5,w:0.62,h:0.62,align:"center",valign:"middle",fontFace:F,fontSize:15,bold:true,color:k===0?T.white:T.green,margin:0});
+          s.addText([{text:String(v),options:{fontSize:34,bold:true,color:T.ink}},{text:" 곳",options:{fontSize:16,bold:true,color:T.grey}}],{x:x+1.1,y:4.35,w:2.6,h:0.85,fontFace:F,valign:"middle",margin:0});
+          s.addText(l,{x:x+1.1,y:5.15,w:2.7,h:0.45,fontFace:F,fontSize:13,color:T.grey,margin:0});});
+        banner(s,"스마트홈 관련성이 높은 업체부터 정리했어요. 업체별 사진과 특징은 뒤 페이지에 있습니다.");
+        counter(s,pi+1,N);
+      }else if(P.k==="summary"){
+        pill(s,"한 장 요약",0.6,0.45);counter(s,pi+1,N);
+        title(s,`참관 부스 ${items.length}곳에서 찾은`,"스마트홈 인사이트",30,1.1);
+        /* 왼쪽: 참관 부스 목록 */
+        const LX=0.6,LW=4.75,LY=2.45,LH=3.95;
+        card(s,LX,LY,LW,LH);
+        s.addText([{text:"참관 부스",options:{bold:true,color:T.ink}},{text:`  ${items.length}곳 · 관련성 높은 순`,options:{color:T.grey,fontSize:10}}],{x:LX+0.25,y:LY+0.15,w:LW-0.5,h:0.35,fontFace:F,fontSize:13,margin:0,valign:"middle"});
+        const maxRows=11,show=items.length>maxRows?items.slice(0,maxRows-1):items;
+        const rh=Math.min(0.4,(LH-0.75)/Math.max(show.length+(items.length>maxRows?1:0),1));
+        show.forEach((b,r)=>{const y=LY+0.6+r*rh;const c={"상":T.green,"중":"A86A00","하":T.soft}[b.relevance]||T.soft;
+          s.addText([{text:"● ",options:{color:c,fontSize:9}},{text:(str(b.booth)||"—").padEnd(5," ")+"  ",options:{color:T.grey,fontSize:10}},{text:str(b.company)||"(업체명 없음)",options:{color:T.ink,bold:b.relevance==="상",fontSize:11}},{text:b.relevance?"  "+b.relevance:"",options:{color:c,bold:true,fontSize:10}}],
+            {x:LX+0.25,y,w:LW-0.5,h:rh,fontFace:F,margin:0,valign:"middle",fit:"shrink"});});
+        if(items.length>maxRows)s.addText(`외 ${items.length-show.length}곳 → 다음 장 목록 참고`,{x:LX+0.25,y:LY+0.6+show.length*rh,w:LW-0.5,h:rh,fontFace:F,fontSize:10,color:T.grey,margin:0,valign:"middle"});
+        /* 오른쪽: 인사이트 3개 */
+        const RX0=5.55,RW=7.18;
+        INS.insights.forEach((o,k)=>{const y=2.45+k*0.92,first=k===0;
+          card(s,RX0,y,RW,0.82,{line:first?T.green:T.line,lw:first?1.5:0.75});
+          s.addShape(RX,{x:RX0+0.2,y:y+0.17,w:0.48,h:0.48,rectRadius:0.1,fill:{color:first?T.green:T.mint},line:{color:first?T.green:T.mint}});
+          s.addText(pad(k+1),{x:RX0+0.2,y:y+0.17,w:0.48,h:0.48,align:"center",valign:"middle",fontFace:F,fontSize:13,bold:true,color:first?T.white:T.green,margin:0});
+          s.addText(o.title,{x:RX0+0.85,y:y+0.07,w:RW-1.05,h:0.36,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,valign:"middle",fit:"shrink"});
+          s.addText(o.body,{x:RX0+0.85,y:y+0.42,w:RW-1.05,h:0.34,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle",fit:"shrink"});});
+        /* 후속 미팅 추천 */
+        const ry=2.45+3*0.92;
+        card(s,RX0,ry,RW,6.4-ry,{fill:T.mint,line:T.mintLine,noShadow:true});
+        s.addText("후속 미팅 추천",{x:RX0+0.2,y:ry+0.08,w:2,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+        s.addText(INS.recommend.flatMap(o=>[{text:"✓ "+o.company,options:{bold:true,color:T.ink}},{text:"   "+o.why,options:{color:T.grey,fontSize:10,breakLine:true}}]),
+          {x:RX0+0.2,y:ry+0.36,w:RW-0.4,h:6.4-ry-0.42,fontFace:F,fontSize:11,margin:0,valign:"top",fit:"shrink",paraSpaceAfter:2});
+        banner(s,INS.headline);
+        if(!INS.ai)s.addText("AI를 쓸 수 없어 기록된 수치로 요약했어요.",{x:0.6,y:7.18,w:6,h:0.25,fontFace:F,fontSize:9,color:T.soft,margin:0});
+      }else if(P.k==="list"){
+        pill(s,"전체 방문 업체",0.6,0.45);counter(s,pi+1,N);
+        title(s,"방문 업체",P.parts>1?`한눈에 보기 (${P.part}/${P.parts})`:"한눈에 보기",30,1.1);
+        P.rows.forEach((b,r)=>{
+          const y=2.45+r*0.78,top=b.relevance==="상";
+          card(s,0.6,y,12.13,0.68,{line:top?T.green:T.line,lw:top?1.5:0.75});
+          s.addShape(RX,{x:0.82,y:y+0.11,w:0.46,h:0.46,rectRadius:0.1,fill:{color:top?T.green:T.mint},line:{color:top?T.green:T.mint}});
+          s.addText(pad(P.start+r+1),{x:0.82,y:y+0.11,w:0.46,h:0.46,align:"center",valign:"middle",fontFace:F,fontSize:12,bold:true,color:top?T.white:T.green,margin:0});
+          s.addText([{text:str(b.company)||"(업체명 없음)",options:{bold:true,color:T.ink,fontSize:15}},{text:"   "+[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),options:{color:T.green,fontSize:11,bold:true}}],{x:1.45,y:y+0.04,w:7.9,h:0.34,fontFace:F,margin:0,valign:"middle",fit:"shrink"});
+          s.addText(str(b.products)||arr(b.features).join(" · ")||" ",{x:1.45,y:y+0.36,w:7.9,h:0.28,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle",fit:"shrink"});
+          relPill(s,b.relevance,9.55,y+0.14);
+          s.addText(stars(b.interest),{x:11.0,y:y+0.14,w:1.55,h:0.4,fontFace:F,fontSize:12,color:"E0A800",align:"right",valign:"middle",margin:0});
+        });
+        foot(s);
+      }else if(P.k==="zones"){
+        pill(s,"전시 구역별",0.6,0.45);counter(s,pi+1,N);
+        title(s,"어느 구역에서","가장 많이 봤을까",30,1.1);
+        const zs=Object.entries(zones).sort((a,c)=>c[1].length-a[1].length).slice(0,6);
+        zs.forEach(([z,bs],k)=>{const x=0.6+(k%3)*4.12,y=2.45+Math.floor(k/3)*2.0;const first=k===0;
+          card(s,x,y,3.89,1.85,{line:first?T.green:T.line,lw:first?1.5:0.75});
+          s.addText(z,{x:x+0.3,y:y+0.22,w:2.4,h:0.4,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,fit:"shrink"});
+          s.addText([{text:String(bs.length),options:{fontSize:26,bold:true,color:T.green}},{text:" 곳",options:{fontSize:12,color:T.grey,bold:true}}],{x:x+2.6,y:y+0.12,w:1.1,h:0.55,align:"right",fontFace:F,margin:0});
+          s.addText(bs.map(b=>str(b.company)).join(" · "),{x:x+0.3,y:y+0.75,w:3.3,h:0.95,fontFace:F,fontSize:11,color:T.grey,valign:"top",margin:0,fit:"shrink"});});
+        foot(s);
+      }else if(P.k==="ai"){
+        pill(s,"AI 총평",0.6,0.45);counter(s,pi+1,N);
+        title(s,"현장 기록으로 본","핵심 인사이트",30,1.1);
+        const step=Math.min(0.78,4.7/P.lines.length),rh=step-0.1;
+        P.lines.forEach((l,r)=>{const y=2.45+r*step;
+          card(s,0.6,y,12.13,rh);
+          s.addShape(RX,{x:0.82,y:y+(rh-0.4)/2,w:0.4,h:0.4,rectRadius:0.1,fill:{color:T.green},line:{color:T.green}});
+          s.addText("✓",{x:0.82,y:y+(rh-0.4)/2,w:0.4,h:0.4,align:"center",valign:"middle",fontSize:14,bold:true,color:T.white,margin:0});
+          s.addText(l,{x:1.45,y:y+0.04,w:11.05,h:rh-0.08,fontFace:F,fontSize:14,color:T.ink,valign:"middle",margin:0,fit:"shrink"});});
+        foot(s);
+      }else if(P.k==="booth"){
+        const b=P.b;
+        st.textContent=`슬라이드 만드는 중 ${P.i+1}/${items.length}`;
+        pill(s,str(b.zone)||"방문 부스",0.6,0.45);counter(s,pi+1,N);
+        const sub=[b.booth?"부스 "+str(b.booth):"",arr(b.categories).join(" · ")].filter(Boolean).join("  |  ")||" ";
+        title(s,str(b.company)||"(업체명 없음)",sub,28,1.1);
+        relPill(s,b.relevance,11.38,1.18);
+        if(b.interest)s.addText(stars(b.interest),{x:10.6,y:1.65,w:2.13,h:0.35,fontFace:F,fontSize:13,color:"E0A800",align:"right",margin:0});
+        const imgs=[];for(const id of arr(b.imageIds).slice(0,4)){try{imgs.push(await imgData(id));}catch(e){}}
+        let rx=0.6,rw=12.13;
+        if(imgs.length){
+          card(s,0.6,2.45,5.6,imgs.length>1?2.9:3.9);
+          s.addImage(fit(imgs[0],0.72,2.57,5.36,(imgs.length>1?2.9:3.9)-0.24));
+          imgs.slice(1).forEach((im,k)=>{const x=0.6+k*1.9;card(s,x,5.47,1.8,0.88,{noShadow:true});s.addImage(fit(im,x+0.06,5.53,1.68,0.76));});
+          rx=6.45;rw=6.28;
+        }
+        let y=2.45;
+        const box=(label,body,h,o={})=>{card(s,rx,y,rw,h,o);
+          s.addText(label,{x:rx+0.25,y:y+0.12,w:rw-0.5,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+          s.addText(body,{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.52,fontFace:F,fontSize:13,color:T.ink,valign:"top",margin:0,fit:"shrink"});y+=h+0.12;};
+        if(b.products)box("주요 제품·기술",str(b.products),0.95);
+        const fAll=arr(b.features),f=P.more&&fAll.length>5?fAll.slice(0,4):fAll.slice();
+        if(P.more&&fAll.length>5)f.push(`외 ${fAll.length-4}개 → 다음 장`);
+        if(f.length){const h=Math.min(2.2,0.55+f.length*0.36);card(s,rx,y,rw,h);
+          s.addText("핵심 특징",{x:rx+0.25,y:y+0.12,w:rw-0.5,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+          s.addText(f.flatMap(t=>[{text:"✓  ",options:{color:T.green,bold:true}},{text:t,options:{color:T.ink,breakLine:true}}]),{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.52,fontFace:F,fontSize:13,valign:"top",margin:0,fit:"shrink",paraSpaceAfter:3});
+          y+=h+0.12;}
+        const rest=6.35-y;
+        const smShown=!!(b.smPoint&&rest>0.6);
+        if(P.more&&plan[pi+1])plan[pi+1].smShown=smShown&&str(b.smPoint).length<=90;
+        if(smShown)box("스마트홈 적용 포인트",str(b.smPoint),Math.min(1.1,rest),{fill:T.mint,line:T.mintLine,noShadow:true});
+        else if(b.contact&&rest>0.6)box("연락처",str(b.contact),Math.min(0.8,rest));
+        const cut=(t,n)=>t.length>n?t.slice(0,n).trimEnd()+"… → 다음 장":t;
+        const bt=b.memo?"현장 메모 · "+(P.more?cut(str(b.memo),38):str(b.memo)):b.contact?"연락처 · "+str(b.contact):b.smPoint&&!(rest>0.6)?"스마트홈 적용 · "+str(b.smPoint):"";
+        if(bt)banner(s,bt);else foot(s);
+      }else if(P.k==="booth2"){
+        const b=P.b;
+        pill(s,str(b.zone)||"방문 부스",0.6,0.45);counter(s,pi+1,N);
+        title(s,str(b.company)||"(업체명 없음)","상세 · 사진과 메모",28,1.1);
+        const imgs=[];for(const id of arr(b.imageIds).slice(4,12)){try{imgs.push(await imgData(id,900));}catch(e){}}
+        let rx=0.6,rw=12.13;
+        if(imgs.length){
+          const cols=imgs.length>4?4:imgs.length>2?2:imgs.length,rows=Math.ceil(imgs.length/cols);
+          const gw=6.9,gh=4.0,cw=(gw-(cols-1)*0.12)/cols,ch=(gh-(rows-1)*0.12)/rows;
+          imgs.forEach((im,k)=>{const x=0.6+(k%cols)*(cw+0.12),y=2.45+Math.floor(k/cols)*(ch+0.12);
+            card(s,x,y,cw,ch,{noShadow:true});s.addImage(fit(im,x+0.06,y+0.06,cw-0.12,ch-0.12));});
+          rx=7.75;rw=4.98;
+        }
+        const blocks=[];
+        if(str(b.memo))blocks.push(["현장 메모",str(b.memo),3]);
+        const fAll=arr(b.features);if(fAll.length>5)blocks.push(["특징 (계속)",fAll.slice(4).map(t=>"✓ "+t).join("\n"),Math.min(3,fAll.length-4)]);
+        if(str(b.smPoint)&&!P.smShown)blocks.push(["스마트홈 적용 포인트",str(b.smPoint),2]);
+        if(str(b.contact))blocks.push(["연락처",str(b.contact),1]);
+        const totalW=blocks.reduce((a,x)=>a+x[2],0)||1,avail=4.0-(blocks.length-1)*0.12;let y=2.45;
+        blocks.forEach(([label,body,w])=>{const h=Math.max(0.8,avail*w/totalW);
+          card(s,rx,y,rw,h,label==="스마트홈 적용 포인트"?{fill:T.mint,line:T.mintLine,noShadow:true}:{});
+          s.addText(label,{x:rx+0.25,y:y+0.12,w:rw-0.5,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+          s.addText(body,{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.52,fontFace:F,fontSize:12,color:T.ink,valign:"top",margin:0,fit:"shrink"});y+=h+0.12;});
+        const extra=arr(b.imageIds).length-12;
+        banner(s,extra>0?`사진이 ${extra}장 더 있어요. 전체 사진은 앱에서 볼 수 있습니다.`:"앞 장에 이어지는 상세 내용입니다.");
+      }
+    }
+    st.textContent="파일 만드는 중…";
+    const blob=await p.write({outputType:"blob"});
+    await S.downloads.save({filename:EXPORT_NAME+".pptx",data:blob});
+    st.textContent="PPTX를 저장했어요.";
+  }catch(e){
+    st.textContent=exportErr(e,"PPTX");
+  }finally{btn.disabled=false;}
+});
+$("aiSumBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.sample){st.textContent="이 화면에서는 AI 총평을 쓸 수 없어요.";return;}
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("aiSumBtn");btn.disabled=true;st.textContent="총평 작성 중…";const box=$("aiSum");box.hidden=false;box.textContent="";
+  try{
+    const r=await S.sample(`다음은 우리 팀이 "2026 스마트 건설·안전·AI 엑스포"에서 스마트홈 관점으로 둘러본 부스 기록입니다. 팀원 공유용 총평을 한국어로 작성하세요.
+형식: 1) 한 줄 요약 2) 눈에 띈 기술 트렌드 3가지 3) 우선 후속 미팅을 추천할 업체 3곳과 이유 4) 우리 스마트홈 사업에 대한 시사점 2~3개. 기록에 없는 사실은 만들지 마세요. 마크다운 제목 없이 번호와 짧은 문장으로.
+
+${reportText()}`,{modelTier:"default",cache:false,onText:u=>{box.textContent=u.text;}});
+    box.textContent=r.text;
+    await getInsight(sortedForReport(),st);renderReport();
+    st.textContent="총평과 요약 인사이트를 만들었어요. 복사하거나 문서로 받으면 함께 들어갑니다.";
+  }catch(e){box.hidden=true;st.textContent=e&&e.code==="rate_limited"?"요청이 많아요. 잠시 뒤 다시 눌러 주세요.":"총평을 만들지 못했어요.";}
+  finally{btn.disabled=false;}
+});
+
+/* ---------- 8. 오프라인 저장 대기열 (이 기기의 IndexedDB) ---------- */
+let qdbP=null;
+function qdb(){
+  if(qdbP)return qdbP;
+  qdbP=new Promise(res=>{try{const r=indexedDB.open("booth-queue",1);
+    r.onupgradeneeded=()=>{try{r.result.createObjectStore("jobs",{keyPath:"id",autoIncrement:true});}catch(e){}};
+    r.onsuccess=()=>res(r.result);r.onerror=()=>res(null);r.onblocked=()=>res(null);}catch(e){res(null);}});
+  return qdbP;
+}
+function qReq(mode,fn){return qdb().then(d=>new Promise(res=>{if(!d)return res(null);
+  try{const t=d.transaction("jobs",mode);const rq=fn(t.objectStore("jobs"));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>res(null);t.onabort=()=>res(null);}catch(e){res(null);}}));}
+const qAll=async()=>(await qReq("readonly",s=>s.getAll()))||[];
+const qAdd=job=>qReq("readwrite",s=>s.add(job));
+const qDel=id=>qReq("readwrite",s=>s.delete(id));
+const PERM_ERR=["not_granted","not_uploader","quota_or_state","too_large","unsupported_type","no_assets","revoked","capability_disabled","capability_removed","invalid_request","invalid_argument","quota_exceeded"];
+const retryable=e=>!navigator.onLine||!(e&&PERM_ERR.includes(e.code));
+async function refreshQueueBar(){
+  const n=(await qAll()).length;const bar=$("queueBar");
+  if(!n){bar.hidden=true;return;}
+  $("queueText").textContent=`이 폰에 임시 저장된 기록 ${n}건 · 인터넷이 연결되면 자동으로 올려요`;bar.hidden=false;
+}
+let qRunning=false;
+async function processQueue(manual){
+  if(qRunning)return;if(!S.db||!S.assets){if(manual)$("queueText").textContent="로그인과 사진 올리기 권한이 있어야 올릴 수 있어요.";return;}
+  if(!navigator.onLine){if(manual)$("queueText").textContent="아직 인터넷이 연결되지 않았어요.";return;}
+  const items=await qAll();if(!items.length){refreshQueueBar();return;}
+  qRunning=true;const j=job(`임시 저장된 기록 ${items.length}건을 올리는 중…`);let ok=0;
+  try{
+    for(const it of items){
+      j.set(`임시 저장된 기록 올리는 중 ${ok+1}/${items.length}`);
+      if(it.kind==="quick")await quickCore(it.blobs||[],null);
+      else if(it.kind==="form"){
+        const ids=[...(it.existingIds||[]),...await uploadBlobs(it.blobs||[])];
+        const data=Object.assign({},it.data,{imageIds:ids,coverIndex:0,updatedAt:Date.now()});
+        if(it.cardBlob)data.cardImageId=(await S.assets.upload(it.cardBlob,{type:"image/jpeg"})).id;
+        const ref=await S.db.collection("booths").add(data);
+        if(!S.booths.some(x=>x.id===ref.id))S.booths.push(Object.assign({},data,{id:ref.id}));
+      }
+      await qDel(it.id);ok++;
+    }
+    j.done(`임시 저장된 기록 ${ok}건을 모두 올렸어요.`);
+  }catch(err){j.fail(`${ok}건 올림 · 나머지는 연결이 안정되면 다시 시도해요.`);}
+  finally{qRunning=false;renderList();refreshQueueBar();}
+}
+window.addEventListener("online",()=>processQueue(false));
+setInterval(()=>processQueue(false),60000);
+$("queueBtn").addEventListener("click",()=>processQueue(true));
+
+/* 원탭 기록 본체: 업로드 → AI → 저장 (대기열에서도 같이 씀) */
+async function quickCore(blobs,j){
+  const set=t=>j&&j.set(t);
+  set("원탭 기록: 사진 올리는 중…");
+  const ids=await uploadBlobs(blobs);
+  let data={},note="";
+  if(S.sample){set("원탭 기록: AI가 사진 읽는 중…");
+    try{const {r,m}=await analyzeBooth(blobs);data=dataFromResult(r,m);}catch(err){note=" ("+aiErrMsg(err)+" 사진만 저장했어요)";}}
+  else note=" (AI를 쓸 수 없어 사진만 저장했어요)";
+  const res=await saveAuto(data,ids);
+  return {res,data,note};
+}
+
+/* ---------- 7. 중복 기록 합치기 ---------- */
+function dupCandidates(b){
+  const nb=normBooth(b.booth),nn=normName(b.company);
+  return S.booths.filter(x=>x.id!==b.id&&((nb&&normBooth(x.booth)===nb&&(EXH.filter(y=>y.b===nb).length<2||normName(x.company)===nn))||(nn.length>=2&&normName(x.company)===nn)));
+}
+async function mergeInto(target,src){
+  const uniq=a=>[...new Set(a.filter(Boolean))];
+  const patch={imageIds:uniq([...arr(target.imageIds),...arr(src.imageIds)]),
+    features:uniq([...arr(target.features),...arr(src.features)]),categories:uniq([...arr(target.categories),...arr(src.categories)]),
+    interest:Math.max(target.interest||0,src.interest||0),needsReview:!!(target.needsReview||src.needsReview),updatedAt:Date.now()};
+  for(const k of ["company","booth","zone","enName","relevance","products","smPoint","cardImageId"])if(!str(target[k])&&str(src[k]))patch[k]=src[k];
+  const join=(a,b,sep)=>{a=str(a).trim();b=str(b).trim();return !a?b:!b||a.includes(b)?a:a+sep+b;};
+  patch.memo=join(target.memo,src.memo,"\n— ");patch.contact=join(target.contact,src.contact," / ");
+  if(str(target.products)&&str(src.products)&&!str(target.products).includes(str(src.products)))patch.products=join(target.products,src.products," / ");
+  await S.db.doc("booths/"+target.id).update(patch);
+  await S.db.doc("booths/"+src.id).delete();
+  Object.assign(target,patch);S.booths=S.booths.filter(x=>x.id!==src.id);
+}
+function mergeUI(b){
+  const box=el("div",{class:"stack",style:"gap:8px"});
+  const dups=dupCandidates(b);
+  const others=S.booths.filter(x=>x.id!==b.id);
+  if(!others.length)return null;
+  if(dups.length)box.append(el("div",{class:"notice",text:`같은 업체로 보이는 기록이 ${dups.length}개 더 있어요. 합치면 사진·특징·메모가 이 기록 하나로 모이고 다른 기록은 지워져요.`}));
+  const sel=el("select",{id:"mergeSel"},...[...dups,...others.filter(x=>!dups.includes(x))].map(x=>
+    el("option",{value:x.id,text:`${dups.includes(x)?"[중복 의심] ":""}${str(x.company)||"(업체명 없음)"}${x.booth?" · "+str(x.booth):""} · 사진 ${arr(x.imageIds).length}장 · ${fmtTime(x.createdAt)}`})));
+  const btn=el("button",{class:"btn",type:"button",text:"이 기록으로 합치기"});
+  const msg=el("div",{class:"status"});
+  let armed=null;
+  btn.addEventListener("click",async()=>{
+    const src=S.booths.find(x=>x.id===sel.value);if(!src)return;
+    if(armed!==src.id){armed=src.id;btn.textContent="한 번 더 누르면 합쳐요";msg.textContent=`‘${str(src.company)||"(업체명 없음)"}’ 기록을 이 기록에 합치고 지웁니다.`;setTimeout(()=>{armed=null;btn.textContent="이 기록으로 합치기";},5000);return;}
+    btn.disabled=true;msg.textContent="합치는 중…";
+    try{await mergeInto(b,src);renderList();renderDetail();}
+    catch(e){btn.disabled=false;msg.className="status err";msg.textContent="합치지 못했어요. 권한과 인터넷 연결을 확인해 주세요.";}
+  });
+  box.append(el("div",{class:"row"},sel,btn),msg);
+  if(!dups.length){const d=el("details",null,el("summary",{text:"다른 기록과 합치기",style:"cursor:pointer;color:var(--muted);font-size:14px"}),box);return d;}
+  return box;
+}
+
+/* ---------- 9. 데이터 백업 ---------- */
+LIBS.JSZip="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js";
+const ymd=()=>{const d=new Date();return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");};
+function backupData(){return {app:"expo-booth-notes",version:1,exportedAt:new Date().toISOString(),
+  booths:S.booths.map(b=>Object.assign({},b)),route:S.route||null};}
+$("bkJson").addEventListener("click",async()=>{
+  const st=$("bkStatus");if(!S.booths.length){st.textContent="백업할 기록이 없어요.";return;}
+  try{await S.downloads.save({filename:`${EXPORT_NAME}-백업-${ymd()}.json`,data:JSON.stringify(backupData(),null,2)});st.textContent=`기록 ${S.booths.length}건을 백업했어요.`;}
+  catch(e){st.textContent=e&&e.code==="declined"?"저장을 취소했어요.":"백업 파일을 저장하지 못했어요.";}
+});
+$("bkZip").addEventListener("click",async()=>{
+  const st=$("bkStatus");if(!S.booths.length){st.textContent="백업할 기록이 없어요.";return;}
+  const btn=$("bkZip");btn.disabled=true;st.textContent="압축 준비 중…";
+  try{
+    await loadLib("JSZip");const zip=new window.JSZip();
+    zip.file("records.json",JSON.stringify(backupData(),null,2));
+    zip.file("정리본.md",mdFull(insightNow()));
+    const items=sortedForReport();let n=0,fail=0;const total=items.reduce((a,b)=>a+arr(b.imageIds).length+(b.cardImageId?1:0),0);
+    const safe=t=>str(t).replace(/[\\/:*?"<>|]/g,"_").slice(0,40)||"업체명없음";
+    for(let i=0;i<items.length;i++){const b=items[i];const dir=`사진/${String(i+1).padStart(2,"0")}_${safe(b.company)}${b.booth?"_"+safe(b.booth):""}`;
+      const list=arr(b.imageIds).map((id,k)=>[id,`${dir}/${k+1}.jpg`]);if(b.cardImageId)list.push([b.cardImageId,`${dir}/명함.jpg`]);
+      for(const [id,path] of list){n++;st.textContent=`사진 담는 중 ${n}/${total}`;
+        try{zip.file(path,await (await fetch(blobUrl(id))).blob());}catch(e){fail++;}}}
+    st.textContent="압축하는 중…";
+    const blob=await zip.generateAsync({type:"blob",compression:"STORE"});
+    await S.downloads.save({filename:`${EXPORT_NAME}-사진포함-${ymd()}.zip`,data:blob});
+    st.textContent=`기록 ${items.length}건과 사진 ${n-fail}장을 백업했어요.`+(fail?` (사진 ${fail}장은 불러오지 못했어요)`:"");
+  }catch(e){st.textContent=e&&e.code==="declined"?"저장을 취소했어요.":e&&e.code==="too_large"?"사진이 많아 파일이 너무 커요. ‘기록 백업 (JSON)’을 먼저 받아 두세요.":"백업 파일을 만들지 못했어요.";}
+  finally{btn.disabled=false;}
+});
+$("bkRestore").addEventListener("click",()=>$("bkIn").click());
+$("bkIn").addEventListener("change",async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f)return;const st=$("bkStatus");
+  if(!S.db){st.textContent="로그인한 상태에서만 불러올 수 있어요.";return;}
+  try{
+    const d=JSON.parse(await f.text());
+    if(!d||d.app!=="expo-booth-notes"||!Array.isArray(d.booths))throw {code:"bad"};
+    let added=0,skipped=0;
+    for(const b of d.booths){
+      const id=str(b.id).replace(/[^A-Za-z0-9_\-]/g,"");
+      if(!id||S.booths.some(x=>x.id===id)){skipped++;continue;}
+      const data={};for(const k of ["company","booth","zone","enName","categories","products","features","relevance","smPoint","contact","memo","interest","imageIds","coverIndex","cardImageId","needsReview","createdAt","updatedAt","authorId"])if(b[k]!==undefined)data[k]=b[k];
+      data.categories=arr(data.categories);data.features=arr(data.features);data.imageIds=arr(data.imageIds);data.interest=Math.max(0,Math.min(5,data.interest|0));
+      await S.db.doc("booths/"+id).set(data);added++;
+    }
+    st.textContent=`백업에서 ${added}건을 되살렸어요.`+(skipped?` 이미 있는 ${skipped}건은 건너뛰었어요.`:"");
+  }catch(err){st.textContent=err&&err.code==="bad"?"이 앱에서 받은 백업 파일(JSON)이 아니에요.":"백업 파일을 불러오지 못했어요.";}
+});
+
+/* ---------- boot ---------- */
+renderList();renderCats();renderStars();renderPhotos();
+const C=window.claude;
+if(!C||!C.use){notice("이 페이지는 claude.ai에서 열어야 저장과 공유가 됩니다.");S.loaded=true;renderList();return;}
+const loadTimer=setTimeout(()=>{if(!S.loaded){S.loaded=true;notice("기록을 불러오지 못했어요. 로그인 상태와 인터넷 연결을 확인해 주세요.");renderList();}},10000);
+C.use("db").then(db=>{
+  if(!db){clearTimeout(loadTimer);S.loaded=true;notice("claude.ai에 로그인해야 부스 기록을 저장하고 팀과 함께 볼 수 있어요.");renderList();return;}
+  S.db=db;
+  db.doc("meta/route").onSnapshot(d=>{const v=d&&d.exists?d.data():null;if(v&&Array.isArray(v.items)){S.route={items:v.items.map(o=>({b:normBooth(o.b),score:Math.max(1,Math.min(3,o.score|0||1)),why:str(o.why)})),createdAt:v.createdAt};if(S.mode==="guide")renderList();}},()=>{});
+  db.collection("booths").onSnapshot(snap=>{
+    clearTimeout(loadTimer);S.loaded=true;notice("");
+    S.booths=snap.docs.map(d=>Object.assign({},d.data()||{},{id:d.id}));
+    if(!S.qKick){S.qKick=true;setTimeout(()=>processQueue(false),1500);}
+    renderList();if(S.view==="detail")renderDetail();if(S.view==="report")renderReport();resolveNames();
+  },err=>{clearTimeout(loadTimer);S.loaded=true;notice("기록을 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.");renderList();});
+});
+C.use("assets").then(a=>{S.assets=a;});
+C.use("sample").then(s=>{S.sample=s;if(!s){$("aiBox").hidden=true;$("aiSumBtn").hidden=true;}});
+C.use("dictation").then(setupDictation);
+C.use("downloads").then(d=>{S.downloads=d;$("exportRow").hidden=!d;$("bkJson").hidden=$("bkZip").hidden=!d;});
+refreshQueueBar();
+C.use("user").then(async u=>{S.user=u;if(!u)return;try{S.myId=await u.id();}catch(e){}resolveNames();});
+async function resolveNames(){
+  if(!S.user)return;const ids=[...new Set(S.booths.map(b=>str(b.authorId)).filter(Boolean))];if(!ids.length)return;
+  try{const ps=await S.user.profiles(ids);for(const id of ids)S.names[id]=(ps[id]&&ps[id].name)||"팀원";if(S.view==="detail")renderDetail();}catch(e){}
+}
+})();
+</script>

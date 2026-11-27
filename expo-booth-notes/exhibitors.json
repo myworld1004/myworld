@@ -1,0 +1,1214 @@
+[
+ {
+  "booth": "F140",
+  "zone": "주관기관",
+  "name_ko": "한국도로공사",
+  "name_en": "Korea Expressway Corporation"
+ },
+ {
+  "booth": "A140",
+  "zone": "주관기관",
+  "name_ko": "한국철도공사",
+  "name_en": "Korea Railroad Corporation"
+ },
+ {
+  "booth": "D140",
+  "zone": "주관기관",
+  "name_ko": "국가철도공단",
+  "name_en": "Korea National Railway"
+ },
+ {
+  "booth": "D150",
+  "zone": "주관기관",
+  "name_ko": "한국토지주택공사",
+  "name_en": "KOREA LAND & HOUSING CORPORATION"
+ },
+ {
+  "booth": "F150",
+  "zone": "주관기관",
+  "name_ko": "국토안전관리원",
+  "name_en": "Korea Authority of Land & Infrastructure Safety"
+ },
+ {
+  "booth": "I140",
+  "zone": "주관기관",
+  "name_ko": "한국건설기술연구원",
+  "name_en": "Korea Institute of Civil Engineering and Building Technology"
+ },
+ {
+  "booth": "A150",
+  "zone": "주관기관",
+  "name_ko": "국토교통과학기술진흥원",
+  "name_en": "Korea Agency for Infrastructure Technology Advancement"
+ },
+ {
+  "booth": "J150",
+  "zone": "주관기관",
+  "name_ko": "스마트건설얼라이언스",
+  "name_en": "Smart Construction Alliance"
+ },
+ {
+  "booth": "C109",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "보다",
+  "name_en": "Boda Co., Ltd"
+ },
+ {
+  "booth": "A125",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "엘립",
+  "name_en": "Elib Co,. Ltd."
+ },
+ {
+  "booth": "C117",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "가디언웍스",
+  "name_en": "Guardian Works Co.,Ltd."
+ },
+ {
+  "booth": "A117",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "거비메타",
+  "name_en": "GUBIMETA"
+ },
+ {
+  "booth": "E113",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "글로벌스마트솔루션",
+  "name_en": "GSS"
+ },
+ {
+  "booth": "C121",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "기람테크",
+  "name_en": "KIRAMTECH"
+ },
+ {
+  "booth": "B102",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "더세이프코리아",
+  "name_en": "THE SAFE KOREA Inc."
+ },
+ {
+  "booth": "A101",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "디알씨티에스",
+  "name_en": "Dr.CTS"
+ },
+ {
+  "booth": "A132",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "비앤알",
+  "name_en": "VAXCON"
+ },
+ {
+  "booth": "A114",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "비이인터렉티브",
+  "name_en": "Beinteractive"
+ },
+ {
+  "booth": "D102",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "상도일렉트릭",
+  "name_en": "SANGDO ELECTRIC CO.,LTD"
+ },
+ {
+  "booth": "C114",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "새임",
+  "name_en": "SEIIM Co.,Ltd."
+ },
+ {
+  "booth": "C127",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "세이지",
+  "name_en": "SAIGE Co.,Ltd"
+ },
+ {
+  "booth": "B118",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "소암컨설턴트",
+  "name_en": "SOAM Consultant"
+ },
+ {
+  "booth": "E108",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "시엑스알",
+  "name_en": "SEEXR"
+ },
+ {
+  "booth": "A124",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "심투리얼",
+  "name_en": "SIM2REAL"
+ },
+ {
+  "booth": "D114",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "씨테크솔루션",
+  "name_en": "CTEC Solution"
+ },
+ {
+  "booth": "C128",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "아이티유",
+  "name_en": "itu co., Ltd"
+ },
+ {
+  "booth": "B114",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "에스아이네트",
+  "name_en": "Si NET Corp"
+ },
+ {
+  "booth": "B117",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "에스제이티엘",
+  "name_en": "SJTL"
+ },
+ {
+  "booth": "A128",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "에이엘테크",
+  "name_en": "AL-TECH Co., Ltd."
+ },
+ {
+  "booth": "D117",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "엔더블유시",
+  "name_en": "NWC Co., Ltd."
+ },
+ {
+  "booth": "B127",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "엘렉트",
+  "name_en": "ELLECT"
+ },
+ {
+  "booth": "B132",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "엘티시큐리티",
+  "name_en": "LTsecurity co.,ltd"
+ },
+ {
+  "booth": "E117",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "엠디퍼트",
+  "name_en": "MDPERT CO., LTD."
+ },
+ {
+  "booth": "B121",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "영우테크",
+  "name_en": "YOUNGWOO TECH"
+ },
+ {
+  "booth": "B128",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "와이낫",
+  "name_en": "Y-not co.,Ltd"
+ },
+ {
+  "booth": "C118",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "워크어웨어",
+  "name_en": "Workaware"
+ },
+ {
+  "booth": "B113",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "원모어시큐리티",
+  "name_en": "OneMoreSecurity"
+ },
+ {
+  "booth": "B131",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "위험안전경보기",
+  "name_en": "RUN-T.CO.,LTD"
+ },
+ {
+  "booth": "A102",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "이성",
+  "name_en": "Isung company"
+ },
+ {
+  "booth": "A121",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "이엠엑스",
+  "name_en": "EMX"
+ },
+ {
+  "booth": "C102",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "인성",
+  "name_en": "INSUNG"
+ },
+ {
+  "booth": "D118",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "제이엠엘이디",
+  "name_en": "JM LED CO., LTD."
+ },
+ {
+  "booth": "A131",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "지브이엠 신호수 로봇 마네킹",
+  "name_en": "G V M Signal robot mannequin"
+ },
+ {
+  "booth": "A108",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "카스웍스",
+  "name_en": "CaasWorks"
+ },
+ {
+  "booth": "B122",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "컨워스",
+  "name_en": "Conworth"
+ },
+ {
+  "booth": "A122",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "케이씨티이엔씨",
+  "name_en": "KCT E&C"
+ },
+ {
+  "booth": "A105",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "케이에스엔티",
+  "name_en": "KSNT Co,. Ltd."
+ },
+ {
+  "booth": "A109",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "코어트러스트",
+  "name_en": "CORETRUST"
+ },
+ {
+  "booth": "B107",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "트윈투게더(디아지트)",
+  "name_en": "TWINTOGETHER(DAGIT)"
+ },
+ {
+  "booth": "A129",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "티엘엑스",
+  "name_en": "TL-X CO., LTD."
+ },
+ {
+  "booth": "C131",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "티제이랩스",
+  "name_en": "TJLABS"
+ },
+ {
+  "booth": "B110",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "파이퀀트",
+  "name_en": "PiQuant"
+ },
+ {
+  "booth": "A113",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "퍼스",
+  "name_en": "PULSE"
+ },
+ {
+  "booth": "F107",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "페이퍼리",
+  "name_en": "Paiperly"
+ },
+ {
+  "booth": "D113",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "포그",
+  "name_en": "POG"
+ },
+ {
+  "booth": "B124",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "피아스페이스",
+  "name_en": "PIASPACE"
+ },
+ {
+  "booth": "C113",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "현대경제연구원",
+  "name_en": "HYUNDAI RESEARCH INSTITUTE"
+ },
+ {
+  "booth": "E102",
+  "zone": "스마트 안전관리 Zone",
+  "name_ko": "현대인프라코어",
+  "name_en": "HYUNDAI INFRACORE"
+ },
+ {
+  "booth": "H102",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "고레로보틱스",
+  "name_en": "GoLe Robotics"
+ },
+ {
+  "booth": "E114",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "네모테크놀로지스",
+  "name_en": "MNEMO Technologies"
+ },
+ {
+  "booth": "E118",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "문스테크놀로지",
+  "name_en": "MOONS TECHNOLOGY CO., LTD."
+ },
+ {
+  "booth": "F112",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "솔리메틱스",
+  "name_en": "SOLIMATICS"
+ },
+ {
+  "booth": "I102",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "스패너",
+  "name_en": "Xpanner"
+ },
+ {
+  "booth": "G106",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "알티비온",
+  "name_en": "ALTIVION"
+ },
+ {
+  "booth": "G111",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "엠에프알",
+  "name_en": "MFR"
+ },
+ {
+  "booth": "F113",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "위슨테크놀로지",
+  "name_en": "WISON TECHNOLOGY"
+ },
+ {
+  "booth": "F117",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "유닛랩",
+  "name_en": "UNITLAB"
+ },
+ {
+  "booth": "F102",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "진인프라",
+  "name_en": "JIN INFRA"
+ },
+ {
+  "booth": "G102",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "탑콘소끼아포지셔닝코리아",
+  "name_en": "TOPCON SOKKIA POSITIONING KOREA"
+ },
+ {
+  "booth": "H105",
+  "zone": "로봇·건설자동화 Zone",
+  "name_ko": "플랜바이테크놀로지스",
+  "name_en": "Planby Technologies"
+ },
+ {
+  "booth": "A171",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "OpenXR융합연구단",
+  "name_en": "OpenXR Convergence Research Center"
+ },
+ {
+  "booth": "C172",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "TR정보기술",
+  "name_en": "TR Information technology"
+ },
+ {
+  "booth": "D171",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "세종측기",
+  "name_en": "SEJONG Surveying"
+ },
+ {
+  "booth": "B162",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "강산기술단",
+  "name_en": "KANGSAN"
+ },
+ {
+  "booth": "A177",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "갱폼컨설팅 넛지",
+  "name_en": "Gangform Consulting nudge. co., Ltd."
+ },
+ {
+  "booth": "C166",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "공새로",
+  "name_en": "GONGSAERO"
+ },
+ {
+  "booth": "D175",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "다온머티리얼즈",
+  "name_en": "Daon Materials"
+ },
+ {
+  "booth": "D180",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "다이나믹코어스",
+  "name_en": "Dynamicores"
+ },
+ {
+  "booth": "B167",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "디지털커브",
+  "name_en": "Digitalcurve"
+ },
+ {
+  "booth": "B172",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "라스트마일",
+  "name_en": "LASTMILE co., ltd."
+ },
+ {
+  "booth": "A165",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "마지글",
+  "name_en": "MAZIGLE"
+ },
+ {
+  "booth": "B161",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "무사퇴근",
+  "name_en": "MUSA"
+ },
+ {
+  "booth": "A175",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "삼에스테크",
+  "name_en": "3S TECH"
+ },
+ {
+  "booth": "D172",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "송산특수엘리베이터",
+  "name_en": "SONGSAN SPECIAL ELEVATORS"
+ },
+ {
+  "booth": "A168",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "슈맥스(슈니버스)",
+  "name_en": "Shoemax(Shoenivers)"
+ },
+ {
+  "booth": "C171",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "신진아이티컨설팅",
+  "name_en": "SINJIN IT CONSULTING CO., LTD"
+ },
+ {
+  "booth": "A172",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "업사이트",
+  "name_en": "UPSIGHT"
+ },
+ {
+  "booth": "B171",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "위즈엑스퍼트",
+  "name_en": "WIZEXPERT"
+ },
+ {
+  "booth": "C161",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "이피션스테크놀로지스",
+  "name_en": "Efficience Technologies Co., Ltd."
+ },
+ {
+  "booth": "C176",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "인프라스마트",
+  "name_en": "InfraSmart"
+ },
+ {
+  "booth": "C162",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "전문건설공제조합",
+  "name_en": "K-FINCO"
+ },
+ {
+  "booth": "A162",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "콘업",
+  "name_en": "conUP"
+ },
+ {
+  "booth": "E171",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "크로스팀",
+  "name_en": "CROSSTEAM"
+ },
+ {
+  "booth": "C167",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "티쉐어건설",
+  "name_en": "T.Share Construction"
+ },
+ {
+  "booth": "B168",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "티쓰리솔루션",
+  "name_en": "T3 Solution"
+ },
+ {
+  "booth": "B175",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "파이어버스터",
+  "name_en": "FIREBUSTER"
+ },
+ {
+  "booth": "A169",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "폼이즈",
+  "name_en": "FORMiS"
+ },
+ {
+  "booth": "D165",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "피식스에스씨",
+  "name_en": "P6ixSC"
+ },
+ {
+  "booth": "A181",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "하이시스템하우스",
+  "name_en": "Hisystemhouse"
+ },
+ {
+  "booth": "A161",
+  "zone": "스마트 건설관리 Zone",
+  "name_ko": "한국에스티엠",
+  "name_en": "Koreastm"
+ },
+ {
+  "booth": "L172",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "간트너코리아",
+  "name_en": "Gantner Korea"
+ },
+ {
+  "booth": "L170",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "길솔루션",
+  "name_en": "GIL Solution"
+ },
+ {
+  "booth": "J173",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "네브시스",
+  "name_en": "NAVSYS Technology"
+ },
+ {
+  "booth": "L174",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "네트워크코리아",
+  "name_en": "Netwrk Korea Co., Ltd."
+ },
+ {
+  "booth": "L176",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "대한이앤씨",
+  "name_en": "Daehan E&C"
+ },
+ {
+  "booth": "I162",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "드림티엔에스/머신가이던스",
+  "name_en": "DREAM T&S/Machine Guidance"
+ },
+ {
+  "booth": "I172",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "디케이시스템",
+  "name_en": "DK SYSTEM"
+ },
+ {
+  "booth": "K172",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "라미랩",
+  "name_en": "Lamilab.inc."
+ },
+ {
+  "booth": "K165",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "라이카 지오시스템즈 코리아 (part of Hexagon)",
+  "name_en": "Leica Geosystems Korea (part of Hexagon)"
+ },
+ {
+  "booth": "J178",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "리베라웨어코리아",
+  "name_en": "Liberaware KOREA"
+ },
+ {
+  "booth": "L180",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "리젠티앤아이",
+  "name_en": "REGENTNI"
+ },
+ {
+  "booth": "I178",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "메가판넬",
+  "name_en": "MEGAPANEL Co., Ltd."
+ },
+ {
+  "booth": "K162",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "미래아이티",
+  "name_en": "Mirae IT co.ltd"
+ },
+ {
+  "booth": "L181",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "스마트 아이리스",
+  "name_en": "SMART AIRIS"
+ },
+ {
+  "booth": "L171",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "스마트로드",
+  "name_en": "SMARTROAD Co.,Ltd."
+ },
+ {
+  "booth": "I178",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "스틸라이트",
+  "name_en": "STEELITE"
+ },
+ {
+  "booth": "K174",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "시원소프트",
+  "name_en": "C1SOFT"
+ },
+ {
+  "booth": "K182",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "쎈블락",
+  "name_en": "SSENVLAK"
+ },
+ {
+  "booth": "L161",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "씨고",
+  "name_en": "CIGO Co.,Ltd"
+ },
+ {
+  "booth": "J166",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "오스콘이엔씨",
+  "name_en": "OSCON ENC"
+ },
+ {
+  "booth": "K178",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "이노온",
+  "name_en": "Ino-on"
+ },
+ {
+  "booth": "K171",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "이제이텍",
+  "name_en": "EJtech"
+ },
+ {
+  "booth": "L166",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "이후시스",
+  "name_en": "EHOOSYS"
+ },
+ {
+  "booth": "K173",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "인프라안전",
+  "name_en": "Infra Safety, Inc."
+ },
+ {
+  "booth": "J182",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "제이투이앤씨",
+  "name_en": "J2 Engineering&Construction"
+ },
+ {
+  "booth": "L177",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "지비유",
+  "name_en": "GBYOU"
+ },
+ {
+  "booth": "L165",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "지오봇",
+  "name_en": "Geobot Co., Ltd."
+ },
+ {
+  "booth": "K166",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "진동측정장치",
+  "name_en": "TVMS IIoT"
+ },
+ {
+  "booth": "L182",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "코세코",
+  "name_en": "KOSECO"
+ },
+ {
+  "booth": "L162",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "테크윌",
+  "name_en": "TECHWILL"
+ },
+ {
+  "booth": "J162",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "포인트웍스 / FARO KOREA",
+  "name_en": "POINTWORKS / FARO KOREA"
+ },
+ {
+  "booth": "K181",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "한국안전보건협회",
+  "name_en": "CSHA"
+ },
+ {
+  "booth": "K177",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "한국장비관리리콘디션협회",
+  "name_en": "KOREA CONS. EQUIP. ASSOCIATION"
+ },
+ {
+  "booth": "J172",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "항타기 24시간 스마트 안전감시 시스템",
+  "name_en": "24-Hour Smart Safety Monitoring System for Piling Machines"
+ },
+ {
+  "booth": "L173",
+  "zone": "스마트 유지관리 Zone",
+  "name_ko": "2027스마트컨스트럭션위크",
+  "name_en": "Smart Construction Week 2027"
+ },
+ {
+  "booth": "K116",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "3D 점군 데이터 최적화 솔루션",
+  "name_en": "IGPNET CO., LTD."
+ },
+ {
+  "booth": "J105",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "엔비랩스",
+  "name_en": "ENVILABS"
+ },
+ {
+  "booth": "L126",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "더마루디자인",
+  "name_en": "Themarudesign"
+ },
+ {
+  "booth": "L111",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "도슨티",
+  "name_en": "Docenty"
+ },
+ {
+  "booth": "L124",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "메타비즈디자인",
+  "name_en": "MetaBizDesign"
+ },
+ {
+  "booth": "L101",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "몰더코리아",
+  "name_en": "Moulder Korea"
+ },
+ {
+  "booth": "J102",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "브이피케이",
+  "name_en": "VPK"
+ },
+ {
+  "booth": "K132",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "비아이엠팩토리",
+  "name_en": "BIM FACTORY"
+ },
+ {
+  "booth": "K122",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "서버키트",
+  "name_en": "serverkit"
+ },
+ {
+  "booth": "L127",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "서벡스",
+  "name_en": "SUBEX"
+ },
+ {
+  "booth": "L108",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "세라",
+  "name_en": "SERA Inc."
+ },
+ {
+  "booth": "L132",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "세이프티원",
+  "name_en": "SafetyOne"
+ },
+ {
+  "booth": "L115",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "솔리데오",
+  "name_en": "SOLIDEO Co.,Ltd"
+ },
+ {
+  "booth": "L121",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "스페이스워크",
+  "name_en": "Spacewalk"
+ },
+ {
+  "booth": "K128",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "엠폴",
+  "name_en": "MPOLE"
+ },
+ {
+  "booth": "F118",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "오토데스크",
+  "name_en": "Autodesk"
+ },
+ {
+  "booth": "L120",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "연우PC엔지니어링",
+  "name_en": "YUNWOO PCE & YTG"
+ },
+ {
+  "booth": "K106",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "유신",
+  "name_en": "Yooshin"
+ },
+ {
+  "booth": "L118",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "유앤미스튜디오 아키박스",
+  "name_en": "YOUNME ARCHBOX"
+ },
+ {
+  "booth": "K105",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "조인트디자인",
+  "name_en": "joint.design"
+ },
+ {
+  "booth": "L105",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "직스캐드 AX",
+  "name_en": "ZYXCAD AX"
+ },
+ {
+  "booth": "L102",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "징코스테크놀러지",
+  "name_en": "Gingko’s Tech"
+ },
+ {
+  "booth": "K102",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "커넥틴",
+  "name_en": "CONNECTIN Co., Ltd."
+ },
+ {
+  "booth": "L114",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "케이지오솔루션",
+  "name_en": "Kgeosolution"
+ },
+ {
+  "booth": "K101",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "트림블",
+  "name_en": "Trimble Inc."
+ },
+ {
+  "booth": "K112",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "포비콘",
+  "name_en": "FOBECON"
+ },
+ {
+  "booth": "L112",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "프롬디",
+  "name_en": "From D Co., Ltd."
+ },
+ {
+  "booth": "L131",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "하우빌드",
+  "name_en": "HOWBUILD"
+ },
+ {
+  "booth": "J130",
+  "zone": "설계 자동화 Zone",
+  "name_ko": "한국생산기술연구원 국가엔지니어링센터",
+  "name_en": "KITECH KNEC"
+ },
+ {
+  "booth": "F173",
+  "zone": "ESG Zone",
+  "name_ko": "구구",
+  "name_en": "GOOGOO"
+ },
+ {
+  "booth": "H161",
+  "zone": "ESG Zone",
+  "name_ko": "넥스비전랩",
+  "name_en": "NEXVISIONLAB Co., Ltd."
+ },
+ {
+  "booth": "G174",
+  "zone": "ESG Zone",
+  "name_ko": "대명에스코",
+  "name_en": "DAEMYUNG ESCO CO.,LTD"
+ },
+ {
+  "booth": "H174",
+  "zone": "ESG Zone",
+  "name_ko": "디더블유아이",
+  "name_en": "DW&I Co., Ltd"
+ },
+ {
+  "booth": "E174",
+  "zone": "ESG Zone",
+  "name_ko": "디월트",
+  "name_en": "DEWALT"
+ },
+ {
+  "booth": "G180",
+  "zone": "ESG Zone",
+  "name_ko": "레디로버스트머신",
+  "name_en": "READi Robust Machine"
+ },
+ {
+  "booth": "F180",
+  "zone": "ESG Zone",
+  "name_ko": "로보블럭시스템",
+  "name_en": "ROBOBLOCK SYSTEM Co., LTD"
+ },
+ {
+  "booth": "H168",
+  "zone": "ESG Zone",
+  "name_ko": "복합열원 하이브리드 K-냉방",
+  "name_en": "Composite heat source hybrid"
+ },
+ {
+  "booth": "F174",
+  "zone": "ESG Zone",
+  "name_ko": "신의환경",
+  "name_en": "SINUI"
+ },
+ {
+  "booth": "I173",
+  "zone": "ESG Zone",
+  "name_ko": "엑사트",
+  "name_en": "EXAXT Inc."
+ },
+ {
+  "booth": "H175",
+  "zone": "ESG Zone",
+  "name_ko": "이유씨엔씨",
+  "name_en": "EUCNC"
+ },
+ {
+  "booth": "H162",
+  "zone": "ESG Zone",
+  "name_ko": "인바디",
+  "name_en": "InBody"
+ },
+ {
+  "booth": "E180",
+  "zone": "ESG Zone",
+  "name_ko": "인터내셔날서비스비지니스",
+  "name_en": "ISB"
+ },
+ {
+  "booth": "H180",
+  "zone": "ESG Zone",
+  "name_ko": "코이스",
+  "name_en": "KOISS"
+ },
+ {
+  "booth": "G162",
+  "zone": "ESG Zone",
+  "name_ko": "큐엠",
+  "name_en": "QM"
+ },
+ {
+  "booth": "I167",
+  "zone": "ESG Zone",
+  "name_ko": "티푸스코리아",
+  "name_en": "TIFUS KOREA"
+ },
+ {
+  "booth": "G173",
+  "zone": "ESG Zone",
+  "name_ko": "파빅스랩",
+  "name_en": "PAVIX LAB"
+ },
+ {
+  "booth": "I161",
+  "zone": "ESG Zone",
+  "name_ko": "하이로컬",
+  "name_en": "Hilokal"
+ },
+ {
+  "booth": "D162",
+  "zone": "ESG Zone",
+  "name_ko": "한국건설기술인협회",
+  "name_en": "KOCEA"
+ },
+ {
+  "booth": "H173",
+  "zone": "ESG Zone",
+  "name_ko": "한국그린텍홀딩스",
+  "name_en": "Korea Greentech Holdings"
+ },
+ {
+  "booth": "D122",
+  "zone": "AI 특별관",
+  "name_ko": "디알티",
+  "name_en": "DRT Co.,Ltd."
+ },
+ {
+  "booth": "E127",
+  "zone": "AI 특별관",
+  "name_ko": "메이사",
+  "name_en": "Meissa"
+ },
+ {
+  "booth": "D132",
+  "zone": "AI 특별관",
+  "name_ko": "메타이노텍",
+  "name_en": "Metainnotech.Inc"
+ },
+ {
+  "booth": "D121",
+  "zone": "AI 특별관",
+  "name_ko": "무스마",
+  "name_en": "musma"
+ },
+ {
+  "booth": "C122",
+  "zone": "AI 특별관",
+  "name_ko": "비드래프트",
+  "name_en": "VIDraft"
+ },
+ {
+  "booth": "E131",
+  "zone": "AI 특별관",
+  "name_ko": "삼성물산·뉴빌리티·디버",
+  "name_en": "Samsung C&T Corporation· NEUBILITY·dver"
+ },
+ {
+  "booth": "F123",
+  "zone": "AI 특별관",
+  "name_ko": "세이프티랩",
+  "name_en": "SAFETYLAB"
+ },
+ {
+  "booth": "F129",
+  "zone": "AI 특별관",
+  "name_ko": "아이티원",
+  "name_en": "IT-ONE"
+ },
+ {
+  "booth": "D128",
+  "zone": "AI 특별관",
+  "name_ko": "에스씨에스",
+  "name_en": "SCS INC."
+ },
+ {
+  "booth": "F121",
+  "zone": "AI 특별관",
+  "name_ko": "에이치에이치에스",
+  "name_en": "HHS Co. , Ltd."
+ },
+ {
+  "booth": "E121",
+  "zone": "AI 특별관",
+  "name_ko": "토탈시스",
+  "name_en": "TOTALSYS.CO.LTD"
+ },
+ {
+  "booth": "E122",
+  "zone": "AI 특별관",
+  "name_ko": "팀워크",
+  "name_en": "TIMWORK Inc."
+ },
+ {
+  "booth": "F202",
+  "zone": "스마트 안전 체험관",
+  "name_ko": "로보아",
+  "name_en": "ROBOA Co.,Ltd."
+ },
+ {
+  "booth": "F200",
+  "zone": "스마트 안전 체험관",
+  "name_ko": "엠라인스튜디오",
+  "name_en": "MLINESTUDIO"
+ },
+ {
+  "booth": "F204",
+  "zone": "스마트 안전 체험관",
+  "name_ko": "영우산업",
+  "name_en": "Youngwoo Industries"
+ },
+ {
+  "booth": "F206",
+  "zone": "스마트 안전 체험관",
+  "name_ko": "한국경량레일",
+  "name_en": "HANKOOK RAIL SYSTEM CO., LTD."
+ },
+ {
+  "booth": "J171",
+  "zone": "글로벌 파트너",
+  "name_ko": "CSPI JAPAN",
+  "name_en": "CSPI JAPAN"
+ },
+ {
+  "booth": "F106",
+  "zone": "글로벌 파트너",
+  "name_ko": "World of Concrete Asia",
+  "name_en": "World of Concrete Asia"
+ }
+]
