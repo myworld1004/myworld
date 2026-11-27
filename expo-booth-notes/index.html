@@ -870,7 +870,7 @@ $("dlBtn").addEventListener("click",async()=>{
 function sortedForReport(){const r={"상":0,"중":1,"하":2,"":3};return [...S.booths].sort((a,c)=>(r[a.relevance||""]-r[c.relevance||""])||((c.interest||0)-(a.interest||0)));}
 const LIBS={
   PptxGenJS:"https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js",
-  docx:"https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js",
+  docx:"https://cdn.jsdelivr.net/npm/docx@9.5.1/dist/index.iife.js",
   ExcelJS:"https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"};
 function loadLib(g){
   if(window[g])return Promise.resolve();
@@ -909,8 +909,10 @@ $("docBtn").addEventListener("click",async()=>{
     const NB={style:D.BorderStyle.NONE,size:0,color:"FFFFFF"};const NOB={top:NB,bottom:NB,left:NB,right:NB};
     const LB={style:D.BorderStyle.SINGLE,size:4,color:"E3E8E6"};const LINE={top:LB,bottom:LB,left:LB,right:LB};
     const runs=(arr2,o={})=>new D.Paragraph({spacing:{before:o.before||0,after:o.after??80,line:o.line},alignment:o.align,children:arr2.map(([t,ro])=>new D.TextRun(Object.assign({text:t},ro||{})))});
-    const box=(children,o={})=>new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:NB},
-      rows:[new D.TableRow({children:[new D.TableCell({shading:{fill:o.fill||MINT},borders:o.borders||NOB,margins:{top:140,bottom:140,left:220,right:220},children})]})]});
+    /* 표 칸 너비는 모두 직접 지정한다(본문 폭 9900twip). 지정하지 않으면 Word에서 칸이 찌그러진다 */
+    const TW=9900,DXA=D.WidthType.DXA,FIX=D.TableLayoutType.FIXED;
+    const box=(children,o={})=>new D.Table({width:{size:TW,type:DXA},columnWidths:[TW],layout:FIX,borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:NB},
+      rows:[new D.TableRow({children:[new D.TableCell({width:{size:TW,type:DXA},shading:{fill:o.fill||MINT},borders:o.borders||NOB,margins:{top:140,bottom:140,left:220,right:220},children})]})]});
     const INS=await getInsight(items,st);st.textContent="Word 작성 중…";
     const shN=items.filter(b=>b.relevance==="상"||b.relevance==="중").length;
     const hiN=items.filter(b=>(b.interest||0)>=4).length;
@@ -919,9 +921,9 @@ $("docBtn").addEventListener("click",async()=>{
     kids.push(runs([["스마트홈 관점으로 본",{bold:true,color:INK,size:64}]],{after:60}));
     kids.push(runs([["부스 탐방 리포트",{bold:true,color:G,size:64}]],{after:360}));
     kids.push(runs([["킨텍스 제1전시장 3·4홀 · 2026. 11. 25.–27.",{color:GREY,size:24}]],{after:600}));
-    kids.push(new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:{style:D.BorderStyle.SINGLE,size:24,color:"FFFFFF"}},
+    kids.push(new D.Table({width:{size:TW,type:DXA},columnWidths:[3300,3300,3300],layout:FIX,borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:{style:D.BorderStyle.SINGLE,size:24,color:"FFFFFF"}},
       rows:[new D.TableRow({children:[[items.length,"방문한 부스"],[shN,"스마트홈 관련성 상·중"],[hiN,"관심도 ★4 이상"]].map(([v,l],k)=>new D.TableCell({
-        shading:{fill:k===0?G:MINT},borders:NOB,margins:{top:200,bottom:200,left:220,right:220},
+        width:{size:3300,type:DXA},shading:{fill:k===0?G:MINT},borders:NOB,margins:{top:200,bottom:200,left:220,right:220},
         children:[runs([[String(v),{bold:true,size:56,color:k===0?"FFFFFF":G}],[" 곳",{bold:true,size:24,color:k===0?"FFFFFF":GREY}]],{after:40}),
           runs([[l,{size:20,color:k===0?"FFFFFF":GREY}]],{after:0})]}))})]}));
     kids.push(runs([["정리 ",{color:GREY,size:22}],[dateStr(),{bold:true,color:G,size:22}]],{before:600,after:0}));
@@ -931,7 +933,7 @@ $("docBtn").addEventListener("click",async()=>{
     kids.push(runs([[`참관 부스 ${items.length}곳에서 찾은 `,{bold:true,color:INK,size:36}],["스마트홈 인사이트",{bold:true,color:G,size:36}]],{after:200}));
     kids.push(box([runs([[INS.headline,{bold:true,color:"FFFFFF",size:24}]],{after:0})],{fill:G}));
     kids.push(runs([["핵심 인사이트",{bold:true,color:G,size:24}]],{before:280,after:100}));
-    kids.push(new D.Table({width:{size:9900,type:D.WidthType.DXA},columnWidths:[800,9100],layout:D.TableLayoutType.FIXED,borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:{style:D.BorderStyle.SINGLE,size:16,color:"FFFFFF"},insideVertical:NB},
+    kids.push(new D.Table({width:{size:TW,type:DXA},columnWidths:[800,9100],layout:FIX,borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:{style:D.BorderStyle.SINGLE,size:16,color:"FFFFFF"},insideVertical:NB},
       rows:INS.insights.map((o,k)=>new D.TableRow({children:[
         new D.TableCell({width:{size:800,type:D.WidthType.DXA},shading:{fill:k===0?G:MINT},borders:NOB,verticalAlign:D.VerticalAlign.CENTER,margins:{top:120,bottom:120,left:100,right:100},
           children:[runs([[String(k+1).padStart(2,"0"),{bold:true,size:24,color:k===0?"FFFFFF":G}]],{align:D.AlignmentType.CENTER,after:0})]}),
@@ -942,14 +944,15 @@ $("docBtn").addEventListener("click",async()=>{
     if(!INS.ai)kids.push(runs([["AI를 쓸 수 없어 기록된 수치로 요약했어요.",{color:"A3ABB5",size:16}]],{before:80}));
     kids.push(runs([["참관 부스 목록",{bold:true,color:G,size:24}],[`   ${items.length}곳 · 스마트홈 관련성 높은 순`,{color:GREY,size:18}]],{before:280,after:100}));
     const relColor={"상":G,"중":"A86A00","하":GREY};
-    const tc=(t,o={})=>new D.TableCell({shading:o.head?{fill:G}:o.fill?{fill:o.fill}:undefined,borders:LINE,margins:{top:60,bottom:60,left:90,right:90},
+    const LW=[2300,900,2000,2300,1000,1400];
+    const tc=(t,o={})=>new D.TableCell({width:{size:o.w,type:DXA},shading:o.head?{fill:G}:o.fill?{fill:o.fill}:undefined,borders:LINE,margins:{top:60,bottom:60,left:90,right:90},
       children:[runs([[t||"-",{bold:!!(o.head||o.bold),color:o.head?"FFFFFF":(o.color||INK),size:18}]],{after:0})]});
-    kids.push(new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},rows:[
-      new D.TableRow({tableHeader:true,children:["업체명","부스","전시 구역","분야","스마트홈","관심도"].map(t=>tc(t,{head:true}))}),
-      ...items.map((b,i)=>new D.TableRow({children:[
-        tc(str(b.company),{bold:b.relevance==="상",fill:i%2?"F7F9F8":undefined}),tc(str(b.booth),{fill:i%2?"F7F9F8":undefined}),tc(str(b.zone),{fill:i%2?"F7F9F8":undefined}),
-        tc(arr(b.categories).join(", "),{fill:i%2?"F7F9F8":undefined}),tc(str(b.relevance),{bold:true,color:relColor[b.relevance],fill:i%2?"F7F9F8":undefined}),
-        tc(b.interest?"★".repeat(b.interest):"",{color:"C99700",fill:i%2?"F7F9F8":undefined})]}))]}));
+    kids.push(new D.Table({width:{size:TW,type:DXA},columnWidths:LW,layout:FIX,rows:[
+      new D.TableRow({tableHeader:true,children:["업체명","부스","전시 구역","분야","스마트홈","관심도"].map((t,k)=>tc(t,{head:true,w:LW[k]}))}),
+      ...items.map((b,i)=>{const f=i%2?"F7F9F8":undefined;return new D.TableRow({cantSplit:true,children:[
+        tc(str(b.company),{bold:b.relevance==="상",fill:f,w:LW[0]}),tc(str(b.booth),{fill:f,w:LW[1]}),tc(str(b.zone),{fill:f,w:LW[2]}),
+        tc(arr(b.categories).join(", "),{fill:f,w:LW[3]}),tc(str(b.relevance),{bold:true,color:relColor[b.relevance],fill:f,w:LW[4]}),
+        tc(b.interest?"★".repeat(b.interest):"",{color:"C99700",fill:f,w:LW[5]})]});})]}));
     const ai=aiSumText();
     if(ai){kids.push(new D.Paragraph({children:[new D.PageBreak()]}));kids.push(runs([["AI 총평",{bold:true,color:G,size:28}]],{after:160}));ai.split("\n").forEach(l=>kids.push(P(l)));}
     let n=0;
@@ -962,7 +965,7 @@ $("docBtn").addEventListener("click",async()=>{
       const imgs=[];for(const id of arr(b.imageIds).slice(0,4)){try{imgs.push(await imgData(id,1000));}catch(e){}}
       if(imgs.length){
         const runs=[];
-        for(let k=0;k<imgs.length;k++)runs.push(new D.ImageRun({data:await imgs[k].blob.arrayBuffer(),transformation:sizeFor(imgs[k],k)}));
+        for(let k=0;k<imgs.length;k++)runs.push(new D.ImageRun({type:imgs[k].blob.type==="image/png"?"png":"jpg",data:await imgs[k].blob.arrayBuffer(),transformation:sizeFor(imgs[k],k)}));
         kids.push(new D.Paragraph({spacing:{after:80},children:[runs[0]]}));
         if(runs.length>1)kids.push(new D.Paragraph({spacing:{after:160},children:runs.slice(1).flatMap((r,k)=>k?[new D.TextRun("  "),r]:[r])}));
       }
@@ -1135,12 +1138,16 @@ $("pptBtn").addEventListener("click",async()=>{
     const counter=(s,i,n)=>s.addText([{text:pad(i),options:{color:T.ink}},{text:" / "+pad(n),options:{color:T.soft}}],{x:10.6,y:0.45,w:2.13,h:0.42,align:"right",fontFace:F,fontSize:16,bold:true,margin:0});
     const title=(s,l1,l2,size=30,y=1.1)=>s.addText([{text:l1,options:{color:T.ink,breakLine:true}},{text:l2,options:{color:T.green}}],{x:0.6,y,w:10.2,h:size*0.042,fontFace:F,fontSize:size,bold:true,valign:"top",margin:0,fit:"shrink",lineSpacingMultiple:1.05});
     const banner=(s,text,y=6.55)=>{s.addShape(RX,{x:0.6,y,w:12.13,h:0.62,rectRadius:0.14,fill:{color:T.green},line:{color:T.green}});
+      text=clip(text,cpl(11.6,15));
       s.addText(text,{x:0.85,y,w:11.7,h:0.62,fontFace:F,fontSize:15,bold:true,color:T.white,valign:"middle",margin:0,fit:"shrink"});};
     const foot=s=>s.addText("2026 스마트 건설·안전·AI 엑스포 · 스마트홈 부스 노트",{x:7.2,y:7.18,w:5.53,h:0.25,fontFace:F,fontSize:9,color:T.soft,align:"right",margin:0});
     const relPill=(s,rel,x,y)=>{if(!rel)return;const c={"상":T.green,"중":"A86A00","하":T.grey}[rel];
       s.addShape(RX,{x,y,w:1.35,h:0.4,rectRadius:0.2,fill:{color:T.white},line:{color:c,width:1.5}});
       s.addText("스마트홈 "+rel,{x,y,w:1.35,h:0.4,align:"center",valign:"middle",fontFace:F,fontSize:12,bold:true,color:c,margin:0});};
     const stars=n=>n?"★".repeat(n)+"☆".repeat(5-n):"";
+    /* 한 줄에 들어가는 글자 수(한글 기준 보수적으로) — PowerPoint는 글씨 자동 축소를 열 때 적용하지 않으므로 미리 자른다 */
+    const cpl=(w,pt)=>Math.max(6,Math.floor(w*72/pt*1.15));
+    const clip=(t,n)=>{t=str(t).replace(/\s+/g," ").trim();return t.length>n?t.slice(0,Math.max(1,n-1)).trimEnd()+"…":t;};
 
     /* build slide plan first so page numbers are known */
     const plan=[];
@@ -1152,8 +1159,34 @@ $("pptBtn").addEventListener("click",async()=>{
     if(Object.keys(zones).length>1||!zones["기타·직접 입력"])plan.push({k:"zones"});
     const aiLines=aiSumText().split("\n").map(l=>l.trim()).filter(Boolean);
     for(let i=0;i<aiLines.length;i+=8)plan.push({k:"ai",lines:aiLines.slice(i,i+8)});
-    const heavy=b=>arr(b.imageIds).length>4||str(b.memo).length>60||arr(b.features).length>5||str(b.smPoint).length>90||str(b.contact).length>70;
-    items.forEach((b,i)=>{plan.push({k:"booth",b,i,more:heavy(b)});if(heavy(b))plan.push({k:"booth2",b,i});});
+    /* 업체 첫 장에 들어갈 글을 칸 크기에 맞춰 미리 자르고, 잘린 게 있으면 상세 장을 붙인다 */
+    const L1=b=>{
+      const ids=arr(b.imageIds),rx=ids.length?6.45:0.6,rw=ids.length?6.28:12.13,tw=rw-0.5;
+      const prodFull=str(b.products).replace(/\s+/g," ").trim();
+      const pLines=Math.min(3,Math.max(1,Math.ceil(prodFull.length/cpl(tw,12)))),pMax=pLines*cpl(tw,12),prodH=0.5+pLines*0.21;
+      const prod=clip(prodFull,pMax),prodCut=prodFull.length>pMax;
+      const fAll=arr(b.features),fMax=cpl(tw-0.3,11);
+      const feats=fAll.slice(0,5).map(t=>clip(t,fMax));
+      const featCut=fAll.length>5||fAll.some(t=>t.length>fMax);
+      if(fAll.length>5){feats.length=4;feats.push(`외 ${fAll.length-4}개 → 다음 장`);}
+      let y=2.45+(prod?prodH+0.12:0)+(feats.length?0.5+feats.length*0.22+0.12:0);
+      const bRaw0=b.memo||b.contact;const bottom=bRaw0?6.35:7.05; // 배너가 없으면 그 자리까지 쓴다
+      const rest=bottom-y,smFull=str(b.smPoint).replace(/\s+/g," ").trim();
+      let smp="",smpCut=false,smpPt=11;
+      if(smFull){if(rest>=0.75){
+        // 글씨를 11→10→9pt로 줄여 보며 첫 장에 다 들어가는 크기를 찾는다
+        for(const pt of [11,10,9]){const lines=Math.max(1,Math.floor((rest-0.5)/(pt*1.25/72))),mx=lines*cpl(tw,pt);
+          if(smFull.length<=mx){smp=smFull;smpPt=pt;break;}}
+        if(!smp){const lines=Math.max(1,Math.floor((rest-0.5)/(11*1.25/72))),mx=lines*cpl(tw,11);smp=clip(smFull,mx);smpCut=true;}
+      }else smpCut=true;}
+      const bRaw=b.memo?"현장 메모 · "+str(b.memo).replace(/\s+/g," "):b.contact?"연락처 · "+str(b.contact):"";
+      const bMax=cpl(11.6,15),bannerCut=bRaw.length>bMax;
+      const contactLost=!!(str(b.memo)&&str(b.contact));
+      const heavy=ids.length>4||prodCut||featCut||smpCut||bannerCut||contactLost;
+      const bannerTxt=!bRaw?"":bannerCut?clip(bRaw,bMax-7)+" → 다음 장":bRaw;
+      return {rx,rw,bottom,prod,prodH,prodCut,feats,featCut,smp,smpPt,smpCut,banner:bannerTxt,heavy};
+    };
+    items.forEach((b,i)=>{const L=L1(b);plan.push({k:"booth",b,i,L});if(L.heavy)plan.push({k:"booth2",b,i,L});});
     const N=plan.length;
     const shN=items.filter(b=>b.relevance==="상"||b.relevance==="중").length;
     const hiN=items.filter(b=>(b.interest||0)>=4).length;
@@ -1182,7 +1215,7 @@ $("pptBtn").addEventListener("click",async()=>{
         const maxRows=11,show=items.length>maxRows?items.slice(0,maxRows-1):items;
         const rh=Math.min(0.4,(LH-0.75)/Math.max(show.length+(items.length>maxRows?1:0),1));
         show.forEach((b,r)=>{const y=LY+0.6+r*rh;const c={"상":T.green,"중":"A86A00","하":T.soft}[b.relevance]||T.soft;
-          s.addText([{text:"● ",options:{color:c,fontSize:9}},{text:(str(b.booth)||"—").padEnd(5," ")+"  ",options:{color:T.grey,fontSize:10}},{text:str(b.company)||"(업체명 없음)",options:{color:T.ink,bold:b.relevance==="상",fontSize:11}},{text:b.relevance?"  "+b.relevance:"",options:{color:c,bold:true,fontSize:10}}],
+          s.addText([{text:"● ",options:{color:c,fontSize:9}},{text:(str(b.booth)||"—").padEnd(5," ")+"  ",options:{color:T.grey,fontSize:10}},{text:clip(str(b.company)||"(업체명 없음)",16),options:{color:T.ink,bold:b.relevance==="상",fontSize:11}},{text:b.relevance?"  "+b.relevance:"",options:{color:c,bold:true,fontSize:10}}],
             {x:LX+0.25,y,w:LW-0.5,h:rh,fontFace:F,margin:0,valign:"middle",fit:"shrink"});});
         if(items.length>maxRows)s.addText(`외 ${items.length-show.length}곳 → 다음 장 목록 참고`,{x:LX+0.25,y:LY+0.6+show.length*rh,w:LW-0.5,h:rh,fontFace:F,fontSize:10,color:T.grey,margin:0,valign:"middle"});
         /* 오른쪽: 인사이트 3개 */
@@ -1191,13 +1224,13 @@ $("pptBtn").addEventListener("click",async()=>{
           card(s,RX0,y,RW,0.82,{line:first?T.green:T.line,lw:first?1.5:0.75});
           s.addShape(RX,{x:RX0+0.2,y:y+0.17,w:0.48,h:0.48,rectRadius:0.1,fill:{color:first?T.green:T.mint},line:{color:first?T.green:T.mint}});
           s.addText(pad(k+1),{x:RX0+0.2,y:y+0.17,w:0.48,h:0.48,align:"center",valign:"middle",fontFace:F,fontSize:13,bold:true,color:first?T.white:T.green,margin:0});
-          s.addText(o.title,{x:RX0+0.85,y:y+0.07,w:RW-1.05,h:0.36,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,valign:"middle",fit:"shrink"});
-          s.addText(o.body,{x:RX0+0.85,y:y+0.42,w:RW-1.05,h:0.34,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle",fit:"shrink"});});
+          s.addText(clip(o.title,cpl(RW-1.05,14)),{x:RX0+0.85,y:y+0.06,w:RW-1.05,h:0.34,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,valign:"middle",fit:"shrink"});
+          s.addText(clip(o.body,2*cpl(RW-1.05,10)),{x:RX0+0.85,y:y+0.4,w:RW-1.05,h:0.38,fontFace:F,fontSize:10,color:T.grey,margin:0,valign:"middle",fit:"shrink"});});
         /* 후속 미팅 추천 */
         const ry=2.45+3*0.92;
         card(s,RX0,ry,RW,6.4-ry,{fill:T.mint,line:T.mintLine,noShadow:true});
         s.addText("후속 미팅 추천",{x:RX0+0.2,y:ry+0.08,w:2,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
-        s.addText(INS.recommend.flatMap(o=>[{text:"✓ "+o.company,options:{bold:true,color:T.ink}},{text:"   "+o.why,options:{color:T.grey,fontSize:10,breakLine:true}}]),
+        s.addText(INS.recommend.flatMap(o=>{const c=clip(o.company,16);return [{text:"✓ "+c,options:{bold:true,color:T.ink}},{text:"   "+clip(o.why,cpl(RW-0.4,10)-c.length-4),options:{color:T.grey,fontSize:10,breakLine:true}}];}),
           {x:RX0+0.2,y:ry+0.36,w:RW-0.4,h:6.4-ry-0.42,fontFace:F,fontSize:11,margin:0,valign:"top",fit:"shrink",paraSpaceAfter:2});
         banner(s,INS.headline);
         if(!INS.ai)s.addText("AI를 쓸 수 없어 기록된 수치로 요약했어요.",{x:0.6,y:7.18,w:6,h:0.25,fontFace:F,fontSize:9,color:T.soft,margin:0});
@@ -1209,8 +1242,8 @@ $("pptBtn").addEventListener("click",async()=>{
           card(s,0.6,y,12.13,0.68,{line:top?T.green:T.line,lw:top?1.5:0.75});
           s.addShape(RX,{x:0.82,y:y+0.11,w:0.46,h:0.46,rectRadius:0.1,fill:{color:top?T.green:T.mint},line:{color:top?T.green:T.mint}});
           s.addText(pad(P.start+r+1),{x:0.82,y:y+0.11,w:0.46,h:0.46,align:"center",valign:"middle",fontFace:F,fontSize:12,bold:true,color:top?T.white:T.green,margin:0});
-          s.addText([{text:str(b.company)||"(업체명 없음)",options:{bold:true,color:T.ink,fontSize:15}},{text:"   "+[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),options:{color:T.green,fontSize:11,bold:true}}],{x:1.45,y:y+0.04,w:7.9,h:0.34,fontFace:F,margin:0,valign:"middle",fit:"shrink"});
-          s.addText(str(b.products)||arr(b.features).join(" · ")||" ",{x:1.45,y:y+0.36,w:7.9,h:0.28,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle",fit:"shrink"});
+          s.addText([{text:clip(str(b.company)||"(업체명 없음)",22),options:{bold:true,color:T.ink,fontSize:15}},{text:"   "+[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),options:{color:T.green,fontSize:11,bold:true}}],{x:1.45,y:y+0.04,w:7.9,h:0.34,fontFace:F,margin:0,valign:"middle",fit:"shrink"});
+          s.addText(clip(str(b.products)||arr(b.features).join(" · "),cpl(7.9,11))||" ",{x:1.45,y:y+0.36,w:7.9,h:0.28,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle",fit:"shrink"});
           relPill(s,b.relevance,9.55,y+0.14);
           s.addText(stars(b.interest),{x:11.0,y:y+0.14,w:1.55,h:0.4,fontFace:F,fontSize:12,color:"E0A800",align:"right",valign:"middle",margin:0});
         });
@@ -1221,9 +1254,9 @@ $("pptBtn").addEventListener("click",async()=>{
         const zs=Object.entries(zones).sort((a,c)=>c[1].length-a[1].length).slice(0,6);
         zs.forEach(([z,bs],k)=>{const x=0.6+(k%3)*4.12,y=2.45+Math.floor(k/3)*2.0;const first=k===0;
           card(s,x,y,3.89,1.85,{line:first?T.green:T.line,lw:first?1.5:0.75});
-          s.addText(z,{x:x+0.3,y:y+0.22,w:2.4,h:0.4,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,fit:"shrink"});
+          s.addText(clip(z,cpl(2.4,14)),{x:x+0.3,y:y+0.22,w:2.4,h:0.4,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,fit:"shrink"});
           s.addText([{text:String(bs.length),options:{fontSize:26,bold:true,color:T.green}},{text:" 곳",options:{fontSize:12,color:T.grey,bold:true}}],{x:x+2.6,y:y+0.12,w:1.1,h:0.55,align:"right",fontFace:F,margin:0});
-          s.addText(bs.map(b=>str(b.company)).join(" · "),{x:x+0.3,y:y+0.75,w:3.3,h:0.95,fontFace:F,fontSize:11,color:T.grey,valign:"top",margin:0,fit:"shrink"});});
+          s.addText(clip(bs.map(b=>str(b.company)).join(" · "),3*cpl(3.3,11)),{x:x+0.3,y:y+0.75,w:3.3,h:0.95,fontFace:F,fontSize:11,color:T.grey,valign:"top",margin:0,fit:"shrink"});});
         foot(s);
       }else if(P.k==="ai"){
         pill(s,"AI 총평",0.6,0.45);counter(s,pi+1,N);
@@ -1233,66 +1266,67 @@ $("pptBtn").addEventListener("click",async()=>{
           card(s,0.6,y,12.13,rh);
           s.addShape(RX,{x:0.82,y:y+(rh-0.4)/2,w:0.4,h:0.4,rectRadius:0.1,fill:{color:T.green},line:{color:T.green}});
           s.addText("✓",{x:0.82,y:y+(rh-0.4)/2,w:0.4,h:0.4,align:"center",valign:"middle",fontSize:14,bold:true,color:T.white,margin:0});
-          s.addText(l,{x:1.45,y:y+0.04,w:11.05,h:rh-0.08,fontFace:F,fontSize:14,color:T.ink,valign:"middle",margin:0,fit:"shrink"});});
+          s.addText(clip(l,(rh>=0.55?2:1)*cpl(11.05,13)),{x:1.45,y:y+0.04,w:11.05,h:rh-0.08,fontFace:F,fontSize:13,color:T.ink,valign:"middle",margin:0,fit:"shrink"});});
         foot(s);
       }else if(P.k==="booth"){
-        const b=P.b;
+        const b=P.b,L=P.L;
         st.textContent=`슬라이드 만드는 중 ${P.i+1}/${items.length}`;
-        pill(s,str(b.zone)||"방문 부스",0.6,0.45);counter(s,pi+1,N);
-        const sub=[b.booth?"부스 "+str(b.booth):"",arr(b.categories).join(" · ")].filter(Boolean).join("  |  ")||" ";
-        title(s,str(b.company)||"(업체명 없음)",sub,28,1.1);
+        pill(s,clip(str(b.zone)||"방문 부스",24),0.6,0.45);counter(s,pi+1,N);
+        const tSize=str(b.company).length>16?24:28;
+        const sub=[b.booth?"부스 "+str(b.booth):"",arr(b.categories).slice(0,3).join(" · ")].filter(Boolean).join("  |  ")||" ";
+        title(s,clip(str(b.company)||"(업체명 없음)",cpl(9.6,tSize)),clip(sub,cpl(9.6,tSize)),tSize,1.1);
         relPill(s,b.relevance,11.38,1.18);
         if(b.interest)s.addText(stars(b.interest),{x:10.6,y:1.65,w:2.13,h:0.35,fontFace:F,fontSize:13,color:"E0A800",align:"right",margin:0});
         const imgs=[];for(const id of arr(b.imageIds).slice(0,4)){try{imgs.push(await imgData(id));}catch(e){}}
-        let rx=0.6,rw=12.13;
         if(imgs.length){
           card(s,0.6,2.45,5.6,imgs.length>1?2.9:3.9);
           s.addImage(fit(imgs[0],0.72,2.57,5.36,(imgs.length>1?2.9:3.9)-0.24));
           imgs.slice(1).forEach((im,k)=>{const x=0.6+k*1.9;card(s,x,5.47,1.8,0.88,{noShadow:true});s.addImage(fit(im,x+0.06,5.53,1.68,0.76));});
-          rx=6.45;rw=6.28;
         }
-        let y=2.45;
-        const box=(label,body,h,o={})=>{card(s,rx,y,rw,h,o);
-          s.addText(label,{x:rx+0.25,y:y+0.12,w:rw-0.5,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
-          s.addText(body,{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.52,fontFace:F,fontSize:13,color:T.ink,valign:"top",margin:0,fit:"shrink"});y+=h+0.12;};
-        if(b.products)box("주요 제품·기술",str(b.products),0.95);
-        const fAll=arr(b.features),f=P.more&&fAll.length>5?fAll.slice(0,4):fAll.slice();
-        if(P.more&&fAll.length>5)f.push(`외 ${fAll.length-4}개 → 다음 장`);
-        if(f.length){const h=Math.min(2.2,0.55+f.length*0.36);card(s,rx,y,rw,h);
-          s.addText("핵심 특징",{x:rx+0.25,y:y+0.12,w:rw-0.5,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
-          s.addText(f.flatMap(t=>[{text:"✓  ",options:{color:T.green,bold:true}},{text:t,options:{color:T.ink,breakLine:true}}]),{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.52,fontFace:F,fontSize:13,valign:"top",margin:0,fit:"shrink",paraSpaceAfter:3});
+        const rx=L.rx,rw=L.rw;let y=2.45;
+        const head=(label,yy)=>s.addText(label,{x:rx+0.25,y:yy+0.1,w:rw-0.5,h:0.28,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+        if(L.prod){card(s,rx,y,rw,L.prodH);head("주요 제품·기술",y);
+          s.addText(L.prod,{x:rx+0.25,y:y+0.4,w:rw-0.5,h:L.prodH-0.44,fontFace:F,fontSize:12,color:T.ink,valign:"top",margin:0});y+=L.prodH+0.12;}
+        if(L.feats.length){const h=0.5+L.feats.length*0.22;card(s,rx,y,rw,h);head("핵심 특징",y);
+          s.addText(L.feats.flatMap(t=>[{text:"✓  ",options:{color:T.green,bold:true}},{text:t,options:{color:T.ink,breakLine:true}}]),{x:rx+0.25,y:y+0.4,w:rw-0.5,h:h-0.44,fontFace:F,fontSize:11,valign:"top",margin:0,lineSpacingMultiple:0.95});
           y+=h+0.12;}
-        const rest=6.35-y;
-        const smShown=!!(b.smPoint&&rest>0.6);
-        if(P.more&&plan[pi+1])plan[pi+1].smShown=smShown&&str(b.smPoint).length<=90;
-        if(smShown)box("스마트홈 적용 포인트",str(b.smPoint),Math.min(1.1,rest),{fill:T.mint,line:T.mintLine,noShadow:true});
-        else if(b.contact&&rest>0.6)box("연락처",str(b.contact),Math.min(0.8,rest));
-        const cut=(t,n)=>t.length>n?t.slice(0,n).trimEnd()+"… → 다음 장":t;
-        const bt=b.memo?"현장 메모 · "+(P.more?cut(str(b.memo),38):str(b.memo)):b.contact?"연락처 · "+str(b.contact):b.smPoint&&!(rest>0.6)?"스마트홈 적용 · "+str(b.smPoint):"";
-        if(bt)banner(s,bt);else foot(s);
+        if(L.smp){const h=L.bottom-y;card(s,rx,y,rw,h,{fill:T.mint,line:T.mintLine,noShadow:true});head("스마트홈 적용 포인트",y);
+          s.addText(L.smp,{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.5,fontFace:F,fontSize:L.smpPt,color:T.ink,valign:"top",margin:0});}
+        if(L.banner)banner(s,L.banner);else if(L.bottom<7)foot(s);
       }else if(P.k==="booth2"){
-        const b=P.b;
-        pill(s,str(b.zone)||"방문 부스",0.6,0.45);counter(s,pi+1,N);
-        title(s,str(b.company)||"(업체명 없음)","상세 · 사진과 메모",28,1.1);
+        const b=P.b,L=P.L;
+        pill(s,clip(str(b.zone)||"방문 부스",24),0.6,0.45);counter(s,pi+1,N);
+        const tSize=str(b.company).length>16?24:28;
+        title(s,clip(str(b.company)||"(업체명 없음)",cpl(9.6,tSize)),"상세 · 사진과 메모",tSize,1.1);
         const imgs=[];for(const id of arr(b.imageIds).slice(4,12)){try{imgs.push(await imgData(id,900));}catch(e){}}
         let rx=0.6,rw=12.13;
         if(imgs.length){
           const cols=imgs.length>4?4:imgs.length>2?2:imgs.length,rows=Math.ceil(imgs.length/cols);
-          const gw=6.9,gh=4.0,cw=(gw-(cols-1)*0.12)/cols,ch=(gh-(rows-1)*0.12)/rows;
+          const gw=6.9,gh=3.95,cw=(gw-(cols-1)*0.12)/cols,ch=(gh-(rows-1)*0.12)/rows;
           imgs.forEach((im,k)=>{const x=0.6+(k%cols)*(cw+0.12),y=2.45+Math.floor(k/cols)*(ch+0.12);
             card(s,x,y,cw,ch,{noShadow:true});s.addImage(fit(im,x+0.06,y+0.06,cw-0.12,ch-0.12));});
           rx=7.75;rw=4.98;
         }
+        /* 앞 장에서 잘린 내용을 모두 싣는다. 칸 높이는 글자 수로 미리 계산해 넘치지 않게 한다 */
         const blocks=[];
-        if(str(b.memo))blocks.push(["현장 메모",str(b.memo),3]);
-        const fAll=arr(b.features);if(fAll.length>5)blocks.push(["특징 (계속)",fAll.slice(4).map(t=>"✓ "+t).join("\n"),Math.min(3,fAll.length-4)]);
-        if(str(b.smPoint)&&!P.smShown)blocks.push(["스마트홈 적용 포인트",str(b.smPoint),2]);
-        if(str(b.contact))blocks.push(["연락처",str(b.contact),1]);
-        const totalW=blocks.reduce((a,x)=>a+x[2],0)||1,avail=4.0-(blocks.length-1)*0.12;let y=2.45;
-        blocks.forEach(([label,body,w])=>{const h=Math.max(0.8,avail*w/totalW);
-          card(s,rx,y,rw,h,label==="스마트홈 적용 포인트"?{fill:T.mint,line:T.mintLine,noShadow:true}:{});
-          s.addText(label,{x:rx+0.25,y:y+0.12,w:rw-0.5,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
-          s.addText(body,{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.52,fontFace:F,fontSize:12,color:T.ink,valign:"top",margin:0,fit:"shrink"});y+=h+0.12;});
+        if(L.prodCut)blocks.push(["주요 제품·기술",[str(b.products)]]);
+        if(L.featCut)blocks.push(["핵심 특징 (전체)",arr(b.features).map(t=>"✓ "+t)]);
+        if(L.smpCut)blocks.push(["스마트홈 적용 포인트",[str(b.smPoint)],true]);
+        if(str(b.memo))blocks.push(["현장 메모",str(b.memo).split("\n")]);
+        if(str(b.contact))blocks.push(["연락처",[str(b.contact)]]);
+        const AV=3.95,tw=rw-0.5;
+        let pt=11,need=()=>blocks.reduce((a,[,ps])=>a+0.5+ps.reduce((n,p)=>n+Math.max(1,Math.ceil(p.length/cpl(tw,pt))),0)*pt*1.25/72+0.12,0);
+        while(need()>AV&&pt>9)pt-=1;
+        // 그래도 넘치면 가장 긴 칸부터 줄인다
+        let guard=0;while(need()>AV&&guard++<40){const big=blocks.reduce((m,x)=>x[1].join("").length>m[1].join("").length?x:m);
+          const t=big[1].join(" ");big[1]=[clip(t,Math.max(20,Math.floor(t.length*0.8)))];}
+        let y=2.45;
+        blocks.forEach(([label,ps,mint])=>{
+          const lines=ps.reduce((n,p)=>n+Math.max(1,Math.ceil(p.length/cpl(tw,pt))),0);const h=0.5+lines*pt*1.25/72;
+          card(s,rx,y,rw,h,mint?{fill:T.mint,line:T.mintLine,noShadow:true}:{});
+          s.addText(label,{x:rx+0.25,y:y+0.1,w:tw,h:0.28,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+          s.addText(ps.map((p,k)=>({text:p,options:{breakLine:k<ps.length-1}})),{x:rx+0.25,y:y+0.42,w:tw,h:h-0.46,fontFace:F,fontSize:pt,color:T.ink,valign:"top",margin:0});
+          y+=h+0.12;});
         const extra=arr(b.imageIds).length-12;
         banner(s,extra>0?`사진이 ${extra}장 더 있어요. 전체 사진은 앱에서 볼 수 있습니다.`:"앞 장에 이어지는 상세 내용입니다.");
       }
