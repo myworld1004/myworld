@@ -99,6 +99,10 @@ ul.feat{margin:0;padding-left:18px}
 .exrow .done{font-size:12px;font-weight:700;color:var(--hi)}
 .exrow .todo{font-size:12px;color:var(--muted)}
 #exhMatch.ok{color:var(--hi)}
+.burst{position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--surface);border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.burst .bt{flex:1;min-width:0;display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
+.burst .bt strong{font-size:15px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .job{font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
 .job.ok{border-color:var(--hi)}.job.err{border-color:var(--danger);color:var(--danger)}
 .chip.rev{background:var(--mid);color:var(--surface);font-weight:700}
@@ -249,6 +253,12 @@ ul.feat{margin:0;padding-left:18px}
   </section>
 </div>
 <button class="btn primary fab" id="fab" type="button">+ 부스 기록</button>
+<div id="burstBar" class="burst" hidden>
+  <div class="bt"><strong id="burstName"></strong><span id="burstCount"></span></div>
+  <button class="btn primary" id="burstMore" type="button">📷 한 장 더</button>
+  <button class="btn" id="burstDone" type="button">완료</button>
+</div>
+<input type="file" id="burstCam" accept="image/*" capture="environment" hidden>
 
 <script>
 (function(){
@@ -304,7 +314,7 @@ function show(view){
   S.view=view;
   for(const v of ["list","detail","edit","report"])$("v-"+v).hidden=(v!==view);
   document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.view===view||(view==="detail"&&t.dataset.view==="list"))));
-  $("fab").hidden=(view==="edit");
+  $("fab").hidden=(view==="edit")||!!S.burst;$("burstBar").hidden=!S.burst||view==="edit";
   if(view==="report")renderReport();
   window.scrollTo(0,0);
 }
@@ -663,11 +673,13 @@ async function quickRecord(files){
   const blobs=[];for(const f of files)if(f.type.startsWith("image/"))blobs.push(await resize(f));
   const toQueue=async()=>{const r=await qAdd({kind:"quick",blobs,at:Date.now()});
     if(r==null){j.fail("인터넷이 연결되지 않았고, 이 브라우저는 임시 저장도 막혀 있어요. 폰 카메라로 찍어 두고 나중에 ‘사진 한꺼번에 정리’를 써 주세요.");return;}
+    setBurst({qid:r,name:"임시 저장한 기록",n:blobs.length});
     j.done("인터넷이 불안정해서 이 폰에 임시 저장했어요. 연결되면 자동으로 올려요.");refreshQueueBar();};
   if(!navigator.onLine){await toQueue();return;}
   if(needLogin(j))return;
   try{
     const {res,data,note}=await quickCore(blobs,j);
+    setBurst({id:res.id,name:data.company||"업체 미확인",n:blobs.length});
     renderList();
     j.done(`${res.merged?"기존 기록에 사진 추가":"새 기록 저장"}: ${data.company||"업체 미확인"}${data.booth?" · "+data.booth:""}${note} · 나중에 ‘확인 필요’에서 검토하세요`);
   }catch(err){if(retryable(err))await toQueue();else j.fail("원탭 기록에 실패했어요. 사진을 올릴 권한을 확인해 주세요.");}
@@ -1324,6 +1336,8 @@ function qReq(mode,fn){return qdb().then(d=>new Promise(res=>{if(!d)return res(n
 const qAll=async()=>(await qReq("readonly",s=>s.getAll()))||[];
 const qAdd=job=>qReq("readwrite",s=>s.add(job));
 const qDel=id=>qReq("readwrite",s=>s.delete(id));
+const qGet=id=>qReq("readonly",s=>s.get(id));
+const qPut=job=>qReq("readwrite",s=>s.put(job));
 const PERM_ERR=["not_granted","not_uploader","quota_or_state","too_large","unsupported_type","no_assets","revoked","capability_disabled","capability_removed","invalid_request","invalid_argument","quota_exceeded"];
 const retryable=e=>!navigator.onLine||!(e&&PERM_ERR.includes(e.code));
 async function refreshQueueBar(){
@@ -1340,7 +1354,9 @@ async function processQueue(manual){
   try{
     for(const it of items){
       j.set(`임시 저장된 기록 올리는 중 ${ok+1}/${items.length}`);
-      if(it.kind==="quick")await quickCore(it.blobs||[],null);
+      if(it.kind==="quick"){const r=await quickCore(it.blobs||[],null);S.qMap[it.id]=r.res.id;
+        if(S.burst&&S.burst.qid===it.id){S.burst.id=r.res.id;S.burst.qid=null;S.burst.name=r.data.company||"업체 미확인";renderBurst();}}
+      else if(it.kind==="append")await appendPhotos(it.recId,it.blobs||[]);
       else if(it.kind==="form"){
         const ids=[...(it.existingIds||[]),...await uploadBlobs(it.blobs||[])];
         const data=Object.assign({},it.data,{imageIds:ids,coverIndex:0,updatedAt:Date.now()});
@@ -1460,6 +1476,63 @@ $("bkIn").addEventListener("change",async e=>{
     st.textContent=`백업에서 ${added}건을 되살렸어요.`+(skipped?` 이미 있는 ${skipped}건은 건너뛰었어요.`:"");
   }catch(err){st.textContent=err&&err.code==="bad"?"이 앱에서 받은 백업 파일(JSON)이 아니에요.":"백업 파일을 불러오지 못했어요.";}
 });
+
+/* ---------- 원탭 이어 찍기 ---------- */
+S.burst=null;S.qMap={};
+function setBurst(b){S.burst=b?Object.assign(b,{at:Date.now()}):null;renderBurst();}
+function renderBurst(){
+  const on=!!S.burst&&S.view!=="edit";$("burstBar").hidden=!on;$("fab").hidden=S.view==="edit"||!!S.burst;
+  if(!S.burst)return;
+  $("burstName").textContent=`‘${S.burst.name}’ 이어서 찍는 중`;
+  $("burstCount").textContent=`사진 ${S.burst.n}장 · 다른 업체는 ‘완료’ 후`;
+  document.body.style.paddingBottom=on?"96px":"";
+}
+$("burstDone").addEventListener("click",()=>{setBurst(null);document.body.style.paddingBottom="";});
+$("burstMore").addEventListener("click",()=>$("burstCam").click());
+$("burstCam").addEventListener("change",e=>{const fs=[...e.target.files];e.target.value="";if(fs.length)burstAdd(fs);});
+setInterval(()=>{if(S.burst&&Date.now()-S.burst.at>20*60000)setBurst(null);},60000);
+/* 이미 있는 기록에 사진을 붙이고, 업체를 아직 모르면 AI로 다시 알아본다 */
+async function appendPhotos(recId,blobs){
+  const ids=await uploadBlobs(blobs);
+  const b=S.booths.find(x=>x.id===recId);
+  if(!b){const r=await saveAuto({},ids);return {id:r.id,name:"업체 미확인"};}
+  const patch={imageIds:[...arr(b.imageIds),...ids],needsReview:true,updatedAt:Date.now()};
+  if(!str(b.company)&&S.sample){
+    try{const {r,m}=await analyzeBooth(blobs);const d=dataFromResult(r,m);
+      for(const k of ["company","booth","zone","enName","products","smPoint","contact","relevance"])if(!str(b[k])&&str(d[k]))patch[k]=d[k];
+      if(!arr(b.features).length&&d.features.length)patch.features=d.features;
+      if(!arr(b.categories).length&&d.categories.length)patch.categories=d.categories;}catch(e){}
+  }
+  await S.db.doc("booths/"+recId).update(patch);Object.assign(b,patch);
+  // 이번에 업체를 새로 알아냈는데 같은 업체 기록이 이미 있으면 그쪽으로 합친다
+  if(patch.company){const other=dupCandidates(b)[0];
+    if(other){try{await mergeInto(other,b);return {id:other.id,name:str(other.company)||"업체 미확인",merged:true};}catch(e){}}}
+  return {id:recId,name:str(b.company)||"업체 미확인"};
+}
+async function burstAdd(files){
+  const B=S.burst;if(!B)return quickRecord(files);
+  B.at=Date.now();
+  const j=job("사진 추가 준비 중…");
+  const blobs=[];for(const f of files)if(f.type.startsWith("image/"))blobs.push(await resize(f));
+  // 첫 장이 아직 폰에 임시 저장 중이면 그 기록에 같이 담는다
+  if(B.qid!=null){
+    const it=await qGet(B.qid);
+    if(it){it.blobs=[...(it.blobs||[]),...blobs];await qPut(it);B.n+=blobs.length;renderBurst();
+      j.done(`임시 저장한 기록에 사진 ${blobs.length}장을 더했어요. 연결되면 함께 올려요.`);refreshQueueBar();return;}
+    if(S.qMap[B.qid]){B.id=S.qMap[B.qid];B.qid=null;}else{setBurst(null);j.fail("이어 찍던 기록을 찾지 못했어요. 원탭 기록으로 새로 찍어 주세요.");return;}
+  }
+  const toQueue=async()=>{const r=await qAdd({kind:"append",recId:B.id,blobs,at:Date.now()});
+    if(r==null){j.fail("사진을 저장하지 못했어요. 인터넷 연결을 확인해 주세요.");return;}
+    B.n+=blobs.length;renderBurst();j.done(`인터넷이 불안정해서 사진 ${blobs.length}장을 이 폰에 임시 저장했어요. 연결되면 ‘${B.name}’ 기록에 붙여요.`);refreshQueueBar();};
+  if(!navigator.onLine){await toQueue();return;}
+  if(needLogin(j))return;
+  try{
+    j.set(`‘${B.name}’에 사진 올리는 중…`);
+    const r=await appendPhotos(B.id,blobs);
+    B.id=r.id;B.n+=blobs.length;const was=B.name;B.name=r.name;renderBurst();renderList();if(S.view==="detail"&&S.detailId===B.id)renderDetail();
+    j.done(`‘${r.name}’ 기록에 사진 ${blobs.length}장을 더했어요 (모두 ${B.n}장)`+(was==="업체 미확인"&&r.name!==was?(r.merged?" · 업체를 알아내서 기존 기록에 합쳤어요":" · 업체도 알아냈어요"):""));
+  }catch(err){if(retryable(err))await toQueue();else j.fail("사진을 올리지 못했어요. 권한을 확인해 주세요.");}
+}
 
 /* ---------- boot ---------- */
 renderList();renderCats();renderStars();renderPhotos();
