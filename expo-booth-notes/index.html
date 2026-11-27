@@ -231,6 +231,7 @@ ul.feat{margin:0;padding-left:18px}
       <div class="row" id="exportRow" hidden>
         <span class="f" style="font-size:13px;font-weight:600;color:var(--muted)">문서로 받기</span>
         <button class="btn primary" id="pptBtn" type="button">PowerPoint</button>
+        <button class="btn primary" id="pdfBtn" type="button">PDF</button>
         <button class="btn primary" id="docBtn" type="button">Word</button>
         <button class="btn primary" id="xlsBtn" type="button">Excel</button>
         <button class="btn" id="dlBtn" type="button">Markdown</button>
@@ -871,7 +872,9 @@ function sortedForReport(){const r={"상":0,"중":1,"하":2,"":3};return [...S.b
 const LIBS={
   PptxGenJS:"https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js",
   docx:"https://cdn.jsdelivr.net/npm/docx@9.5.1/dist/index.iife.js",
-  ExcelJS:"https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"};
+  ExcelJS:"https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js",
+  html2canvas:"https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
+  jspdf:"https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"};
 function loadLib(g){
   if(window[g])return Promise.resolve();
   return new Promise((res,rej)=>{const s=document.createElement("script");s.src=LIBS[g];s.onload=res;s.onerror=rej;document.head.append(s);});
@@ -901,7 +904,9 @@ $("docBtn").addEventListener("click",async()=>{
     const D=window.docx;const items=sortedForReport();
     const FONT="Malgun Gothic";
     const P=(text,o={})=>new D.Paragraph({spacing:{after:o.after??80},children:[new D.TextRun({text,bold:o.bold,color:o.color,size:o.size})],heading:o.heading});
-    const label=(k,v)=>new D.Paragraph({spacing:{after:60},children:[new D.TextRun({text:k+"  ",bold:true,color:"5D6762"}),new D.TextRun({text:v})]});
+    const HLW={type:D.ShadingType.CLEAR,color:"auto",fill:"FFF0B3"};
+    const wRuns=(text,ph,base={})=>hlSplit(text,ph).map(g=>new D.TextRun(Object.assign({text:g.t},base,g.h?{bold:true,shading:HLW,color:"1B2433"}:{})));
+    const label=(k,v,ph)=>new D.Paragraph({spacing:{after:60},children:[new D.TextRun({text:k+"  ",bold:true,color:"5D6762"}),...wRuns(v,ph)]});
     const cell=(t,head)=>new D.TableCell({shading:head?{fill:"24332E"}:undefined,margins:{top:60,bottom:60,left:80,right:80},
       children:[new D.Paragraph({children:[new D.TextRun({text:t||"-",bold:!!head,color:head?"FFFFFF":undefined,size:18})]})]});
     const kids=[];
@@ -913,7 +918,8 @@ $("docBtn").addEventListener("click",async()=>{
     const TW=9900,DXA=D.WidthType.DXA,FIX=D.TableLayoutType.FIXED;
     const box=(children,o={})=>new D.Table({width:{size:TW,type:DXA},columnWidths:[TW],layout:FIX,borders:{top:NB,bottom:NB,left:NB,right:NB,insideHorizontal:NB,insideVertical:NB},
       rows:[new D.TableRow({children:[new D.TableCell({width:{size:TW,type:DXA},shading:{fill:o.fill||MINT},borders:o.borders||NOB,margins:{top:140,bottom:140,left:220,right:220},children})]})]});
-    const INS=await getInsight(items,st);st.textContent="Word 작성 중…";
+    const INS=await getInsight(items,st);
+    const HL=await getHighlights(items,st),ALLPH=[...new Set(Object.values(HL).flat().concat(HL_WORDS))];st.textContent="Word 작성 중…";
     const shN=items.filter(b=>b.relevance==="상"||b.relevance==="중").length;
     const hiN=items.filter(b=>(b.interest||0)>=4).length;
     /* --- 1쪽: 표지 --- */
@@ -938,7 +944,7 @@ $("docBtn").addEventListener("click",async()=>{
         new D.TableCell({width:{size:800,type:D.WidthType.DXA},shading:{fill:k===0?G:MINT},borders:NOB,verticalAlign:D.VerticalAlign.CENTER,margins:{top:120,bottom:120,left:100,right:100},
           children:[runs([[String(k+1).padStart(2,"0"),{bold:true,size:24,color:k===0?"FFFFFF":G}]],{align:D.AlignmentType.CENTER,after:0})]}),
         new D.TableCell({width:{size:9100,type:D.WidthType.DXA},borders:k===0?{top:{style:D.BorderStyle.SINGLE,size:8,color:G},bottom:{style:D.BorderStyle.SINGLE,size:8,color:G},left:NB,right:{style:D.BorderStyle.SINGLE,size:8,color:G}}:LINE,margins:{top:120,bottom:120,left:200,right:200},
-          children:[runs([[o.title,{bold:true,size:24,color:INK}]],{after:40}),runs([[o.body,{size:20,color:GREY}]],{after:0})]})]}))}));
+          children:[runs([[o.title,{bold:true,size:24,color:INK}]],{after:40}),new D.Paragraph({spacing:{after:0},children:wRuns(o.body,ALLPH,{size:20,color:GREY})})]})]}))}));
     kids.push(runs([["후속 미팅 추천",{bold:true,color:G,size:24}]],{before:280,after:100}));
     kids.push(box(INS.recommend.map((o,k)=>runs([["✓ "+o.company,{bold:true,color:INK,size:21}],["   "+o.why,{color:GREY,size:20}]],{after:k<INS.recommend.length-1?80:0}))));
     if(!INS.ai)kids.push(runs([["AI를 쓸 수 없어 기록된 수치로 요약했어요.",{color:"A3ABB5",size:16}]],{before:80}));
@@ -970,10 +976,10 @@ $("docBtn").addEventListener("click",async()=>{
         if(runs.length>1)kids.push(new D.Paragraph({spacing:{after:160},children:runs.slice(1).flatMap((r,k)=>k?[new D.TextRun("  "),r]:[r])}));
       }
       if(arr(b.categories).length)kids.push(label("분야",arr(b.categories).join(", ")));
-      if(b.products)kids.push(label("주요 제품·기술",str(b.products)));
+      if(b.products)kids.push(label("주요 제품·기술",str(b.products),HL[b.id]));
       const f=arr(b.features);
-      if(f.length){kids.push(P("특징",{bold:true,color:"5D6762",after:40}));f.forEach(t=>kids.push(new D.Paragraph({bullet:{level:0},spacing:{after:40},children:[new D.TextRun(t)]})));}
-      if(b.smPoint)kids.push(label("스마트홈 적용 포인트",str(b.smPoint)));
+      if(f.length){kids.push(P("특징",{bold:true,color:"5D6762",after:40}));f.forEach(t=>kids.push(new D.Paragraph({bullet:{level:0},spacing:{after:40},children:wRuns(t,HL[b.id])})));}
+      if(b.smPoint)kids.push(label("스마트홈 적용 포인트",str(b.smPoint),HL[b.id]));
       if(b.contact)kids.push(label("연락처",str(b.contact)));
       if(b.memo)kids.push(label("현장 메모",str(b.memo)));
     }
@@ -1093,6 +1099,43 @@ function fallbackInsight(items){
     .map(b=>({company:str(b.company),why:str(b.smPoint)||str(b.products)||"관심도 "+(b.interest||0)}));
   return {headline:`스마트홈 관점으로 ${items.length}곳을 둘러봤고, 그중 ${hi.length+mid.length}곳이 사업에 참고할 만합니다.`,insights:ins.slice(0,3),recommend:rec,ai:false};
 }
+/* ---------- 보고서 형광펜: 부스마다 스마트홈 관점의 핵심 구절 ---------- */
+S.hlCache=null;
+const HL_WORDS=["월패드","홈네트워크","스마트홈","낙상","에너지","출입","헬스케어","엘리베이터","비대면","고령자","돌봄","Matter","IoT"];
+const hlNorm=t=>String(t||"").replace(/\s+/g," ").trim();
+const hlText=b=>[str(b.products),...arr(b.features),str(b.smPoint)].map(hlNorm).join("\n");
+async function getHighlights(items,st){
+  const key=items.map(b=>b.id+":"+(b.updatedAt||0)).join(",");
+  if(S.hlCache&&S.hlCache.key===key)return S.hlCache.val;
+  const val={};
+  if(S.sample){
+    if(st)st.textContent="AI가 강조할 핵심 구절을 고르는 중…";
+    try{
+      const r=await S.sample.json(`아래는 우리 팀(아파트·주거용 스마트홈 사업)이 전시회에서 기록한 부스별 내용입니다. 보고서에서 형광펜으로 강조할 핵심 구절을 부스마다 2~4개 고르세요.
+규칙: 구절은 반드시 그 부스 텍스트에 글자 그대로 있는 부분(2~15자)이어야 합니다. 스마트홈 사업에 중요한 기술, 적용처, 수치, 차별점을 고르세요. '시스템', '솔루션' 같은 흔한 단어 하나만 고르지 마세요.
+JSON 하나만 출력: {"booths":[{"id":"부스 id","phrases":["구절"]}]}
+
+${items.map(b=>"### id="+b.id+"\n"+hlText(b)).join("\n\n")}`,{modelTier:"default",cache:false});
+      for(const o of (r&&Array.isArray(r.booths)?r.booths:[])){
+        const b=items.find(x=>x.id===o.id);if(!b)continue;const t=hlText(b);
+        val[b.id]=[...new Set(arr(o.phrases).map(hlNorm).filter(p=>p.length>=2&&p.length<=20&&t.includes(p)))].slice(0,4);
+      }
+    }catch(e){}
+  }
+  for(const b of items)if(!val[b.id]||!val[b.id].length){const t=hlText(b);val[b.id]=HL_WORDS.filter(w=>t.includes(w)).slice(0,4);}
+  S.hlCache={key,val};return val;
+}
+/* 글을 강조 구절 기준으로 [보통, 강조, 보통…] 조각으로 나눈다 */
+function hlSplit(text,phrases){
+  text=String(text||"");const ps=(phrases||[]).filter(Boolean);if(!ps.length)return [{t:text,h:false}];
+  const out=[];let i=0;
+  while(i<text.length){let best=null,bi=-1;
+    for(const p of ps){const j=text.indexOf(p,i);if(j>=0&&(bi<0||j<bi||(j===bi&&p.length>best.length))){bi=j;best=p;}}
+    if(bi<0){out.push({t:text.slice(i),h:false});break;}
+    if(bi>i)out.push({t:text.slice(i,bi),h:false});out.push({t:best,h:true});i=bi+best.length;}
+  return out.filter(x=>x.t);
+}
+
 async function getInsight(items,st){
   const key=items.map(b=>b.id+":"+(b.updatedAt||0)).join(",");
   if(S.insightCache&&S.insightCache.key===key)return S.insightCache.val;
@@ -1118,28 +1161,113 @@ ${reportText()}`,{modelTier:"default",cache:false});
   S.insightCache={key,val};return val;
 }
 
-$("pptBtn").addEventListener("click",async()=>{
-  const st=$("repStatus");
-  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
-  const btn=$("pptBtn");btn.disabled=true;st.textContent="PPTX 준비 중…";
+/* ---------- 슬라이드 그리기 (PowerPoint와 PDF가 같이 씀) ---------- */
+/* 사진을 칸 비율에 맞게 가운데를 잘라 칸을 꽉 채운다 */
+async function imgCrop(id,ar,max=1400){
+  const raw=await (await fetch(blobUrl(id))).blob();const url=URL.createObjectURL(raw);
+  try{const im=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url;});
+    let sw=im.naturalWidth,sh=im.naturalHeight,sx=0,sy=0;
+    if(sw/sh>ar){const nw=sh*ar;sx=(sw-nw)/2;sw=nw;}else{const nh=sw/ar;sy=(sh-nh)/2;sh=nh;}
+    const k=Math.min(1,max/Math.max(sw,sh));const c=document.createElement("canvas");c.width=Math.max(1,Math.round(sw*k));c.height=Math.max(1,Math.round(sh*k));
+    c.getContext("2d").drawImage(im,sx,sy,sw,sh,0,0,c.width,c.height);return c.toDataURL("image/jpeg",0.82);
+  }finally{URL.revokeObjectURL(url);}
+}
+/* 사진 수에 따른 배치: 1장 크게 / 2장 나란히 / 3장 큰 사진+세로 2장 / 4장 큰 사진+아래 3장 */
+function photoFrames(n,W,H,g=0.1){
+  if(n<=1)return [[0,0,W,H]];
+  if(n===2){const w=(W-g)/2;return [[0,0,w,H],[w+g,0,w,H]];}
+  if(n===3){const w1=W*0.62,w2=W-w1-g,h2=(H-g)/2;return [[0,0,w1,H],[w1+g,0,w2,h2],[w1+g,h2+g,w2,h2]];}
+  const h1=H*0.66,tw=(W-2*g)/3,th=H-h1-g;return [[0,0,W,h1],[0,h1+g,tw,th],[tw+g,h1+g,tw,th],[2*(tw+g),h1+g,tw,th]];
+}
+function gridFrames(n,W,H,g=0.1){
+  const cols=n<=2?n:n<=4?2:n<=6?3:4,rows=Math.ceil(n/cols),cw=(W-(cols-1)*g)/cols,ch=(H-(rows-1)*g)/rows;
+  return Array.from({length:n},(_,k)=>[(k%cols)*(cw+g),Math.floor(k/cols)*(ch+g),cw,ch]);
+}
+/* PDF용: pptxgenjs와 같은 호출을 받아 화면(HTML)에 그리는 대역 */
+function domDeck(font){
+  const IN=96,pages=[];
+  const css=o=>Object.entries(o).map(([k,v])=>k+":"+v).join(";");
+  return {pages,ShapeType:{roundRect:"roundRect",rect:"rect"},layout:"",title:"",
+    addSlide(){
+      const el=document.createElement("div");el.style.cssText=css({position:"relative",width:"1280px",height:"720px",overflow:"hidden","font-family":font,background:"#fff"});pages.push(el);
+      const box=o=>({position:"absolute",left:o.x*IN+"px",top:o.y*IN+"px",width:o.w*IN+"px",height:o.h*IN+"px","box-sizing":"border-box"});
+      return {
+        set background(v){el.style.background="#"+v.color;},
+        addShape(type,o){const d=document.createElement("div");const st=box(o);
+          if(o.fill)st.background="#"+o.fill.color;
+          if(o.line&&o.line.color)st.border=Math.max(1,(o.line.width||0.75)*IN/72)+"px solid #"+o.line.color;
+          if(type==="roundRect")st["border-radius"]=Math.min(o.rectRadius||0.1,o.h/2,o.w/2)*IN+"px";
+          if(o.shadow)st["box-shadow"]="0 2px 8px rgba(0,0,0,.07)";
+          d.style.cssText=css(st);el.append(d);},
+        addText(t,o){const d=document.createElement("div");const st=box(o);
+          const pad=o.margin===0?"0":"4.8px 9.6px";
+          Object.assign(st,{display:"flex","flex-direction":"column","justify-content":o.valign==="middle"?"center":o.valign==="bottom"?"flex-end":"flex-start",
+            padding:pad,overflow:"hidden","text-align":o.align==="center"?"center":o.align==="right"?"right":"left",
+            "font-size":(o.fontSize||12)*IN/72+"px","font-weight":o.bold?"700":"400",color:"#"+(o.color||"000000"),
+            "line-height":String(1.25*(o.lineSpacingMultiple||1)),"word-break":"keep-all","overflow-wrap":"anywhere","white-space":"pre-wrap"});
+          d.style.cssText=css(st);
+          const runs=Array.isArray(t)?t:[{text:String(t),options:{}}];
+          /* 줄바꿈(breakLine) 단위로 문단을 나누고, 글머리 문단은 둘째 줄이 글자에 맞춰 들여쓰이게 한다 */
+          const paras=[[]];runs.forEach(r=>{paras[paras.length-1].push(r);if((r.options||{}).breakLine)paras.push([]);});
+          paras.filter(pr=>pr.length).forEach((pr,pi2,all)=>{
+            const p=document.createElement("div");const b=(pr[0].options||{}).bullet;
+            if(pi2<all.length-1&&o.paraSpaceAfter)p.style.marginBottom=o.paraSpaceAfter*IN/72+"px";
+            const tgt=b?document.createElement("div"):p;
+            if(b){p.style.cssText="display:flex;gap:0.35em";const g=document.createElement("span");
+              g.textContent=b.code?String.fromCodePoint(parseInt(b.code,16)):"•";g.style.flex="none";p.append(g,tgt);tgt.style.cssText="flex:1;min-width:0";}
+            pr.forEach(r=>{const op=r.options||{};
+              const mk=t=>{const sp=document.createElement("span");sp.textContent=t;
+                if(op.color)sp.style.color="#"+op.color;if(op.bold)sp.style.fontWeight="700";if(op.fontSize)sp.style.fontSize=op.fontSize*IN/72+"px";
+                if(op.highlight)sp.style.background="#"+op.highlight;return sp;};
+              /* 형광펜 구절은 글자마다 따로 그린다. 칠한 덩어리가 줄을 넘어가면 PDF 캡처 도구가 배경을 큰 상자로 그려 글자를 가린다.
+                 단어 단위로는 '월패드·홈네트워크'처럼 띄어쓰기 없는 묶음 안에서 줄이 바뀔 때 같은 문제가 생긴다 */
+              if(op.highlight)Array.from(r.text).forEach(ch=>tgt.append(mk(ch)));
+              else tgt.append(mk(r.text));});
+            d.append(p);});
+          el.append(d);},
+        addImage(o){const i=document.createElement("img");i.src=o.data;i.style.cssText=css(Object.assign(box(o),{"object-fit":"cover"}));el.append(i);}
+      };
+    }};
+}
+/* PowerPoint 규격 보정: pptxgenjs는 글 조각마다 문단 설정(a:pPr)을 한 문단 안에 여러 번 쓴다.
+   규격상 문단마다 하나여야 하고, 엄격한 뷰어는 그런 슬라이드를 그리지 않으므로 첫 번째만 남긴다. */
+function fixParaXml(xml){
+  return xml.replace(/<a:p>([\s\S]*?)<\/a:p>/g,(m,inner)=>{
+    let seen=false;
+    const out=inner.replace(/<a:pPr\b[^>]*\/>|<a:pPr\b[^>]*>[\s\S]*?<\/a:pPr>/g,pp=>{if(seen)return "";seen=true;return pp;});
+    return "<a:p>"+out+"</a:p>";});
+}
+async function fixPptx(blob){
   try{
-    await loadPptx();
+    await loadLib("JSZip");const z=await window.JSZip.loadAsync(blob);
+    const names=Object.keys(z.files).filter(n=>/^ppt\/(slides|slideLayouts|slideMasters|notesSlides)\/[^/]+\.xml$/.test(n));
+    for(const n of names){const x=await z.file(n).async("string");const y=fixParaXml(x);if(y!==x)z.file(n,y);}
+    return await z.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.presentationml.presentation",compression:"DEFLATE"});
+  }catch(e){return blob;}
+}
+async function buildDeck(p,st,F){
     const T={bg:"F7F9F8",ink:"1B2433",green:"14634A",green2:"1E8A5F",mint:"E8F5EF",mintLine:"BFE3D2",grey:"6B7280",soft:"A3ABB5",line:"E3E8E6",white:"FFFFFF"};
-    const F="Malgun Gothic";
     const SH={type:"outer",blur:8,offset:2,angle:90,color:"000000",opacity:0.07};
-    const p=new window.PptxGenJS();p.layout="LAYOUT_WIDE";p.title="2026 스마트 건설·안전·AI 엑스포 스마트홈 부스 리포트";
+    p.layout="LAYOUT_WIDE";p.title="2026 스마트 건설·안전·AI 엑스포 스마트홈 부스 리포트";
     const items=sortedForReport();
     const pad=n=>String(n).padStart(2,"0");
     const RX=p.ShapeType.roundRect;
     const card=(s,x,y,w,h,o={})=>s.addShape(RX,{x,y,w,h,rectRadius:o.r??0.14,fill:{color:o.fill||T.white},line:{color:o.line||T.line,width:o.lw||0.75},shadow:o.noShadow?undefined:SH});
+    /* 흰 테두리 카드 안에 사진을 꽉 채워 넣는다 */
+    const placePhotos=async(s,ids,frames,x0,y0,max)=>{
+      for(let k=0;k<ids.length;k++){const [fx,fy,fw,fh]=frames[k],x=x0+fx,y=y0+fy;
+        card(s,x,y,fw,fh,{r:0.08,noShadow:k>0});
+        try{const d=await imgCrop(ids[k],(fw-0.1)/(fh-0.1),max);s.addImage({data:d,x:x+0.05,y:y+0.05,w:fw-0.1,h:fh-0.1});}
+        catch(e){s.addText("사진을 불러오지 못했어요",{x,y,w:fw,h:fh,align:"center",valign:"middle",fontFace:F,fontSize:10,color:T.soft,margin:0});}}
+    };
     const pill=(s,text,x,y)=>{const w=Math.min(6,0.5+text.length*0.17);
       s.addShape(RX,{x,y,w,h:0.42,rectRadius:0.21,fill:{color:T.mint},line:{color:T.mintLine,width:1}});
       s.addText([{text:"● ",options:{color:T.green,fontSize:10}},{text,options:{color:T.green,bold:true,fontSize:13}}],{x,y,w,h:0.42,align:"center",valign:"middle",fontFace:F,margin:0});};
     const counter=(s,i,n)=>s.addText([{text:pad(i),options:{color:T.ink}},{text:" / "+pad(n),options:{color:T.soft}}],{x:10.6,y:0.45,w:2.13,h:0.42,align:"right",fontFace:F,fontSize:16,bold:true,margin:0});
-    const title=(s,l1,l2,size=30,y=1.1)=>s.addText([{text:l1,options:{color:T.ink,breakLine:true}},{text:l2,options:{color:T.green}}],{x:0.6,y,w:10.2,h:size*0.042,fontFace:F,fontSize:size,bold:true,valign:"top",margin:0,fit:"shrink",lineSpacingMultiple:1.05});
+    const title=(s,l1,l2,size=30,y=1.1)=>s.addText([{text:l1,options:{color:T.ink,breakLine:true}},{text:l2,options:{color:T.green}}],{x:0.6,y,w:10.2,h:size*0.042,fontFace:F,fontSize:size,bold:true,valign:"top",margin:0,lineSpacingMultiple:1.05});
     const banner=(s,text,y=6.55)=>{s.addShape(RX,{x:0.6,y,w:12.13,h:0.62,rectRadius:0.14,fill:{color:T.green},line:{color:T.green}});
       text=clip(text,cpl(11.6,15));
-      s.addText(text,{x:0.85,y,w:11.7,h:0.62,fontFace:F,fontSize:15,bold:true,color:T.white,valign:"middle",margin:0,fit:"shrink"});};
+      s.addText(text,{x:0.85,y,w:11.7,h:0.62,fontFace:F,fontSize:15,bold:true,color:T.white,valign:"middle",margin:0});};
     const foot=s=>s.addText("2026 스마트 건설·안전·AI 엑스포 · 스마트홈 부스 노트",{x:7.2,y:7.18,w:5.53,h:0.25,fontFace:F,fontSize:9,color:T.soft,align:"right",margin:0});
     const relPill=(s,rel,x,y)=>{if(!rel)return;const c={"상":T.green,"중":"A86A00","하":T.grey}[rel];
       s.addShape(RX,{x,y,w:1.35,h:0.4,rectRadius:0.2,fill:{color:T.white},line:{color:c,width:1.5}});
@@ -1147,6 +1275,13 @@ $("pptBtn").addEventListener("click",async()=>{
     const stars=n=>n?"★".repeat(n)+"☆".repeat(5-n):"";
     /* 한 줄에 들어가는 글자 수(한글 기준 보수적으로) — PowerPoint는 글씨 자동 축소를 열 때 적용하지 않으므로 미리 자른다 */
     const cpl=(w,pt)=>Math.max(6,Math.floor(w*72/pt*1.15));
+    /* 제목 두 줄: 자르지 않고 글씨를 28→22pt로 줄여 보고, 그래도 길면 둘째 줄 후보(분야 3→2→1개)를 바꾼다 */
+    const fitTitle=(l1,l2s,W=9.9)=>{
+      for(const l2 of l2s)for(const pt of [28,26,24,22])if(l1.length<=cpl(W,pt)&&l2.length<=cpl(W,pt))return {l1,l2,pt};
+      const l2=l2s[l2s.length-1];
+      for(const pt of [20,18])if(l1.length<=cpl(W,pt)&&l2.length<=cpl(W,pt))return {l1,l2,pt};
+      return {l1:clip(l1,cpl(W,18)),l2:clip(l2,cpl(W,18)),pt:18};
+    };
     const clip=(t,n)=>{t=str(t).replace(/\s+/g," ").trim();return t.length>n?t.slice(0,Math.max(1,n-1)).trimEnd()+"…":t;};
 
     /* build slide plan first so page numbers are known */
@@ -1154,6 +1289,12 @@ $("pptBtn").addEventListener("click",async()=>{
     plan.push({k:"cover"});
     plan.push({k:"summary"});
     const INS=await getInsight(items,st);
+    const HL=await getHighlights(items,st),ALLPH=[...new Set(Object.values(HL).flat().concat(HL_WORDS))];
+    const HLC="FFF0B3";
+    /* 강조 구절은 굵게 + 연노랑 형광펜 */
+    const hlRuns=(text,ph,base={})=>hlSplit(text,ph).map(g=>({text:g.t,options:Object.assign({},base,g.h?{bold:true,highlight:HLC,color:T.ink}:{})}));
+    const hlParas=(list,ph,base,bul)=>list.flatMap((t,k)=>{const rs=hlRuns(t,ph,base);if(!rs.length)rs.push({text:" ",options:Object.assign({},base)});
+      if(bul)rs[0].options.bullet=bul;if(k<list.length-1)rs[rs.length-1].options.breakLine=true;return rs;});
     for(let i=0;i<items.length;i+=6)plan.push({k:"list",rows:items.slice(i,i+6),start:i,part:Math.floor(i/6)+1,parts:Math.ceil(items.length/6)});
     const zones={};items.forEach(b=>{const z=str(b.zone)||"기타·직접 입력";(zones[z]=zones[z]||[]).push(b);});
     if(Object.keys(zones).length>1||!zones["기타·직접 입력"])plan.push({k:"zones"});
@@ -1161,21 +1302,23 @@ $("pptBtn").addEventListener("click",async()=>{
     for(let i=0;i<aiLines.length;i+=8)plan.push({k:"ai",lines:aiLines.slice(i,i+8)});
     /* 업체 첫 장에 들어갈 글을 칸 크기에 맞춰 미리 자르고, 잘린 게 있으면 상세 장을 붙인다 */
     const L1=b=>{
-      const ids=arr(b.imageIds),rx=ids.length?6.45:0.6,rw=ids.length?6.28:12.13,tw=rw-0.5;
+      /* 오른쪽 설명 칸: 사진 칸을 4.9인치로 줄이고 설명 칸을 7.0인치로 넓혀 큰 글씨(제품 14pt·특징 13pt·적용 포인트 11~13pt)를 쓴다 */
+      const ids=arr(b.imageIds),rx=ids.length?5.75:0.6,rw=ids.length?6.98:12.13,tw=rw-0.5;
       const prodFull=str(b.products).replace(/\s+/g," ").trim();
-      const pLines=Math.min(3,Math.max(1,Math.ceil(prodFull.length/cpl(tw,12)))),pMax=pLines*cpl(tw,12),prodH=0.5+pLines*0.21;
+      const pLines=Math.min(3,Math.max(1,Math.ceil(prodFull.length/cpl(tw,14)))),pMax=pLines*cpl(tw,14),prodH=0.5+pLines*14*1.25/72;
       const prod=clip(prodFull,pMax),prodCut=prodFull.length>pMax;
-      const fAll=arr(b.features),fMax=cpl(tw-0.3,11);
+      const fAll=arr(b.features),fMax=cpl(tw-0.3,13),fRow=13*1.3/72;
       const feats=fAll.slice(0,5).map(t=>clip(t,fMax));
       const featCut=fAll.length>5||fAll.some(t=>t.length>fMax);
       if(fAll.length>5){feats.length=4;feats.push(`외 ${fAll.length-4}개 → 다음 장`);}
-      let y=2.45+(prod?prodH+0.12:0)+(feats.length?0.5+feats.length*0.22+0.12:0);
+      const featsH=feats.length?0.5+feats.length*fRow:0;
+      let y=2.45+(prod?prodH+0.12:0)+(feats.length?featsH+0.12:0);
       const bRaw0=b.memo||b.contact;const bottom=bRaw0?6.35:7.05; // 배너가 없으면 그 자리까지 쓴다
       const rest=bottom-y,smFull=str(b.smPoint).replace(/\s+/g," ").trim();
-      let smp="",smpCut=false,smpPt=11;
+      let smp="",smpCut=false,smpPt=13;
       if(smFull){if(rest>=0.75){
-        // 글씨를 11→10→9pt로 줄여 보며 첫 장에 다 들어가는 크기를 찾는다
-        for(const pt of [11,10,9]){const lines=Math.max(1,Math.floor((rest-0.5)/(pt*1.25/72))),mx=lines*cpl(tw,pt);
+        // 글씨를 13→12→11pt로 줄여 보며 첫 장에 다 들어가는 크기를 찾는다(11pt 아래로는 줄이지 않는다)
+        for(const pt of [13,12,11]){const lines=Math.max(1,Math.floor((rest-0.5)/(pt*1.25/72))),mx=lines*cpl(tw,pt);
           if(smFull.length<=mx){smp=smFull;smpPt=pt;break;}}
         if(!smp){const lines=Math.max(1,Math.floor((rest-0.5)/(11*1.25/72))),mx=lines*cpl(tw,11);smp=clip(smFull,mx);smpCut=true;}
       }else smpCut=true;}
@@ -1184,7 +1327,7 @@ $("pptBtn").addEventListener("click",async()=>{
       const contactLost=!!(str(b.memo)&&str(b.contact));
       const heavy=ids.length>4||prodCut||featCut||smpCut||bannerCut||contactLost;
       const bannerTxt=!bRaw?"":bannerCut?clip(bRaw,bMax-7)+" → 다음 장":bRaw;
-      return {rx,rw,bottom,prod,prodH,prodCut,feats,featCut,smp,smpPt,smpCut,banner:bannerTxt,heavy};
+      return {rx,rw,bottom,prod,prodH,prodCut,feats,featsH,featCut,smp,smpPt,smpCut,banner:bannerTxt,heavy};
     };
     items.forEach((b,i)=>{const L=L1(b);plan.push({k:"booth",b,i,L});if(L.heavy)plan.push({k:"booth2",b,i,L});});
     const N=plan.length;
@@ -1208,30 +1351,32 @@ $("pptBtn").addEventListener("click",async()=>{
       }else if(P.k==="summary"){
         pill(s,"한 장 요약",0.6,0.45);counter(s,pi+1,N);
         title(s,`참관 부스 ${items.length}곳에서 찾은`,"스마트홈 인사이트",30,1.1);
-        /* 왼쪽: 참관 부스 목록 */
-        const LX=0.6,LW=4.75,LY=2.45,LH=3.95;
-        card(s,LX,LY,LW,LH);
-        s.addText([{text:"참관 부스",options:{bold:true,color:T.ink}},{text:`  ${items.length}곳 · 관련성 높은 순`,options:{color:T.grey,fontSize:10}}],{x:LX+0.25,y:LY+0.15,w:LW-0.5,h:0.35,fontFace:F,fontSize:13,margin:0,valign:"middle"});
-        const maxRows=11,show=items.length>maxRows?items.slice(0,maxRows-1):items;
-        const rh=Math.min(0.4,(LH-0.75)/Math.max(show.length+(items.length>maxRows?1:0),1));
-        show.forEach((b,r)=>{const y=LY+0.6+r*rh;const c={"상":T.green,"중":"A86A00","하":T.soft}[b.relevance]||T.soft;
-          s.addText([{text:"● ",options:{color:c,fontSize:9}},{text:(str(b.booth)||"—").padEnd(5," ")+"  ",options:{color:T.grey,fontSize:10}},{text:clip(str(b.company)||"(업체명 없음)",16),options:{color:T.ink,bold:b.relevance==="상",fontSize:11}},{text:b.relevance?"  "+b.relevance:"",options:{color:c,bold:true,fontSize:10}}],
-            {x:LX+0.25,y,w:LW-0.5,h:rh,fontFace:F,margin:0,valign:"middle",fit:"shrink"});});
-        if(items.length>maxRows)s.addText(`외 ${items.length-show.length}곳 → 다음 장 목록 참고`,{x:LX+0.25,y:LY+0.6+show.length*rh,w:LW-0.5,h:rh,fontFace:F,fontSize:10,color:T.grey,margin:0,valign:"middle"});
-        /* 오른쪽: 인사이트 3개 */
-        const RX0=5.55,RW=7.18;
-        INS.insights.forEach((o,k)=>{const y=2.45+k*0.92,first=k===0;
-          card(s,RX0,y,RW,0.82,{line:first?T.green:T.line,lw:first?1.5:0.75});
-          s.addShape(RX,{x:RX0+0.2,y:y+0.17,w:0.48,h:0.48,rectRadius:0.1,fill:{color:first?T.green:T.mint},line:{color:first?T.green:T.mint}});
-          s.addText(pad(k+1),{x:RX0+0.2,y:y+0.17,w:0.48,h:0.48,align:"center",valign:"middle",fontFace:F,fontSize:13,bold:true,color:first?T.white:T.green,margin:0});
-          s.addText(clip(o.title,cpl(RW-1.05,14)),{x:RX0+0.85,y:y+0.06,w:RW-1.05,h:0.34,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,valign:"middle",fit:"shrink"});
-          s.addText(clip(o.body,2*cpl(RW-1.05,10)),{x:RX0+0.85,y:y+0.4,w:RW-1.05,h:0.38,fontFace:F,fontSize:10,color:T.grey,margin:0,valign:"middle",fit:"shrink"});});
-        /* 후속 미팅 추천 */
-        const ry=2.45+3*0.92;
-        card(s,RX0,ry,RW,6.4-ry,{fill:T.mint,line:T.mintLine,noShadow:true});
-        s.addText("후속 미팅 추천",{x:RX0+0.2,y:ry+0.08,w:2,h:0.3,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
-        s.addText(INS.recommend.flatMap(o=>{const c=clip(o.company,16);return [{text:"✓ "+c,options:{bold:true,color:T.ink}},{text:"   "+clip(o.why,cpl(RW-0.4,10)-c.length-4),options:{color:T.grey,fontSize:10,breakLine:true}}];}),
-          {x:RX0+0.2,y:ry+0.36,w:RW-0.4,h:6.4-ry-0.42,fontFace:F,fontSize:11,margin:0,valign:"top",fit:"shrink",paraSpaceAfter:2});
+        /* 왼쪽: 핵심 인사이트 3개 — 제목 16pt, 본문은 3줄 안에 들어가는 가장 큰 글씨(13→11pt)로 */
+        const IX=0.6,IW=7.75,CH=1.2,GAP=0.12,tw=IW-1.25;
+        INS.insights.forEach((o,k)=>{const y=2.4+k*(CH+GAP),first=k===0;
+          card(s,IX,y,IW,CH,{line:first?T.green:T.line,lw:first?1.5:0.75});
+          s.addShape(RX,{x:IX+0.25,y:y+0.2,w:0.55,h:0.55,rectRadius:0.12,fill:{color:first?T.green:T.mint},line:{color:first?T.green:T.mint}});
+          s.addText(pad(k+1),{x:IX+0.25,y:y+0.2,w:0.55,h:0.55,align:"center",valign:"middle",fontFace:F,fontSize:15,bold:true,color:first?T.white:T.green,margin:0});
+          /* 제목: 16→15→14pt 한 줄, 그래도 길면 14pt 두 줄로 쓰고 본문을 아래로 내린다 */
+          const ttl=str(o.title).replace(/\s+/g," ").trim();let tpt=14,tLines=2;
+          for(const pt of [16,15,14])if(ttl.length<=cpl(tw,pt)){tpt=pt;tLines=1;break;}
+          const tH=tLines===1?0.36:0.5;
+          s.addText(tLines===1?ttl:clip(ttl,2*cpl(tw,14)),{x:IX+1.0,y:y+0.12,w:tw,h:tH,fontFace:F,fontSize:tpt,bold:true,color:T.ink,margin:0,valign:"middle"});
+          const by=y+0.16+tH,bh=CH-(by-y)-0.06;
+          const body=str(o.body).replace(/\s+/g," ").trim();let bpt=11,btxt=body;
+          for(const pt of [13,12,11]){const fitL=Math.max(1,Math.floor(bh/(pt*1.25/72)));if(Math.ceil(body.length/cpl(tw,pt))<=fitL){bpt=pt;break;}if(pt===11)btxt=clip(body,fitL*cpl(tw,11));}
+          s.addText(hlRuns(btxt,ALLPH,{color:T.grey}),{x:IX+1.0,y:by,w:tw,h:bh,fontFace:F,fontSize:bpt,color:T.grey,margin:0,valign:"top"});});
+        /* 오른쪽: 후속 미팅 추천 — 번호 배지 + 업체명 + 이유(줄 맞춤) */
+        const RX0=8.55,RW=4.18,RY=2.4,RH=3*CH+2*GAP;
+        card(s,RX0,RY,RW,RH,{fill:T.mint,line:T.mintLine,noShadow:true});
+        s.addText("후속 미팅 추천",{x:RX0+0.3,y:RY+0.18,w:RW-0.6,h:0.32,fontFace:F,fontSize:13,bold:true,color:T.green,margin:0,valign:"middle"});
+        const recs=INS.recommend.slice(0,3),rowH=(RH-0.7)/Math.max(3,recs.length),ww=RW-1.0;
+        recs.forEach((o,k)=>{const y=RY+0.62+k*rowH;
+          s.addShape(RX,{x:RX0+0.3,y:y+0.04,w:0.36,h:0.36,rectRadius:0.18,fill:{color:T.green},line:{color:T.green}});
+          s.addText(String(k+1),{x:RX0+0.3,y:y+0.04,w:0.36,h:0.36,align:"center",valign:"middle",fontFace:F,fontSize:11,bold:true,color:T.white,margin:0});
+          s.addText(clip(o.company,cpl(ww,14)),{x:RX0+0.8,y,w:ww,h:0.44,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,valign:"middle"});
+          const why=str(o.why).trim(),wl=Math.max(1,Math.floor((rowH-0.55)/(11.5*1.25/72)));
+          s.addText(clip(why,wl*cpl(ww,11.5)),{x:RX0+0.8,y:y+0.46,w:ww,h:rowH-0.52,fontFace:F,fontSize:11.5,color:T.grey,margin:0,valign:"top"});});
         banner(s,INS.headline);
         if(!INS.ai)s.addText("AI를 쓸 수 없어 기록된 수치로 요약했어요.",{x:0.6,y:7.18,w:6,h:0.25,fontFace:F,fontSize:9,color:T.soft,margin:0});
       }else if(P.k==="list"){
@@ -1242,8 +1387,8 @@ $("pptBtn").addEventListener("click",async()=>{
           card(s,0.6,y,12.13,0.68,{line:top?T.green:T.line,lw:top?1.5:0.75});
           s.addShape(RX,{x:0.82,y:y+0.11,w:0.46,h:0.46,rectRadius:0.1,fill:{color:top?T.green:T.mint},line:{color:top?T.green:T.mint}});
           s.addText(pad(P.start+r+1),{x:0.82,y:y+0.11,w:0.46,h:0.46,align:"center",valign:"middle",fontFace:F,fontSize:12,bold:true,color:top?T.white:T.green,margin:0});
-          s.addText([{text:clip(str(b.company)||"(업체명 없음)",22),options:{bold:true,color:T.ink,fontSize:15}},{text:"   "+[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),options:{color:T.green,fontSize:11,bold:true}}],{x:1.45,y:y+0.04,w:7.9,h:0.34,fontFace:F,margin:0,valign:"middle",fit:"shrink"});
-          s.addText(clip(str(b.products)||arr(b.features).join(" · "),cpl(7.9,11))||" ",{x:1.45,y:y+0.36,w:7.9,h:0.28,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle",fit:"shrink"});
+          s.addText([{text:clip(str(b.company)||"(업체명 없음)",22),options:{bold:true,color:T.ink,fontSize:15}},{text:"   "+[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),options:{color:T.green,fontSize:11,bold:true}}],{x:1.45,y:y+0.04,w:7.9,h:0.34,fontFace:F,margin:0,valign:"middle"});
+          s.addText(clip(str(b.products)||arr(b.features).join(" · "),cpl(7.9,11))||" ",{x:1.45,y:y+0.36,w:7.9,h:0.28,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle"});
           relPill(s,b.relevance,9.55,y+0.14);
           s.addText(stars(b.interest),{x:11.0,y:y+0.14,w:1.55,h:0.4,fontFace:F,fontSize:12,color:"E0A800",align:"right",valign:"middle",margin:0});
         });
@@ -1254,9 +1399,9 @@ $("pptBtn").addEventListener("click",async()=>{
         const zs=Object.entries(zones).sort((a,c)=>c[1].length-a[1].length).slice(0,6);
         zs.forEach(([z,bs],k)=>{const x=0.6+(k%3)*4.12,y=2.45+Math.floor(k/3)*2.0;const first=k===0;
           card(s,x,y,3.89,1.85,{line:first?T.green:T.line,lw:first?1.5:0.75});
-          s.addText(clip(z,cpl(2.4,14)),{x:x+0.3,y:y+0.22,w:2.4,h:0.4,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0,fit:"shrink"});
+          s.addText(clip(z,cpl(2.4,14)),{x:x+0.3,y:y+0.22,w:2.4,h:0.4,fontFace:F,fontSize:14,bold:true,color:T.ink,margin:0});
           s.addText([{text:String(bs.length),options:{fontSize:26,bold:true,color:T.green}},{text:" 곳",options:{fontSize:12,color:T.grey,bold:true}}],{x:x+2.6,y:y+0.12,w:1.1,h:0.55,align:"right",fontFace:F,margin:0});
-          s.addText(clip(bs.map(b=>str(b.company)).join(" · "),3*cpl(3.3,11)),{x:x+0.3,y:y+0.75,w:3.3,h:0.95,fontFace:F,fontSize:11,color:T.grey,valign:"top",margin:0,fit:"shrink"});});
+          s.addText(clip(bs.map(b=>str(b.company)).join(" · "),3*cpl(3.3,11)),{x:x+0.3,y:y+0.75,w:3.3,h:0.95,fontFace:F,fontSize:11,color:T.grey,valign:"top",margin:0});});
         foot(s);
       }else if(P.k==="ai"){
         pill(s,"AI 총평",0.6,0.45);counter(s,pi+1,N);
@@ -1266,78 +1411,103 @@ $("pptBtn").addEventListener("click",async()=>{
           card(s,0.6,y,12.13,rh);
           s.addShape(RX,{x:0.82,y:y+(rh-0.4)/2,w:0.4,h:0.4,rectRadius:0.1,fill:{color:T.green},line:{color:T.green}});
           s.addText("✓",{x:0.82,y:y+(rh-0.4)/2,w:0.4,h:0.4,align:"center",valign:"middle",fontSize:14,bold:true,color:T.white,margin:0});
-          s.addText(clip(l,(rh>=0.55?2:1)*cpl(11.05,13)),{x:1.45,y:y+0.04,w:11.05,h:rh-0.08,fontFace:F,fontSize:13,color:T.ink,valign:"middle",margin:0,fit:"shrink"});});
+          s.addText(clip(l,(rh>=0.55?2:1)*cpl(11.05,13)),{x:1.45,y:y+0.04,w:11.05,h:rh-0.08,fontFace:F,fontSize:13,color:T.ink,valign:"middle",margin:0});});
         foot(s);
       }else if(P.k==="booth"){
         const b=P.b,L=P.L;
         st.textContent=`슬라이드 만드는 중 ${P.i+1}/${items.length}`;
         pill(s,clip(str(b.zone)||"방문 부스",24),0.6,0.45);counter(s,pi+1,N);
-        const tSize=str(b.company).length>16?24:28;
-        const sub=[b.booth?"부스 "+str(b.booth):"",arr(b.categories).slice(0,3).join(" · ")].filter(Boolean).join("  |  ")||" ";
-        title(s,clip(str(b.company)||"(업체명 없음)",cpl(9.6,tSize)),clip(sub,cpl(9.6,tSize)),tSize,1.1);
+        const subs=[3,2,1,0].map(n=>[b.booth?"부스 "+str(b.booth):"",arr(b.categories).slice(0,n).join(" · ")].filter(Boolean).join("  |  ")||" ");
+        const T2=fitTitle(str(b.company)||"(업체명 없음)",subs);
+        title(s,T2.l1,T2.l2,T2.pt,1.1);
         relPill(s,b.relevance,11.38,1.18);
         if(b.interest)s.addText(stars(b.interest),{x:10.6,y:1.65,w:2.13,h:0.35,fontFace:F,fontSize:13,color:"E0A800",align:"right",margin:0});
-        const imgs=[];for(const id of arr(b.imageIds).slice(0,4)){try{imgs.push(await imgData(id));}catch(e){}}
-        if(imgs.length){
-          card(s,0.6,2.45,5.6,imgs.length>1?2.9:3.9);
-          s.addImage(fit(imgs[0],0.72,2.57,5.36,(imgs.length>1?2.9:3.9)-0.24));
-          imgs.slice(1).forEach((im,k)=>{const x=0.6+k*1.9;card(s,x,5.47,1.8,0.88,{noShadow:true});s.addImage(fit(im,x+0.06,5.53,1.68,0.76));});
-        }
+        const ids4=arr(b.imageIds).slice(0,4);
+        if(ids4.length)await placePhotos(s,ids4,photoFrames(ids4.length,4.9,3.9),0.6,2.45,1400);
         const rx=L.rx,rw=L.rw;let y=2.45;
-        const head=(label,yy)=>s.addText(label,{x:rx+0.25,y:yy+0.1,w:rw-0.5,h:0.28,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
+        const head=(label,yy)=>s.addText(label,{x:rx+0.25,y:yy+0.1,w:rw-0.5,h:0.3,fontFace:F,fontSize:12,bold:true,color:T.green,margin:0});
         if(L.prod){card(s,rx,y,rw,L.prodH);head("주요 제품·기술",y);
-          s.addText(L.prod,{x:rx+0.25,y:y+0.4,w:rw-0.5,h:L.prodH-0.44,fontFace:F,fontSize:12,color:T.ink,valign:"top",margin:0});y+=L.prodH+0.12;}
-        if(L.feats.length){const h=0.5+L.feats.length*0.22;card(s,rx,y,rw,h);head("핵심 특징",y);
-          s.addText(L.feats.flatMap(t=>[{text:"✓  ",options:{color:T.green,bold:true}},{text:t,options:{color:T.ink,breakLine:true}}]),{x:rx+0.25,y:y+0.4,w:rw-0.5,h:h-0.44,fontFace:F,fontSize:11,valign:"top",margin:0,lineSpacingMultiple:0.95});
+          s.addText(hlRuns(L.prod,HL[b.id],{color:T.ink}),{x:rx+0.25,y:y+0.42,w:rw-0.5,h:L.prodH-0.46,fontFace:F,fontSize:14,color:T.ink,valign:"top",margin:0});y+=L.prodH+0.12;}
+        if(L.feats.length){const h=L.featsH;card(s,rx,y,rw,h);head("핵심 특징",y);
+          s.addText(hlParas(L.feats,HL[b.id],{color:T.ink},{code:"2022",indent:14}),{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.46,fontFace:F,fontSize:13,valign:"top",margin:0,lineSpacingMultiple:1.04});
           y+=h+0.12;}
         if(L.smp){const h=L.bottom-y;card(s,rx,y,rw,h,{fill:T.mint,line:T.mintLine,noShadow:true});head("스마트홈 적용 포인트",y);
-          s.addText(L.smp,{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.5,fontFace:F,fontSize:L.smpPt,color:T.ink,valign:"top",margin:0});}
+          s.addText(hlRuns(L.smp,HL[b.id],{color:T.ink}),{x:rx+0.25,y:y+0.42,w:rw-0.5,h:h-0.5,fontFace:F,fontSize:L.smpPt,color:T.ink,valign:"top",margin:0});}
         if(L.banner)banner(s,L.banner);else if(L.bottom<7)foot(s);
       }else if(P.k==="booth2"){
         const b=P.b,L=P.L;
         pill(s,clip(str(b.zone)||"방문 부스",24),0.6,0.45);counter(s,pi+1,N);
-        const tSize=str(b.company).length>16?24:28;
-        title(s,clip(str(b.company)||"(업체명 없음)",cpl(9.6,tSize)),"상세 · 사진과 메모",tSize,1.1);
-        const imgs=[];for(const id of arr(b.imageIds).slice(4,12)){try{imgs.push(await imgData(id,900));}catch(e){}}
+        const T2=fitTitle(str(b.company)||"(업체명 없음)",["상세 · 사진과 메모"]);
+        title(s,T2.l1,T2.l2,T2.pt,1.1);
+        const ids8=arr(b.imageIds).slice(4,12);
         let rx=0.6,rw=12.13;
-        if(imgs.length){
-          const cols=imgs.length>4?4:imgs.length>2?2:imgs.length,rows=Math.ceil(imgs.length/cols);
-          const gw=6.9,gh=3.95,cw=(gw-(cols-1)*0.12)/cols,ch=(gh-(rows-1)*0.12)/rows;
-          imgs.forEach((im,k)=>{const x=0.6+(k%cols)*(cw+0.12),y=2.45+Math.floor(k/cols)*(ch+0.12);
-            card(s,x,y,cw,ch,{noShadow:true});s.addImage(fit(im,x+0.06,y+0.06,cw-0.12,ch-0.12));});
-          rx=7.75;rw=4.98;
-        }
+        if(ids8.length){await placePhotos(s,ids8,gridFrames(ids8.length,5.9,3.95),0.6,2.45,900);rx=6.75;rw=5.98;}
         /* 앞 장에서 잘린 내용을 모두 싣는다. 칸 높이는 글자 수로 미리 계산해 넘치지 않게 한다 */
         const blocks=[];
         if(L.prodCut)blocks.push(["주요 제품·기술",[str(b.products)]]);
-        if(L.featCut)blocks.push(["핵심 특징 (전체)",arr(b.features).map(t=>"✓ "+t)]);
+        if(L.featCut)blocks.push(["핵심 특징 (전체)",arr(b.features),false,true]);
         if(L.smpCut)blocks.push(["스마트홈 적용 포인트",[str(b.smPoint)],true]);
         if(str(b.memo))blocks.push(["현장 메모",str(b.memo).split("\n")]);
         if(str(b.contact))blocks.push(["연락처",[str(b.contact)]]);
         const AV=3.95,tw=rw-0.5;
-        let pt=11,need=()=>blocks.reduce((a,[,ps])=>a+0.5+ps.reduce((n,p)=>n+Math.max(1,Math.ceil(p.length/cpl(tw,pt))),0)*pt*1.25/72+0.12,0);
-        while(need()>AV&&pt>9)pt-=1;
+        let pt=13,need=()=>blocks.reduce((a,[,ps])=>a+0.5+ps.reduce((n,p)=>n+Math.max(1,Math.ceil(p.length/cpl(tw,pt))),0)*pt*1.25/72+0.12,0);
+        while(need()>AV&&pt>11)pt-=1;
         // 그래도 넘치면 가장 긴 칸부터 줄인다
         let guard=0;while(need()>AV&&guard++<40){const big=blocks.reduce((m,x)=>x[1].join("").length>m[1].join("").length?x:m);
           const t=big[1].join(" ");big[1]=[clip(t,Math.max(20,Math.floor(t.length*0.8)))];}
         let y=2.45;
-        blocks.forEach(([label,ps,mint])=>{
+        blocks.forEach(([label,ps,mint,bul])=>{
           const lines=ps.reduce((n,p)=>n+Math.max(1,Math.ceil(p.length/cpl(tw,pt))),0);const h=0.5+lines*pt*1.25/72;
           card(s,rx,y,rw,h,mint?{fill:T.mint,line:T.mintLine,noShadow:true}:{});
-          s.addText(label,{x:rx+0.25,y:y+0.1,w:tw,h:0.28,fontFace:F,fontSize:11,bold:true,color:T.green,margin:0});
-          s.addText(ps.map((p,k)=>({text:p,options:{breakLine:k<ps.length-1}})),{x:rx+0.25,y:y+0.42,w:tw,h:h-0.46,fontFace:F,fontSize:pt,color:T.ink,valign:"top",margin:0});
+          s.addText(label,{x:rx+0.25,y:y+0.1,w:tw,h:0.3,fontFace:F,fontSize:12,bold:true,color:T.green,margin:0});
+          s.addText(hlParas(ps,label==="연락처"||label==="현장 메모"?[]:HL[b.id],{color:T.ink},bul?{code:"2022",indent:12}:null),{x:rx+0.25,y:y+0.42,w:tw,h:h-0.46,fontFace:F,fontSize:pt,color:T.ink,valign:"top",margin:0});
           y+=h+0.12;});
         const extra=arr(b.imageIds).length-12;
         banner(s,extra>0?`사진이 ${extra}장 더 있어요. 전체 사진은 앱에서 볼 수 있습니다.`:"앞 장에 이어지는 상세 내용입니다.");
       }
     }
+}
+$("pptBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("pptBtn");btn.disabled=true;st.textContent="PPTX 준비 중…";
+  try{
+    await loadPptx();
+    const p=new window.PptxGenJS();
+    await buildDeck(p,st,"Malgun Gothic");
     st.textContent="파일 만드는 중…";
-    const blob=await p.write({outputType:"blob"});
+    const blob=await fixPptx(await p.write({outputType:"blob"}));
     await S.downloads.save({filename:EXPORT_NAME+".pptx",data:blob});
     st.textContent="PPTX를 저장했어요.";
   }catch(e){
     st.textContent=exportErr(e,"PPTX");
   }finally{btn.disabled=false;}
+});
+/* PDF: 같은 슬라이드를 화면에 그려 이미지로 찍은 뒤 페이지로 묶는다 */
+$("pdfBtn").addEventListener("click",async()=>{
+  const st=$("repStatus");
+  if(!S.booths.length){st.textContent="기록한 부스가 없어요.";return;}
+  const btn=$("pdfBtn");btn.disabled=true;st.textContent="PDF 준비 중…";
+  const host=document.createElement("div");host.style.cssText="position:fixed;left:-20000px;top:0;width:1280px;pointer-events:none";
+  try{
+    await loadLib("html2canvas");await loadLib("jspdf");
+    const d=domDeck('"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif');
+    await buildDeck(d,st,"");
+    d.pages.forEach(pg=>host.append(pg));document.body.append(host);
+    try{await document.fonts.ready;}catch(e){}
+    await Promise.all([...host.querySelectorAll("img")].map(i=>i.decode?i.decode().catch(()=>{}):null));
+    const pdf=new window.jspdf.jsPDF({orientation:"landscape",unit:"px",format:[1280,720],hotfixes:["px_scaling"],compress:true});
+    for(let i=0;i<d.pages.length;i++){
+      st.textContent=`PDF 페이지 만드는 중 ${i+1}/${d.pages.length}`;
+      const c=await window.html2canvas(d.pages[i],{scale:1.5,backgroundColor:"#F7F9F8",logging:false,useCORS:true});
+      if(i)pdf.addPage([1280,720],"landscape");
+      pdf.addImage(c.toDataURL("image/jpeg",0.85),"JPEG",0,0,1280,720);
+    }
+    st.textContent="파일 만드는 중…";
+    await S.downloads.save({filename:EXPORT_NAME+".pdf",data:pdf.output("blob")});
+    st.textContent="PDF를 저장했어요.";
+  }catch(e){st.textContent=exportErr(e,"PDF");}
+  finally{host.remove();btn.disabled=false;}
 });
 $("aiSumBtn").addEventListener("click",async()=>{
   const st=$("repStatus");
