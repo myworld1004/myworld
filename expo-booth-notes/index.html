@@ -1295,7 +1295,7 @@ async function buildDeck(p,st,F){
     const hlRuns=(text,ph,base={})=>hlSplit(text,ph).map(g=>({text:g.t,options:Object.assign({},base,g.h?{bold:true,highlight:HLC,color:T.ink}:{})}));
     const hlParas=(list,ph,base,bul)=>list.flatMap((t,k)=>{const rs=hlRuns(t,ph,base);if(!rs.length)rs.push({text:" ",options:Object.assign({},base)});
       if(bul)rs[0].options.bullet=bul;if(k<list.length-1)rs[rs.length-1].options.breakLine=true;return rs;});
-    for(let i=0;i<items.length;i+=6)plan.push({k:"list",rows:items.slice(i,i+6),start:i,part:Math.floor(i/6)+1,parts:Math.ceil(items.length/6)});
+    const PER=5;for(let i=0;i<items.length;i+=PER)plan.push({k:"list",rows:items.slice(i,i+PER),start:i,part:Math.floor(i/PER)+1,parts:Math.ceil(items.length/PER)});
     const zones={};items.forEach(b=>{const z=str(b.zone)||"기타·직접 입력";(zones[z]=zones[z]||[]).push(b);});
     if(Object.keys(zones).length>1||!zones["기타·직접 입력"])plan.push({k:"zones"});
     const aiLines=aiSumText().split("\n").map(l=>l.trim()).filter(Boolean);
@@ -1382,15 +1382,20 @@ async function buildDeck(p,st,F){
       }else if(P.k==="list"){
         pill(s,"전체 방문 업체",0.6,0.45);counter(s,pi+1,N);
         title(s,"방문 업체",P.parts>1?`한눈에 보기 (${P.part}/${P.parts})`:"한눈에 보기",30,1.1);
+        /* 한 줄에 업체 하나: 업체명은 자르지 않고 15→13pt로 맞추고, 설명은 두 줄까지 */
+        const TW=7.9;
         P.rows.forEach((b,r)=>{
-          const y=2.45+r*0.78,top=b.relevance==="상";
-          card(s,0.6,y,12.13,0.68,{line:top?T.green:T.line,lw:top?1.5:0.75});
-          s.addShape(RX,{x:0.82,y:y+0.11,w:0.46,h:0.46,rectRadius:0.1,fill:{color:top?T.green:T.mint},line:{color:top?T.green:T.mint}});
-          s.addText(pad(P.start+r+1),{x:0.82,y:y+0.11,w:0.46,h:0.46,align:"center",valign:"middle",fontFace:F,fontSize:12,bold:true,color:top?T.white:T.green,margin:0});
-          s.addText([{text:clip(str(b.company)||"(업체명 없음)",22),options:{bold:true,color:T.ink,fontSize:15}},{text:"   "+[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),options:{color:T.green,fontSize:11,bold:true}}],{x:1.45,y:y+0.04,w:7.9,h:0.34,fontFace:F,margin:0,valign:"middle"});
-          s.addText(clip(str(b.products)||arr(b.features).join(" · "),cpl(7.9,11))||" ",{x:1.45,y:y+0.36,w:7.9,h:0.28,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"middle"});
-          relPill(s,b.relevance,9.55,y+0.14);
-          s.addText(stars(b.interest),{x:11.0,y:y+0.14,w:1.55,h:0.4,fontFace:F,fontSize:12,color:"E0A800",align:"right",valign:"middle",margin:0});
+          const y=2.35+r*0.93,h=0.85,top=b.relevance==="상";
+          card(s,0.6,y,12.13,h,{line:top?T.green:T.line,lw:top?1.5:0.75});
+          s.addShape(RX,{x:0.82,y:y+(h-0.5)/2,w:0.5,h:0.5,rectRadius:0.1,fill:{color:top?T.green:T.mint},line:{color:top?T.green:T.mint}});
+          s.addText(pad(P.start+r+1),{x:0.82,y:y+(h-0.5)/2,w:0.5,h:0.5,align:"center",valign:"middle",fontFace:F,fontSize:13,bold:true,color:top?T.white:T.green,margin:0});
+          const name=str(b.company)||"(업체명 없음)",metaFull=[str(b.booth),str(b.zone)].filter(Boolean).join(" · "),metaShort=str(b.booth);
+          let pt=13,meta=metaShort;
+          outer:for(const m of [metaFull,metaShort])for(const p2 of [15,14,13]){if(name.length+(m?m.length*0.75+3:0)<=cpl(TW,p2)){pt=p2;meta=m;break outer;}}
+          s.addText([{text:name,options:{bold:true,color:T.ink,fontSize:pt}},{text:meta?"   "+meta:"",options:{color:T.green,fontSize:11,bold:true}}],{x:1.5,y:y+0.08,w:TW,h:0.34,fontFace:F,margin:0,valign:"middle"});
+          s.addText(clip(str(b.products)||arr(b.features).join(" · "),2*cpl(TW,11))||" ",{x:1.5,y:y+0.42,w:TW,h:0.38,fontFace:F,fontSize:11,color:T.grey,margin:0,valign:"top"});
+          relPill(s,b.relevance,9.65,y+(h-0.4)/2);
+          s.addText(stars(b.interest),{x:11.1,y:y+(h-0.4)/2,w:1.45,h:0.4,fontFace:F,fontSize:12,color:"E0A800",align:"right",valign:"middle",margin:0});
         });
         foot(s);
       }else if(P.k==="zones"){
